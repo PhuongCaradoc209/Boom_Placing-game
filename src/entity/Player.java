@@ -114,23 +114,35 @@ public class Player extends Entity {
 //            gp.stopMusic("grass");
         }
 
+        // UPDATE the solidArea due to zoom in and out
+        solidArea.x = (10 * gp.tileSize) / 48;
+        solidArea.y = (20 * gp.tileSize) / 48;
+        solidArea.width = (30 * gp.tileSize) / 48;
+        solidArea.height = (35 * gp.tileSize) / 48;
+
+        // CHECK TILE COLLISION
+        collisionOn = false;
+        gp.cChecker.checkTile(this);
+        // CHECK IF AT EDGE
+        gp.cChecker.checkAtEdge(this);
+
 //         IF COLLISION IS FALSE, PLAYER CAN MOVE
-//        if (!collisionOn) {
-        switch (direction) {
-            case "up":
-                worldY -= speed;
-                break;
-            case "down":
-                worldY += speed;
-                break;
-            case "right":
-                worldX += speed;
-                break;
-            case "left":
-                worldX -= speed;
-                break;
+        if (!collisionOn) {
+            switch (direction) {
+                case "up":
+                    worldY -= speed;
+                    break;
+                case "down":
+                    worldY += speed;
+                    break;
+                case "right":
+                    worldX += speed;
+                    break;
+                case "left":
+                    worldX -= speed;
+                    break;
+            }
         }
-//        }
 
         spriteCounter++;
         if (spriteCounter > 24) {

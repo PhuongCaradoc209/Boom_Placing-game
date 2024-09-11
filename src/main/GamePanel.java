@@ -38,6 +38,7 @@ public class GamePanel extends JPanel implements Runnable {
     //SYSTEM
     public TileManager tileMgr = new TileManager(this);
     public KeyHandler keyHandler = new KeyHandler(this);
+    public CollisionChecker cChecker = new CollisionChecker(this);
 
     //FULL SCREEN
     int screenWidth2 = screenWidth;

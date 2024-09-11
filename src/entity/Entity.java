@@ -42,18 +42,14 @@ public class Entity {
     public void update() {
         setAction();
 
-//        if (gp.currentMap == 0) {
-//            gp.cChecker.checkObj(this, false);
-//            gp.cChecker.checkEntity(this, gp.npc);
-//            gp.cChecker.checkEntity(this, gp.animal);
-//            gp.cChecker.checkPlayer(this);
-//        }
-//        gp.cChecker.checkTile(this, isDuck);
-//        gp.cChecker.checkAtEdge(this);
+        if (gp.currentMap == 0) {
+            gp.cChecker.checkPlayer(this);
+        }
+        gp.cChecker.checkTile(this);
+        gp.cChecker.checkAtEdge(this);
 
         // IF COLLISION IS FALSE, PLAYER CAN MOVE
-//        if (!collisionOn) {
-            // System.out.println(direction);
+        if (!collisionOn) {
             switch (direction) {
                 case "up":
                     worldY -= speed;
@@ -68,7 +64,7 @@ public class Entity {
                     worldX -= speed;
                     break;
             }
-//        }
+        }
 
         spriteCounter++;
         if (spriteCounter > 15) {
