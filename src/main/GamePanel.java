@@ -1,5 +1,7 @@
 package main;
 
+import entity.Entity;
+import entity.Player;
 import tile.TileManager;
 
 import javax.swing.*;
@@ -35,6 +37,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     //SYSTEM
     public TileManager tileMgr = new TileManager(this);
+    public KeyHandler keyHandler = new KeyHandler(this);
 
     //FULL SCREEN
     int screenWidth2 = screenWidth;
@@ -43,11 +46,20 @@ public class GamePanel extends JPanel implements Runnable {
     Graphics2D g2;
     boolean fullScreenOn = false;
 
+    //PLAYER
+    public Player player = new Player(this, keyHandler, tileMgr);
+    //ENTITY
+    ArrayList<Entity> entityList = new ArrayList<>();
+
+    //GAME STATE
+    public int gameState;
+    public final int playState = 1;
+
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.BLACK);
         this.setDoubleBuffered(true);
-//        this.addKeyListener(keyHandler);
+        this.addKeyListener(keyHandler);
         this.setVisible(true);
         this.setFocusable(true);
     }
@@ -109,7 +121,7 @@ public class GamePanel extends JPanel implements Runnable {
 //        aSetter.setInteractiveTile();
 //        enviMgr.setUp();
 //
-//        gameState = tittleState;
+        gameState = playState;
         tempScreen = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_ARGB);
         g2 = (Graphics2D) tempScreen.getGraphics();
 
@@ -119,7 +131,9 @@ public class GamePanel extends JPanel implements Runnable {
 //        }
     }
 
-    public void update(){}
+    public void update() {
+        player.update();
+    }
 
     public void drawToScreen() {
         Graphics g = getGraphics();
@@ -130,85 +144,25 @@ public class GamePanel extends JPanel implements Runnable {
     public void drawToTempScreen() {
         //DEBUG
         long drawStart = 0;
-//        if (keyHandler.checkDrawTime == true) {
-            drawStart = System.nanoTime();
-//        }
-        tileMgr.draw(g2);
-//        //TITTLE SCREEN
-//        if (gameState != tittleState && currentMap == 0) {
-//            //TILE
-//            tileMgr.draw(g2);
-//
-//            //ADD ENTITIES TO THE LIST
-//            entityList.add(player);
-//
-//            //INTERACTIVE TILE
-//            for (InteractiveTile interactiveTile : iTile[currentMap]) {
-//                if (interactiveTile != null) {
-//                    entityList.add(interactiveTile);
-//                }
-//            }
-//
-//            for (Entity entity : npc[currentMap]) {
-//                if (entity != null) {
-//                    entityList.add(entity);
-//                }
-//            }
-//
-//            for (Entity value : obj[currentMap]) {
-//                if (value != null) {
-//                    entityList.add(value);
-//                }
-//            }
-//
-//            for (Entity value : animal[currentMap]) {
-//                if (value != null) {
-//                    entityList.add(value);
-//                }
-//            }
-//
-//            //SORT
-//            Collections.sort(entityList, new Comparator<Entity>() {
-//                @Override
-//                public int compare(Entity e1, Entity e2) {
-//                    return Integer.compare((int) e1.worldY, (int) e2.worldY);
-//                }
-//            });
-//
-//            //DRAW ENTITIES
-//            for (Entity entity : entityList) {
-//                entity.draw(g2);
-//            }
-//
-//            //REMOVE ENTITIES TO THE LIST (otherwise, the list become larger after every loop)
-//            entityList.clear();
-//
-//            //ENVIRONMENT
-//            enviMgr.draw(g2);
-//        } else if (gameState == fishTankState) {
-//            //TILE
-//            tileMgr.draw(g2);
-//
-//            //DRAW FISH
-//            for (int i = 0; i < animal[1].size(); i++) {
-//                animal[1].get(i).draw(g2);
-//            }
-//
-//            //DRAW OBJ
-//            for (int i = 0; i < obj[1].size(); i++) {
-//                obj[1].get(i).draw(g2);
-//            }
-//        }
-//        //UI
-//        ui.draw(g2);
-//
-//        if (keyHandler.checkDrawTime == true) {
-//            long drawEnd = System.nanoTime();
-//            long passed = drawEnd - drawStart;
-//            g2.setColor(Color.WHITE);
-//            g2.drawString("Draw Time: " + passed, 10, 400);
-//            System.out.println("Draw Time: " + passed);
-//        }
+        if (keyHandler.checkDrawTime == true) {
+        drawStart = System.nanoTime();
+        }
+        //TITTLE SCREEN
+        if (currentMap == 0) {
+            //TILE
+            tileMgr.draw(g2);
+
+            //ADD ENTITIES TO THE LIST
+            entityList.add(player);
+
+            //DRAW ENTITIES
+            for (Entity entity : entityList) {
+                entity.draw(g2);
+            }
+
+            //REMOVE ENTITIES TO THE LIST (otherwise, the list become larger after every loop)
+            entityList.clear();
+        }
 
     }
 }
