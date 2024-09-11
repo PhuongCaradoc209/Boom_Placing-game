@@ -25,7 +25,7 @@ public class TileManager {
 
 
         //READ TILE DATA FILE
-        InputStream is = getClass().getResourceAsStream("/tiles/tiledata.txt");
+        InputStream is = getClass().getResourceAsStream("/tiles/tiledata");
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
         //GETTING THE TILE NAMES AND COLLISION INFO FROM THE FILE
@@ -44,13 +44,13 @@ public class TileManager {
         mapTileNum = new int[gp.maxMap][gp.maxWorldRow][gp.maxWorldCol];
 
         getTileImage();
-        loadMap("/maps/mapdata.txt", 0);
+        loadMap("/maps/mapdata", 0);
     }
 
     public void getTileImage() {
         String fileName;
         boolean collision;
-        for (int i = 0; i< fileNames.size(); i++){
+        for (int i = 0; i< fileNames.size() - 1; i++){
             //Get a file name
             fileName = fileNames.get(i);
 
@@ -69,7 +69,7 @@ public class TileManager {
         UtilityTool uTool = new UtilityTool();
         try {
             tile[index] = new Tile();
-            String img = String.format("tiles/" + "%03d" + ".png", index);
+            String img = String.format("tiles/" + "%02d" + ".png", index);
             tile[index].image = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(img)));
             tile[index].image = uTool.scaleImage(tile[index].image, gp.tileSize, gp.tileSize);
             tile[index].collision = collision;
@@ -109,8 +109,8 @@ public class TileManager {
             int worldY = worldRow * gp.tileSize;
             //Coordinate for the screen
 
-//            double screenX = worldX - gp.player.worldX + gp.player.screenX;
-//            double screenY = worldY - gp.player.worldY + gp.player.screenY;
+            double screenX = worldX - 15 + 15;
+            double screenY = worldY - 15 + 15;
 
             //STOP MOVING THE CAMERA AT EDGE (TILES CAN NOT MOVE IF AT EDGE)
             //TOP
@@ -144,7 +144,7 @@ public class TileManager {
 //                    gp.player.screenY > gp.player.worldY ||
 //                    rightOffSet > gp.worldWidth - gp.player.worldX ||
 //                    bottomOffSet > gp.worldHeight - gp.player.worldY) {
-//                g2.drawImage(tile[tileNum].image, (int) screenX, (int) screenY, null);
+                g2.drawImage(tile[tileNum].image, (int) screenX, (int) screenY, null);
 //            }
 
             worldCol++;
