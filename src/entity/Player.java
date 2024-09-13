@@ -125,7 +125,7 @@ public class Player extends Entity {
         collisionOn = false;
         gp.cChecker.checkTile(this);
         // CHECK INTERACT TILE COLLISION
-//        iTileIndex = gp.cChecker.checkEntity(this, gp.iTile);
+        iTileIndex = gp.cChecker.checkEntity(this, gp.iTile);
         // CHECK IF AT EDGE
         gp.cChecker.checkAtEdge(this);
         // CHECK OBJ COLLISION
