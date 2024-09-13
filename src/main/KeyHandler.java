@@ -6,7 +6,7 @@ import java.awt.event.KeyListener;
 // KeyListener: the listener interface for receiving keyboard events (keystrokes)
 public class KeyHandler implements KeyListener {
 
-    public boolean upPressed, downPressed, leftPressed, rightPressed, enterPressed, spacePressed, fPressed;
+    public boolean upPressed, downPressed, leftPressed, rightPressed, enterPressed, spacePressed, escapePressed;
     public boolean AnnouceCompleteAnimation;
     // DEBUG
     boolean checkDrawTime = false;
@@ -23,11 +23,10 @@ public class KeyHandler implements KeyListener {
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
 
-        // TITTLE STATE
-
-//        if (gp.gameState == gp.tittleState) {
-//            tittleState(key);
-//        }
+//         TITLE STATE
+        if (gp.gameState == gp.titleState) {
+            titleState(key);
+        }
 //
 //        if (gp.gameState == gp.selectPlayerState) {
 //            selectPlayerState(key);
@@ -61,8 +60,26 @@ public class KeyHandler implements KeyListener {
         if (key == KeyEvent.VK_SPACE) {
             spacePressed = false;
         }
-        if (key == KeyEvent.VK_F) {
-            fPressed = false;
+    }
+
+    public void titleState(int key) {
+        if (key == KeyEvent.VK_W) {
+            gp.ui.commandNum--;
+//            gp.playSoundEffect("select_sound", 6);
+            if (gp.ui.commandNum < 0) {
+                gp.ui.commandNum = 2;
+            }
+        }
+        if (key == KeyEvent.VK_S) {
+            gp.ui.commandNum++;
+//            gp.playSoundEffect("select_sound", 6);
+            if (gp.ui.commandNum > 2) {
+                gp.ui.commandNum = 0;
+            }
+        }
+        if (key == KeyEvent.VK_ENTER) {
+//            gp.playSoundEffect("click_sound", 7);
+            enterPressed = true;
         }
     }
 
@@ -84,6 +101,9 @@ public class KeyHandler implements KeyListener {
         }
         if (key == KeyEvent.VK_SPACE) {
             spacePressed = true;
+        }
+        if (key == KeyEvent.VK_ESCAPE) {
+            escapePressed = true;
         }
 
         // DEBUG

@@ -41,13 +41,13 @@ public class GamePanel extends JPanel implements Runnable {
     public KeyHandler keyHandler = new KeyHandler(this);
     public CollisionChecker cChecker = new CollisionChecker(this);
     public AssetSetter aSetter = new AssetSetter(this);
+    public UI ui = new UI(this);
 
     //FULL SCREEN
     int screenWidth2 = screenWidth;
     int screenHeight2 = screenHeight;
     BufferedImage tempScreen;
     Graphics2D g2;
-    boolean fullScreenOn = false;
 
     //PLAYER
     public Player player = new Player(this, keyHandler, tileMgr);
@@ -60,6 +60,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     //GAME STATE
     public int gameState;
+    public final int titleState = 0;
     public final int playState = 1;
 
     public GamePanel() {
@@ -114,7 +115,7 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void setupGame() {
-//        CREATE ARRAYLIST FOR ENTITY
+        //CREATE ENTITIES
         for (int i = 0; i < maxMap; i++) {
             obj[i] = new ArrayList<>();
             iTile[i] = new ArrayList<>();
@@ -122,18 +123,9 @@ public class GamePanel extends JPanel implements Runnable {
         //SET ON MAP
         aSetter.setObject();
         aSetter.setInteractiveTile();
-//        aSetter.setNPC();
-//        aSetter.setAnimal(currentMap);
-//        enviMgr.setUp();
-//
-        gameState = playState;
         tempScreen = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_ARGB);
         g2 = (Graphics2D) tempScreen.getGraphics();
-
-//        //SET FULL SCREEN
-//        if (fullScreenOn){
-//            setFullScreen();
-//        }
+        gameState = titleState;
     }
 
     public void update() {
@@ -158,7 +150,7 @@ public class GamePanel extends JPanel implements Runnable {
         drawStart = System.nanoTime();
         }
         //TITTLE SCREEN
-        if (currentMap == 0) {
+        if (gameState != titleState && currentMap == 0) {
             //TILE
             tileMgr.draw(g2);
 
@@ -195,6 +187,7 @@ public class GamePanel extends JPanel implements Runnable {
             //REMOVE ENTITIES TO THE LIST (otherwise, the list become larger after every loop)
             entityList.clear();
         }
-
+        //UI
+        ui.draw(g2);
     }
 }

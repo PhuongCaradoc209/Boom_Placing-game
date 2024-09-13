@@ -88,7 +88,6 @@ public class Player extends Entity {
     }
 
     public void update() {
-        System.out.println(direction);
         if (key.downPressed || key.upPressed || key.leftPressed || key.rightPressed) {
             if (key.upPressed) {
                 direction = "up";
