@@ -81,16 +81,16 @@ public class CollisionChecker {
         }
     }
 
-    public <T extends Entity> int checkEntity(Entity entity, ArrayList<T>[] target) {
+    public int checkObj(Entity entity, boolean isPlayer) {
         int index = 999;
-        for (int i = 0; i < target[gp.currentMap].size(); i++) {
-            if (target[gp.currentMap].get(i) != null) {
+        for (int i = 0; i < gp.obj[gp.currentMap].size(); i++) {
+            if (gp.obj[gp.currentMap].get(i) != null) {
                 //get the entity's solid area position within the game world
                 entity.solidArea.x = (int) (entity.worldX + entity.solidArea.x);
                 entity.solidArea.y = (int) (entity.worldY + entity.solidArea.y);
-                //get the npc's solid area position within the game world
-                target[gp.currentMap].get(i).solidArea.x = (int) (target[gp.currentMap].get(i).worldX + target[gp.currentMap].get(i).solidArea.x);
-                target[gp.currentMap].get(i).solidArea.y = (int) (target[gp.currentMap].get(i).worldY + target[gp.currentMap].get(i).solidArea.y);
+                //get the object's solid area position within the game world
+                gp.obj[gp.currentMap].get(i).solidArea.x = (int) (gp.obj[gp.currentMap].get(i).worldX + gp.obj[gp.currentMap].get(i).solidArea.x);
+                gp.obj[gp.currentMap].get(i).solidArea.y = (int) (gp.obj[gp.currentMap].get(i).worldY + gp.obj[gp.currentMap].get(i).solidArea.y);
 
                 switch (entity.direction) {
                     //SIMULATING ENTITY'S MOVEMENT AND CHECK WHERE IT WILL BE AFTER IT MOVED
@@ -108,6 +108,54 @@ public class CollisionChecker {
 
                     case "left":
                         entity.solidArea.x -= entity.speed;
+                        break;
+                }
+                if (entity.solidArea.intersects(gp.obj[gp.currentMap].get(i).solidArea)) {
+                    if (gp.obj[gp.currentMap].get(i).collision == true) {
+                        entity.collisionOn = true;
+                    }
+                    if (isPlayer) {
+                        index = i;
+                    }
+                }
+                entity.solidArea.x = entity.solidAreaDefaultX;
+                entity.solidArea.y = entity.solidAreaDefaultY;
+                gp.obj[gp.currentMap].get(i).solidArea.x = gp.obj[gp.currentMap].get(i).solidAreaDefaultX;
+                gp.obj[gp.currentMap].get(i).solidArea.y = gp.obj[gp.currentMap].get(i).solidAreaDefaultY;
+            }
+        }
+        return index;
+    }
+
+    public <T extends Entity> int checkEntity(Entity entity, ArrayList<T>[] target) {
+        int index = 999;
+        for (int i = 0; i < target[gp.currentMap].size(); i++) {
+            if (target[gp.currentMap].get(i) != null) {
+                //get the entity's solid area position within the game world
+                entity.solidArea.x = (int) (entity.worldX + entity.solidArea.x);
+                entity.solidArea.y = (int) (entity.worldY + entity.solidArea.y);
+
+                //get the npc's solid area position within the game world
+                target[gp.currentMap].get(i).solidArea.x = (int) (target[gp.currentMap].get(i).worldX + target[gp.currentMap].get(i).solidArea.x);
+                target[gp.currentMap].get(i).solidArea.y = (int) (target[gp.currentMap].get(i).worldY + target[gp.currentMap].get(i).solidArea.y);
+
+
+                switch (entity.direction) {
+                    //SIMULATING ENTITY'S MOVEMENT AND CHECK WHERE IT WILL BE AFTER IT MOVED
+                    case "up":
+                        entity.solidArea.y -= (int) entity.speed + 5;
+                        break;
+
+                    case "down":
+                        entity.solidArea.y += (int) entity.speed + 5;
+                        break;
+
+                    case "right":
+                        entity.solidArea.x += (int) entity.speed + 5;
+                        break;
+
+                    case "left":
+                        entity.solidArea.x -= (int) entity.speed + 5;
                         break;
                 }
                 if (entity.solidArea.intersects(target[gp.currentMap].get(i).solidArea)) {
