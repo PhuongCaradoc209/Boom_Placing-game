@@ -42,10 +42,10 @@ public class Player extends Entity {
 
         // AREA COLLISION
         solidArea = new Rectangle();
-        solidArea.x = (8 * gp.tileSize) / 48;
-        solidArea.y = (16 * gp.tileSize) / 48;
-        solidArea.width = (32 * gp.tileSize) / 48;
-        solidArea.height = (32 * gp.tileSize) / 48;
+        solidArea.x = (10 * gp.tileSize) / 48;
+        solidArea.y = (20 * gp.tileSize) / 48;
+        solidArea.width = (28 * gp.tileSize) / 48;
+        solidArea.height = (30 * gp.tileSize) / 48;
 
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
@@ -60,7 +60,7 @@ public class Player extends Entity {
 
     public void setDefaultValues() {
         worldX = gp.tileSize * 2;
-        worldY = gp.tileSize * 2;
+        worldY = gp.tileSize * 1.8;
         speed = (double) gp.worldWidth / 800;
         direction = "standDown";
     }
@@ -76,18 +76,19 @@ public class Player extends Entity {
         up3 = left3 = setup("player/left_3", 32, 32);
         up4 = left4 = setup("player/left_4", 32, 32);
 
-        standDown1 = setup("player/standDown_1", 32, 32);
-        standDown2 = setup("player/standDown_2", 32, 32);
-        standDown3 = setup("player/standDown_3", 32, 32);
-        standDown4 = setup("player/standDown_4", 32, 32);
+        standLeft1 = setup("player/standLeft_1", 32, 32);
+        standLeft2 = setup("player/standLeft_2", 32, 32);
+        standLeft3 = setup("player/standLeft_3", 32, 32);
+        standLeft4 = setup("player/standLeft_4", 32, 32);
 
-        standUp1 = setup("player/standDown_1", 32, 32);
-        standUp2 = setup("player/standDown_2", 32, 32);
-        standUp3 = setup("player/standDown_3", 32, 32);
-        standUp4 = setup("player/standDown_4", 32, 32);
+        standRight1 = setup("player/standRight_1", 32, 32);
+        standRight2 = setup("player/standRight_2", 32, 32);
+        standRight3 = setup("player/standRight_3", 32, 32);
+        standRight4 = setup("player/standRight_4", 32, 32);
     }
 
     public void update() {
+        System.out.println(direction);
         if (key.downPressed || key.upPressed || key.leftPressed || key.rightPressed) {
             if (key.upPressed) {
                 direction = "up";
@@ -102,9 +103,9 @@ public class Player extends Entity {
 //            setTileSound(tileM);
         } else {
             if (Objects.equals(direction, "up")) {
-                direction = "standUp";
+                direction = "standLeft";
             } else if (Objects.equals(direction, "down")) {
-                direction = "standDown";
+                direction = "standRight";
             } else if (Objects.equals(direction, "right")) {
                 direction = "standRight";
             } else if (Objects.equals(direction, "left")) {
@@ -117,14 +118,18 @@ public class Player extends Entity {
         // UPDATE the solidArea due to zoom in and out
         solidArea.x = (10 * gp.tileSize) / 48;
         solidArea.y = (20 * gp.tileSize) / 48;
-        solidArea.width = (30 * gp.tileSize) / 48;
-        solidArea.height = (35 * gp.tileSize) / 48;
+        solidArea.width = (28 * gp.tileSize) / 48;
+        solidArea.height = (30 * gp.tileSize) / 48;
 
         // CHECK TILE COLLISION
         collisionOn = false;
         gp.cChecker.checkTile(this);
+        // CHECK INTERACT TILE COLLISION
+//        iTileIndex = gp.cChecker.checkEntity(this, gp.iTile);
         // CHECK IF AT EDGE
         gp.cChecker.checkAtEdge(this);
+        // CHECK OBJ COLLISION
+        objIndex = gp.cChecker.checkObj(this, true);
 
 //         IF COLLISION IS FALSE, PLAYER CAN MOVE
         if (!collisionOn) {
@@ -190,6 +195,7 @@ public class Player extends Entity {
     public void draw(Graphics2D g) {
         // g.setColor(Color.white);
         // g.fillRect(x, y, gp.tileSize, gp.tileSize);
+
         BufferedImage image = null;
         switch (direction) {
             case "up":
@@ -248,34 +254,32 @@ public class Player extends Entity {
                     image = right4;
                 }
                 break;
-            case "standUp":
             case "standLeft":
                 if (spriteNum == 1) {
-                    image = standUp1;
+                    image = standLeft1;
                 }
                 if (spriteNum == 2) {
-                    image = standUp2;
+                    image = standLeft2;
                 }
                 if (spriteNum == 3) {
-                    image = standUp3;
+                    image = standLeft3;
                 }
                 if (spriteNum == 4) {
-                    image = standUp4;
+                    image = standLeft4;
                 }
                 break;
-            case "standDown":
             case "standRight":
                 if (spriteNum == 1) {
-                    image = standDown1;
+                    image = standRight1;
                 }
                 if (spriteNum == 2) {
-                    image = standDown2;
+                    image = standRight2;
                 }
                 if (spriteNum == 3) {
-                    image = standDown3;
+                    image = standRight3;
                 }
                 if (spriteNum == 4) {
-                    image = standDown4;
+                    image = standRight4;
                 }
                 break;
         }
