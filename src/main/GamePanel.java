@@ -3,6 +3,7 @@ package main;
 import entity.Entity;
 import entity.Player;
 import tile.TileManager;
+import tile_Interact.InteractiveTile;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,6 +40,7 @@ public class GamePanel extends JPanel implements Runnable {
     public TileManager tileMgr = new TileManager(this);
     public KeyHandler keyHandler = new KeyHandler(this);
     public CollisionChecker cChecker = new CollisionChecker(this);
+    public AssetSetter aSetter = new AssetSetter(this);
 
     //FULL SCREEN
     int screenWidth2 = screenWidth;
@@ -51,6 +53,10 @@ public class GamePanel extends JPanel implements Runnable {
     public Player player = new Player(this, keyHandler, tileMgr);
     //ENTITY
     ArrayList<Entity> entityList = new ArrayList<>();
+    //OBJECT
+    public ArrayList<Entity>[] obj = new ArrayList[maxMap];
+    //INTERACT TILE
+    public ArrayList<InteractiveTile>[] iTile = new ArrayList[maxMap];
 
     //GAME STATE
     public int gameState;
@@ -108,18 +114,16 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void setupGame() {
-        //CREATE ARRAYLIST FOR ENTITY
-//        for (int i = 0; i < maxMap; i++) {
-//            obj[i] = new ArrayList<>();
-//            npc[i] = new ArrayList<>();
-//            animal[i] = new ArrayList<>();
-//            iTile[i] = new ArrayList<>();
-//        }
-//        //SET ON MAP
-//        aSetter.setObject();
+//        CREATE ARRAYLIST FOR ENTITY
+        for (int i = 0; i < maxMap; i++) {
+            obj[i] = new ArrayList<>();
+            iTile[i] = new ArrayList<>();
+        }
+        //SET ON MAP
+        aSetter.setObject();
+        aSetter.setInteractiveTile();
 //        aSetter.setNPC();
 //        aSetter.setAnimal(currentMap);
-//        aSetter.setInteractiveTile();
 //        enviMgr.setUp();
 //
         gameState = playState;
@@ -134,6 +138,11 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void update() {
         player.update();
+        for (int i = 0; i < iTile[0].size(); i++) {
+            if (iTile[0].get(i) != null) {
+                iTile[0].get(i).update();
+            }
+        }
     }
 
     public void drawToScreen() {
@@ -155,6 +164,28 @@ public class GamePanel extends JPanel implements Runnable {
 
             //ADD ENTITIES TO THE LIST
             entityList.add(player);
+
+            //DRAW OBJ
+            for (Entity value : obj[currentMap]) {
+                if (value != null) {
+                    entityList.add(value);
+                }
+            }
+
+            //INTERACTIVE TILE
+            for (InteractiveTile interactiveTile : iTile[currentMap]) {
+                if (interactiveTile != null) {
+                    entityList.add(interactiveTile);
+                }
+            }
+
+            //SORT
+            Collections.sort(entityList, new Comparator<Entity>() {
+                @Override
+                public int compare(Entity e1, Entity e2) {
+                    return Integer.compare((int) e1.worldY, (int) e2.worldY);
+                }
+            });
 
             //DRAW ENTITIES
             for (Entity entity : entityList) {

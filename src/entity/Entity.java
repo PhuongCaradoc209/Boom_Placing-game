@@ -21,15 +21,19 @@ public class Entity {
             down1, down2, down3, down4,
             right1, right2 , right3, right4,
             left1, left2, left3, left4,
-            standUp1, standUp2, standUp3, standUp4,
-            standDown1, standDown2, standDown3, standDown4;
+            standRight1, standRight2, standRight3, standRight4,
+            standLeft1, standLeft2, standLeft3, standLeft4;
     public String direction = "down";
     public int spriteCounter = 0;
     public int spriteNum = 1;
     public int solidAreaDefaultX, solidAreaDefaultY;
     public Rectangle solidArea;// by this, you can manage which part of tile can be collision
     public boolean collisionOn = false;
+    public boolean collision = false;
     public int actionLookCounter = 0;
+
+    //OBJ
+    public String name;
 
     public Entity(GamePanel gp) {
         this.gp = gp;
@@ -153,32 +157,16 @@ public class Entity {
 //        }
     }
 
-    public BufferedImage setup(String imagePath, int targetWidth, int targetHeight) {
+    public BufferedImage setup(String imagePath, int width, int height) {
         UtilityTool uTool = new UtilityTool();
         BufferedImage image = null;
         try {
             image = ImageIO
                     .read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(imagePath + ".png")));
-            // Get original dimensions
-            int originalWidth = image.getWidth();
-            int originalHeight = image.getHeight();
-
-            // Calculate aspect ratio
-            double aspectRatio = (double) originalWidth / originalHeight;
-
-            // Adjust target width or height to maintain aspect ratio
-            if (originalWidth > originalHeight) {
-                targetHeight = (int) (targetWidth / aspectRatio);
-            } else {
-                targetWidth = (int) (targetHeight * aspectRatio);
-            }
-
-            // Resize the image while maintaining aspect ratio
-            image = uTool.scaleImage(image, targetWidth, targetHeight);
+            image = uTool.scaleImage(image, width, height);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return image;
     }
-
 }
