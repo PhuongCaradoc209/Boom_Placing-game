@@ -64,4 +64,9 @@ public class AssetSetter {
         String key = x + "," + y; // Tạo chuỗi key từ tọa độ
         objectMap.remove(key);
     }
+
+    public boolean hasObjectAt(int x, int y) {
+        String key = x + "," + y;
+        return objectMap.containsKey(key);
+    }
 }

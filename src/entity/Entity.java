@@ -2,6 +2,8 @@ package entity;
 
 import main.GamePanel;
 import main.UtilityTool;
+import object.Boom;
+import object.BoomManager;
 
 import javax.imageio.ImageIO;
 import javax.swing.plaf.PanelUI;
@@ -15,7 +17,9 @@ public class Entity {
     public GamePanel gp;
     protected int size;
     public double worldX, worldY;
+    private int col, row;
     public double speed;
+
     public BufferedImage
             up1, up2, up3, up4,
             down1, down2, down3, down4,
@@ -35,9 +39,13 @@ public class Entity {
     //OBJ
     public String name;
 
+    //BOOM
+    public BoomManager boomManager;
+
     public Entity(GamePanel gp) {
         this.gp = gp;
         solidArea = new Rectangle(0, 0, gp.tileSize, gp.tileSize);
+        boomManager = new BoomManager(gp, this);
     }
 
     public void setAction() {
@@ -168,5 +176,16 @@ public class Entity {
             e.printStackTrace();
         }
         return image;
+    }
+
+    public void placeBoom() {
+        getEntityCoordinates(this);
+        boomManager.booms.add(new Boom(col, row, 70, gp));
+        gp.keyHandler.spacePressed = false;
+    }
+
+    public void getEntityCoordinates(Entity entity) {
+        col = (int) ((worldX + gp.tileSize / 2) / gp.tileSize);
+        row = (int) ((worldY + gp.tileSize / 2) / gp.tileSize);
     }
 }
