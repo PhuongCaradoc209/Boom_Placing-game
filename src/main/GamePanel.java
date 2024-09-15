@@ -3,6 +3,7 @@ package main;
 import entity.Entity;
 import entity.Player;
 import tile.TileManager;
+import tile_Interact.InteractiveTile;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,7 +16,7 @@ public class GamePanel extends JPanel implements Runnable {
     //SCREEN SETTINGS
     private final int originalTileSize = 16;
     private final int scale = 5;
-    public int tileSize = originalTileSize * scale; //58x58
+    public int tileSize = originalTileSize * scale; //80x80
     private final int maxScreenCol = 8;
     private final int maxScreenRow = 8;
     public int screenWidth = maxScreenCol * tileSize;//1160 px
@@ -39,21 +40,27 @@ public class GamePanel extends JPanel implements Runnable {
     public TileManager tileMgr = new TileManager(this);
     public KeyHandler keyHandler = new KeyHandler(this);
     public CollisionChecker cChecker = new CollisionChecker(this);
+    public AssetSetter aSetter = new AssetSetter(this);
+    public UI ui = new UI(this);
 
     //FULL SCREEN
     int screenWidth2 = screenWidth;
     int screenHeight2 = screenHeight;
     BufferedImage tempScreen;
     Graphics2D g2;
-    boolean fullScreenOn = false;
 
     //PLAYER
     public Player player = new Player(this, keyHandler, tileMgr);
     //ENTITY
     ArrayList<Entity> entityList = new ArrayList<>();
+    //OBJECT
+    public ArrayList<Entity>[] obj = new ArrayList[maxMap];
+    //INTERACT TILE
+    public ArrayList<InteractiveTile>[] iTile = new ArrayList[maxMap];
 
     //GAME STATE
     public int gameState;
+    public final int titleState = 0;
     public final int playState = 1;
 
     public GamePanel() {
@@ -108,32 +115,25 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void setupGame() {
-        //CREATE ARRAYLIST FOR ENTITY
-//        for (int i = 0; i < maxMap; i++) {
-//            obj[i] = new ArrayList<>();
-//            npc[i] = new ArrayList<>();
-//            animal[i] = new ArrayList<>();
-//            iTile[i] = new ArrayList<>();
-//        }
-//        //SET ON MAP
-//        aSetter.setObject();
-//        aSetter.setNPC();
-//        aSetter.setAnimal(currentMap);
-//        aSetter.setInteractiveTile();
-//        enviMgr.setUp();
-//
-        gameState = playState;
+        //CREATE ENTITIES
+        for (int i = 0; i < maxMap; i++) {
+            obj[i] = new ArrayList<>();
+        }
+        //SET ON MAP
+        aSetter.setObject();
+        aSetter.setInteractiveTile();
         tempScreen = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_ARGB);
         g2 = (Graphics2D) tempScreen.getGraphics();
-
-//        //SET FULL SCREEN
-//        if (fullScreenOn){
-//            setFullScreen();
-//        }
+        gameState = titleState;
     }
 
     public void update() {
         player.update();
+        for (InteractiveTile tile : aSetter.getObjectMap().values()) {
+            if (tile != null) {
+                tile.update();
+            }
+        }
     }
 
     public void drawToScreen() {
@@ -149,21 +149,38 @@ public class GamePanel extends JPanel implements Runnable {
         drawStart = System.nanoTime();
         }
         //TITTLE SCREEN
-        if (currentMap == 0) {
+        if (gameState != titleState && currentMap == 0) {
             //TILE
             tileMgr.draw(g2);
 
             //ADD ENTITIES TO THE LIST
             entityList.add(player);
 
+            //INTERACTIVE TILE
+            for (InteractiveTile tile : aSetter.getObjectMap().values()) {
+                if (tile != null) {
+                    tile.draw(g2);
+                }
+            }
+
+            //SORT
+            Collections.sort(entityList, new Comparator<Entity>() {
+                @Override
+                public int compare(Entity e1, Entity e2) {
+                    return Integer.compare((int) e1.worldY, (int) e2.worldY);
+                }
+            });
+
             //DRAW ENTITIES
             for (Entity entity : entityList) {
                 entity.draw(g2);
+                entity.boomManager.draw(g2);
             }
 
             //REMOVE ENTITIES TO THE LIST (otherwise, the list become larger after every loop)
             entityList.clear();
         }
-
+        //UI
+        ui.draw(g2);
     }
 }
