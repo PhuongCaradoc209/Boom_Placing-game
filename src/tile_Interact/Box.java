@@ -12,7 +12,7 @@ public class Box extends InteractiveTile {
         this.worldX = gp.tileSize * col;
         this.worldY = gp.tileSize * row;
 
-        isOpen = false;
+        setHardness(1);
         collision = true;
 
         solidArea.x = 0;

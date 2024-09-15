@@ -5,7 +5,7 @@ import entity.Entity;
 
 public class InteractiveTile extends Entity {
     GamePanel gp;
-    public boolean isOpen = false;
+    private int hardness;
     public InteractiveTile(GamePanel gp, int col, int row){
         super(gp);
         this.gp = gp;
@@ -17,5 +17,13 @@ public class InteractiveTile extends Entity {
     }
 
     public void update(){
+    }
+
+    public int getHardness(){
+        return hardness;
+    }
+
+    public void setHardness(int hardness){
+        this.hardness = hardness;
     }
 }
