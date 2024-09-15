@@ -156,24 +156,22 @@ public class Boom {
         if (bottomOffSet >= gp.worldHeight - gp.player.worldY) {
             screenY = gp.screenHeight - (gp.worldHeight - worldY);
         }
+
+        screenX -= 10;
+        screenY -= 10;
         g2.drawImage(fontExplosion[currentAnimExplosion], (int) screenX, (int) screenY, null);
         //CHECK UP
-
+        if (!gp.tileMgr.tile[gp.tileMgr.mapTileNum[gp.currentMap][row - 1][col]].collision)
             g2.drawImage(upExplosion[currentAnimExplosion], (int) screenX, (int) screenY - gp.tileSize, null);
         //CHECK DOWN
-
+        if (!gp.tileMgr.tile[gp.tileMgr.mapTileNum[gp.currentMap][row + 1][col]].collision)
             g2.drawImage(downExplosion[currentAnimExplosion], (int) screenX, (int) screenY + gp.tileSize, null);
         //CHECK RIGHT
-
+        if (!gp.tileMgr.tile[gp.tileMgr.mapTileNum[gp.currentMap][row][col + 1]].collision)
             g2.drawImage(rightExplosion[currentAnimExplosion], (int) screenX + gp.tileSize, (int) screenY, null);
         //CHECK LEFT
-
+        if (!gp.tileMgr.tile[gp.tileMgr.mapTileNum[gp.currentMap][row][col - 1]].collision)
             g2.drawImage(leftExplosion[currentAnimExplosion], (int) screenX - gp.tileSize, (int) screenY, null);
-    }
-
-    //Explode
-    public boolean isExplode() {
-        return exploded;
     }
 
     public BufferedImage setup(String imagePath, int width, int height) {
@@ -187,5 +185,18 @@ public class Boom {
             e.printStackTrace();
         }
         return image;
+    }
+
+    //Explode
+    public boolean isExplode() {
+        return exploded;
+    }
+
+    public int getCol() {
+        return col;
+    }
+
+    public int getRow() {
+        return row;
     }
 }
