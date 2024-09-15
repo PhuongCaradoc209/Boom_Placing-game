@@ -2,7 +2,9 @@ package main;
 
 import entity.Entity;
 
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class CollisionChecker {
     GamePanel gp;
@@ -171,6 +173,59 @@ public class CollisionChecker {
             }
         }
         return index;
+    }
+
+    public <T extends Entity> int[] checkEntity(Entity entity, HashMap<String, T> targetMap) {
+        int[] collisionCoordinates = null;
+
+        for (String key : targetMap.keySet()) {
+            T targetEntity = targetMap.get(key);
+
+            if (targetEntity != null) {
+                // Tính toán vùng va chạm của entity
+                Rectangle entitySolidArea = new Rectangle(
+                        (int) (entity.worldX + entity.solidArea.x),
+                        (int) (entity.worldY + entity.solidArea.y),
+                        entity.solidArea.width,
+                        entity.solidArea.height
+                );
+
+                // Tính toán vùng va chạm của target entity
+                Rectangle targetSolidArea = new Rectangle(
+                        (int) (targetEntity.worldX + targetEntity.solidArea.x),
+                        (int) (targetEntity.worldY + targetEntity.solidArea.y),
+                        targetEntity.solidArea.width,
+                        targetEntity.solidArea.height
+                );
+
+                // Mô phỏng chuyển động của entity
+                switch (entity.direction) {
+                    case "up":
+                        entitySolidArea.y -= (int) entity.speed + 5;
+                        break;
+                    case "down":
+                        entitySolidArea.y += (int) entity.speed + 5;
+                        break;
+                    case "left":
+                        entitySolidArea.x -= (int) entity.speed + 5;
+                        break;
+                    case "right":
+                        entitySolidArea.x += (int) entity.speed + 5;
+                        break;
+                }
+
+                if (entitySolidArea.intersects(targetSolidArea) && targetEntity != entity) {
+                    entity.collisionOn = true;
+                    String[] coords = key.split(",");
+                    int x = Integer.parseInt(coords[0]);
+                    int y = Integer.parseInt(coords[1]);
+
+                    collisionCoordinates = new int[]{x, y};
+                    break;
+                }
+            }
+        }
+        return collisionCoordinates;
     }
 
     public void checkPlayer(Entity entity) {
