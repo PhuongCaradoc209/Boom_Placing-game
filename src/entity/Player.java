@@ -5,11 +5,13 @@ import main.GamePanel;
 //import object.Fishing_Rod;
 //import object.OBJ_FishingRod1;
 import main.KeyHandler;
+import object.Boom;
 import tile.TileManager;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Player extends Entity {
@@ -18,13 +20,13 @@ public class Player extends Entity {
 
     public double screenX;
     public double screenY;
-    public double temp_worldX;
-    public double temp_worldY;
-    public int interactEntity_Index;
     public ArrayList<Entity> interactEntity;
-    public Entity currentFishingRod;
     private double x, y;
+    private int playerCol, playerRow;
     private int npcIndex, animalIndex, iTileIndex, objIndex;
+
+    private List<Boom> booms;
+    private int boomAmount = 1;
 
     public Player(GamePanel gp, KeyHandler key, TileManager tileM) {
         super(gp);
@@ -52,6 +54,8 @@ public class Player extends Entity {
 
         direction = "down";
         setPlayerImage();
+
+        this.booms = new ArrayList<>();
     }
 
     public void setPlayerImage() {
@@ -112,6 +116,19 @@ public class Player extends Entity {
             }
             // STOP SOUND
 //            gp.stopMusic("grass");
+        }
+
+        if (key.spacePressed) {
+            if (booms.size() < boomAmount) {
+                placeBoom();
+            }
+        }
+        for (int i = 0; i < booms.size(); i++) {
+            booms.get(i).update();
+            if (booms.get(i).isExplode()) {
+                booms.remove(i);
+                i--; // Đảm bảo không bỏ qua phần tử tiếp theo sau khi remove
+            }
         }
 
         // UPDATE the solidArea due to zoom in and out
@@ -194,6 +211,11 @@ public class Player extends Entity {
     public void draw(Graphics2D g) {
         // g.setColor(Color.white);
         // g.fillRect(x, y, gp.tileSize, gp.tileSize);
+
+        //DRAW BOOMS
+        for (Boom boom : booms) {
+            boom.draw(g);
+        }
 
         BufferedImage image = null;
         switch (direction) {
@@ -306,4 +328,20 @@ public class Player extends Entity {
         g.drawImage(image, (int) x, (int) y, size, size, null);
     }
 
+    public void placeBoom() {
+        getPlayerCoordinates();
+        System.out.println(worldX + " " + worldY);
+        System.out.println(playerCol + " " + playerRow);
+        booms.add(new Boom(playerCol*gp.tileSize + 10, playerRow*gp.tileSize + 10, 70, gp));
+        key.spacePressed = false;
+    }
+
+    public void getPlayerCoordinates() {
+        playerCol = (int) ((worldX + gp.tileSize / 2) / gp.tileSize);
+        playerRow = (int) ((worldY + gp.tileSize / 2) / gp.tileSize);
+    }
+
+    public int getBoomAmount() {
+        return boomAmount;
+    }
 }
