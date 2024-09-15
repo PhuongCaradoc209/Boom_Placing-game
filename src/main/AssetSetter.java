@@ -8,15 +8,18 @@ import tile_Interact.Tree;
 import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.Random;
 
 public class AssetSetter {
     GamePanel gp;
     private int i,mapNum;
     private Random random;
+    private HashMap<String, InteractiveTile> objectMap;
     public AssetSetter(GamePanel gp) {
         this.gp = gp;
         random = new Random();
+        objectMap = new HashMap<>();
     }
 
     public void setObject() {
@@ -37,20 +40,28 @@ public class AssetSetter {
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = br.readLine()) != null) {
-                String[] values = line.split(","); // Tách x và y
+                String[] values = line.split(",");
                 int x = Integer.parseInt(values[0]);
                 int y = Integer.parseInt(values[1]);
                 Constructor<T> constructor = tile.getConstructor(GamePanel.class, int.class, int.class);
 
-                // Tạo đối tượng mới bằng cách gọi constructor
                 T object = constructor.newInstance(gp, x, y);
 
-                // Thêm đối tượng vào danh sách trên bản đồ hiện tại
-                gp.iTile[mapNum].add((InteractiveTile) object);
+                String key = x + "," + y;
+                objectMap.put(key, (InteractiveTile) object);
             }
         } catch (IOException | InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
             e.printStackTrace();
         }
+    }
+
+    public HashMap<String, InteractiveTile> getObjectMap() {
+        return objectMap;
+    }
+
+    public void removeObject(int x, int y) {
+        String key = x + "," + y; // Tạo chuỗi key từ tọa độ
+        objectMap.remove(key);
     }
 }
