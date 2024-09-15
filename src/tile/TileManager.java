@@ -23,7 +23,6 @@ public class TileManager {
     public TileManager(GamePanel gp) {
         this.gp = gp;
 
-
         //READ TILE DATA FILE
         InputStream is = getClass().getResourceAsStream("/tiles/tiledata");
         BufferedReader br = new BufferedReader(new InputStreamReader(is));

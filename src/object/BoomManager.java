@@ -10,6 +10,7 @@ import java.util.List;
 public class BoomManager {
     private GamePanel gp;
     private Entity entity;
+    private ExplosionManager explosionManager;
 
     public List<Boom> booms;
     private int boomAmount;
@@ -18,6 +19,7 @@ public class BoomManager {
         this.gp = gp;
         this.entity = entity;
         this.booms = new ArrayList<>();
+        this.explosionManager = new ExplosionManager(gp);
     }
 
     public void update(){
@@ -29,6 +31,7 @@ public class BoomManager {
         for (int i = 0; i < booms.size(); i++) {
             booms.get(i).update();
             if (booms.get(i).isExplode()) {
+                explosionManager.checkDestructibleTiles(booms.get(i));
                 booms.remove(i);
                 i--;
             }
