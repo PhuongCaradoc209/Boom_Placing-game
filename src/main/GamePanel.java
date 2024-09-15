@@ -118,7 +118,6 @@ public class GamePanel extends JPanel implements Runnable {
         //CREATE ENTITIES
         for (int i = 0; i < maxMap; i++) {
             obj[i] = new ArrayList<>();
-            iTile[i] = new ArrayList<>();
         }
         //SET ON MAP
         aSetter.setObject();
@@ -130,9 +129,9 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void update() {
         player.update();
-        for (int i = 0; i < iTile[0].size(); i++) {
-            if (iTile[0].get(i) != null) {
-                iTile[0].get(i).update();
+        for (InteractiveTile tile : aSetter.getObjectMap().values()) {
+            if (tile != null) {
+                tile.update();
             }
         }
     }
@@ -157,17 +156,10 @@ public class GamePanel extends JPanel implements Runnable {
             //ADD ENTITIES TO THE LIST
             entityList.add(player);
 
-            //DRAW OBJ
-            for (Entity value : obj[currentMap]) {
-                if (value != null) {
-                    entityList.add(value);
-                }
-            }
-
             //INTERACTIVE TILE
-            for (InteractiveTile interactiveTile : iTile[currentMap]) {
-                if (interactiveTile != null) {
-                    entityList.add(interactiveTile);
+            for (InteractiveTile tile : aSetter.getObjectMap().values()) {
+                if (tile != null) {
+                    tile.draw(g2);
                 }
             }
 
@@ -182,6 +174,7 @@ public class GamePanel extends JPanel implements Runnable {
             //DRAW ENTITIES
             for (Entity entity : entityList) {
                 entity.draw(g2);
+                entity.boomManager.draw(g2);
             }
 
             //REMOVE ENTITIES TO THE LIST (otherwise, the list become larger after every loop)

@@ -23,10 +23,8 @@ public class Player extends Entity {
     public ArrayList<Entity> interactEntity;
     private double x, y;
     private int playerCol, playerRow;
-    private int npcIndex, animalIndex, iTileIndex, objIndex;
-
-    private List<Boom> booms;
-    private int boomAmount = 1;
+    private int npcIndex, animalIndex, objIndex;
+    private int[] iTileCoordinate;
 
     public Player(GamePanel gp, KeyHandler key, TileManager tileM) {
         super(gp);
@@ -55,7 +53,9 @@ public class Player extends Entity {
         direction = "down";
         setPlayerImage();
 
-        this.booms = new ArrayList<>();
+        //SET UP BOOM
+        boomManager.setBoomAmount(2);
+
     }
 
     public void setPlayerImage() {
@@ -118,18 +118,8 @@ public class Player extends Entity {
 //            gp.stopMusic("grass");
         }
 
-        if (key.spacePressed) {
-            if (booms.size() < boomAmount) {
-                placeBoom();
-            }
-        }
-        for (int i = 0; i < booms.size(); i++) {
-            booms.get(i).update();
-            if (booms.get(i).isExplode()) {
-                booms.remove(i);
-                i--; // Đảm bảo không bỏ qua phần tử tiếp theo sau khi remove
-            }
-        }
+        //BOOM UPDATE
+        boomManager.update();
 
         // UPDATE the solidArea due to zoom in and out
         solidArea.x = (10 * gp.tileSize) / 48;
@@ -141,7 +131,10 @@ public class Player extends Entity {
         collisionOn = false;
         gp.cChecker.checkTile(this);
         // CHECK INTERACT TILE COLLISION
-        iTileIndex = gp.cChecker.checkEntity(this, gp.iTile);
+        iTileCoordinate = gp.cChecker.checkEntity(this, gp.aSetter.getObjectMap());
+//        if (iTileCoordinate != null) {
+//            gp.aSetter.removeObject(iTileCoordinate[0], iTileCoordinate[1]);
+//        }
         // CHECK IF AT EDGE
         gp.cChecker.checkAtEdge(this);
         // CHECK OBJ COLLISION
@@ -211,12 +204,6 @@ public class Player extends Entity {
     public void draw(Graphics2D g) {
         // g.setColor(Color.white);
         // g.fillRect(x, y, gp.tileSize, gp.tileSize);
-
-        //DRAW BOOMS
-        for (Boom boom : booms) {
-            boom.draw(g);
-        }
-
         BufferedImage image = null;
         switch (direction) {
             case "up":
@@ -326,22 +313,5 @@ public class Player extends Entity {
             y = gp.screenHeight - (gp.worldHeight - worldY);
         }
         g.drawImage(image, (int) x, (int) y, size, size, null);
-    }
-
-    public void placeBoom() {
-        getPlayerCoordinates();
-        System.out.println(worldX + " " + worldY);
-        System.out.println(playerCol + " " + playerRow);
-        booms.add(new Boom(playerCol*gp.tileSize + 10, playerRow*gp.tileSize + 10, 70, gp));
-        key.spacePressed = false;
-    }
-
-    public void getPlayerCoordinates() {
-        playerCol = (int) ((worldX + gp.tileSize / 2) / gp.tileSize);
-        playerRow = (int) ((worldY + gp.tileSize / 2) / gp.tileSize);
-    }
-
-    public int getBoomAmount() {
-        return boomAmount;
     }
 }
