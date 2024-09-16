@@ -3,18 +3,14 @@ package object;
 import entity.Entity;
 import main.GamePanel;
 
-import java.awt.*;
-
 public class ExplosionManager {
-    GamePanel gp;
-    Entity entity;
+    private GamePanel gp;
 
     private String key;
     private int hardness;
 
-    public ExplosionManager(GamePanel gp, Entity entity) {
+    public ExplosionManager(GamePanel gp) {
         this.gp = gp;
-        this.entity = entity;
     }
 
     public void checkDestructibleTiles(Boom boom) {
@@ -31,9 +27,13 @@ public class ExplosionManager {
             // Check right direction
             check(boom.getCol() + i, boom.getRow());
         }
+    }
 
-        if (isPlayerInExplosionRange(boom)) {
-            gp.eHandler.damagePit();
+    public void hitEntities(Boom boom) {
+        for (int i=0; i<gp.entityManager.getEntities().size();i++) { // Loop through all entities in the game
+            if (isEntityInExplosionRange(boom, gp.entityManager.getEntities().get(i))) {
+                gp.eHandler.damagePit(gp.entityManager.getEntities().get(i)); // Handle entity damage
+            }
         }
     }
 
@@ -50,20 +50,20 @@ public class ExplosionManager {
         }
     }
 
-
-    private boolean isPlayerInExplosionRange(Boom boom) {
-        int playerCol = gp.player.getCol();
-        int playerRow = gp.player.getRow();
+    private boolean isEntityInExplosionRange(Boom boom, Entity entity) {
+        int entityCol = entity.getCol();
+        int entityRow = entity.getRow();
 
         int boomCol = boom.getCol();
         int boomRow = boom.getRow();
 
         int explosionRadius = boom.getRadiusExplosion();
 
-        if (Math.abs(playerCol - boomCol) <= explosionRadius && playerRow == boomRow) {
+        // Check if the entity is within the explosion range (both horizontal and vertical directions)
+        if (Math.abs(entityCol - boomCol) <= explosionRadius && entityRow == boomRow) {
             return true;
         }
-        if (Math.abs(playerRow - boomRow) <= explosionRadius && playerCol == boomCol) {
+        if (Math.abs(entityRow - boomRow) <= explosionRadius && entityCol == boomCol) {
             return true;
         }
 

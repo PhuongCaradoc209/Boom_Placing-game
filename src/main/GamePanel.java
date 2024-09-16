@@ -1,8 +1,10 @@
 package main;
 
 import entity.Entity;
+import entity.EntityManager;
 import entity.Player;
 import event.EventHandler;
+import object.BoomManager;
 import tile.TileManager;
 import tile_Interact.InteractiveTile;
 
@@ -43,6 +45,9 @@ public class GamePanel extends JPanel implements Runnable {
     public CollisionChecker cChecker = new CollisionChecker(this);
     public AssetSetter aSetter = new AssetSetter(this);
     public EventHandler eHandler = new EventHandler(this);
+    public EntityManager entityManager = new EntityManager(this);
+    public BoomManager boomManager = new BoomManager(this);
+
     public UI ui = new UI(this);
 
     //FULL SCREEN
@@ -130,23 +135,27 @@ public class GamePanel extends JPanel implements Runnable {
         aSetter.setInteractiveTile();
         aSetter.setEnemy();
 
+        entityManager.addEntity(player);
+
+        //ADD ENTITY FOR MANAGER
+        for (Entity entity : enemy[currentMap]) {
+            if (entity != null) {
+                entityManager.addEntity(entity);
+            }
+        }
+
         tempScreen = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_ARGB);
         g2 = (Graphics2D) tempScreen.getGraphics();
         gameState = titleState;
     }
 
     public void update() {
-        player.update();
+        entityManager.updateEntities();
+        boomManager.update();
 
         for (InteractiveTile tile : aSetter.getObjectMap(currentMap).values()) {
             if (tile != null) {
                 tile.update();
-            }
-        }
-
-        for (int i = 0; i < enemy[currentMap].size(); i++) {
-            if (enemy[currentMap].get(i) != null) {
-                enemy[currentMap].get(i).update();
             }
         }
     }
@@ -195,8 +204,9 @@ public class GamePanel extends JPanel implements Runnable {
             //DRAW ENTITIES
             for (Entity entity : entityList) {
                 entity.draw(g2);
-                entity.boomManager.draw(g2);
             }
+
+            boomManager.draw(g2);
 
             //REMOVE ENTITIES TO THE LIST (otherwise, the list become larger after every loop)
             entityList.clear();

@@ -9,85 +9,91 @@ import java.util.List;
 
 public class BoomManager {
     private GamePanel gp;
-    private Entity entity;
     private ExplosionManager explosionManager;
 
     public List<Boom> booms;
-    private int boomAmount;
+    private Entity entity;
 
-    public BoomManager(GamePanel gp, Entity entity) {
+    public BoomManager(GamePanel gp) {
         this.gp = gp;
-        this.entity = entity;
         this.booms = new ArrayList<>();
-        this.explosionManager = new ExplosionManager(gp, entity);
+        this.explosionManager = new ExplosionManager(gp);
     }
 
     public void update() {
-        if (gp.keyHandler.spacePressed) {
-            if (booms.size() < boomAmount) {
-                entity.placeBoom();
-            }
-        }
         for (int i = 0; i < booms.size(); i++) {
             booms.get(i).update();
-            checkEntityOutOfBoom(booms.get(i));
+            checkAllEntitiesOutOfBoom(booms.get(i));
+
+            entity = getEntityPlacedBoom(booms.get(i));
+            if (entity != null) {
+                if (booms.get(i).isExplode()) {
+                    entity.ownBooms.remove(booms.get(i));
+                    if (entity.ownBooms.isEmpty())
+                        entity.setPlacedBoom(false);
+                }
+            }
+
             if (booms.get(i).isExplode()) {
                 explosionManager.checkDestructibleTiles(booms.get(i));
+                explosionManager.hitEntities(booms.get(i));
                 booms.remove(i);
-                entity.setOutOfBoomCoordinate(false);
                 i--;
             }
         }
     }
 
+    public Entity getEntityPlacedBoom(Boom boom) {
+        for (Entity entity : gp.entityManager.getEntities()) {
+            if (entity.isPlacedBoom()) {
+                List<Boom> entityBooms = entity.ownBooms; // Assuming the entity has a list of bombs it placed
+                if (entityBooms.contains(boom)) {
+                    return entity;
+                }
+            }
+        }
+        return null;
+    }
+
     public void draw(Graphics2D g2) {
-        //DRAW BOOMS
+        // DRAW BOOMS
         for (Boom boom : booms) {
             boom.draw(g2);
         }
     }
 
-    public void setBoomAmount(int boomAmount) {
-        this.boomAmount = boomAmount;
-    }
+    public void checkAllEntitiesOutOfBoom(Boom boom) {
+        for (Entity entity : gp.entityManager.getEntities()) {
+            entity.solidArea.x = (int) (entity.worldX + entity.solidArea.x);
+            entity.solidArea.y = (int) (entity.worldY + entity.solidArea.y);
+            boom.solidArea.x = (int) (boom.getWorldX() + boom.solidArea.x);
+            boom.solidArea.y = (int) (boom.getWorldY() + boom.solidArea.y);
 
-    public void checkEntityOutOfBoom(Boom boom) {
-        //get the entity's solid area position within the game world
-        entity.solidArea.x = (int) (entity.worldX + entity.solidArea.x);
-        entity.solidArea.y = (int) (entity.worldY + entity.solidArea.y);
+            switch (entity.direction) {
+                case "up":
+                    entity.solidArea.y -= (int) entity.speed;
+                    break;
+                case "down":
+                    entity.solidArea.y += (int) entity.speed;
+                    break;
+                case "right":
+                    entity.solidArea.x += (int) entity.speed;
+                    break;
+                case "left":
+                    entity.solidArea.x -= (int) entity.speed;
+                    break;
+            }
 
-        //get the npc's solid area position within the game world
-        boom.solidArea.x = (int) (boom.getWorldX() + boom.solidArea.x);
-        boom.solidArea.y = (int) (boom.getWorldY() + boom.solidArea.y);
-
-
-        switch (entity.direction) {
-            //SIMULATING ENTITY'S MOVEMENT AND CHECK WHERE IT WILL BE AFTER IT MOVED
-            case "up":
-                entity.solidArea.y -= (int) entity.speed + 5;
-                break;
-
-            case "down":
-                entity.solidArea.y += (int) entity.speed + 5;
-                break;
-
-            case "right":
-                entity.solidArea.x += (int) entity.speed + 5;
-                break;
-
-            case "left":
-                entity.solidArea.x -= (int) entity.speed + 5;
-                break;
-        }
-        if (!entity.solidArea.intersects(boom.solidArea)) {
-            {
+            //check the entity that place boom is out of that boom or not
+            if (!entity.solidArea.intersects(boom.solidArea) && entity.isPlacedBoom()) {
                 entity.setOutOfBoomCoordinate(true);
                 boom.collision = true;
             }
+
+            entity.solidArea.x = entity.solidAreaDefaultX;
+            entity.solidArea.y = entity.solidAreaDefaultY;
+            boom.solidArea.x = boom.solidAreaDefaultX;
+            boom.solidArea.y = boom.solidAreaDefaultY;
         }
-        entity.solidArea.x = entity.solidAreaDefaultX;
-        entity.solidArea.y = entity.solidAreaDefaultY;
-        boom.solidArea.x = boom.solidAreaDefaultX;
-        boom.solidArea.y = boom.solidAreaDefaultY;
     }
 }

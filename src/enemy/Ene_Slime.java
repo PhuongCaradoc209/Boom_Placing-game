@@ -16,7 +16,7 @@ public class Ene_Slime extends Entity {
         size = gp.tileSize;
         collisionOn = false;
 
-        setMaxLife(1);
+        setMaxLife(2);
         setLife(getMaxLife());
 
         solidArea.x = (10 * gp.tileSize) / 48;
@@ -26,6 +26,7 @@ public class Ene_Slime extends Entity {
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
 
+        setBoomAmount(1);
         getImage();
     }
 

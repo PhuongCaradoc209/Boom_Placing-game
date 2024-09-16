@@ -1,15 +1,15 @@
 package entity;
 
-import enemy.Ene_Slime;
 import main.GamePanel;
 import main.UtilityTool;
 import object.Boom;
-import object.BoomManager;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Entity {
@@ -44,13 +44,15 @@ public class Entity {
     public BufferedImage image, image1;
 
     //BOOM
-    public BoomManager boomManager;
     private boolean outOfBoomCoordinate = false;
+    public List<Boom> ownBooms;
+    private int boomAmount;
+    private boolean placedBoom = false;
 
     public Entity(GamePanel gp) {
         this.gp = gp;
         solidArea = new Rectangle(0, 0, gp.tileSize, gp.tileSize);
-        boomManager = new BoomManager(gp, this);
+        ownBooms = new ArrayList<>();
     }
 
     public void setAction() {
@@ -67,6 +69,7 @@ public class Entity {
         gp.cChecker.checkTile(this);
         gp.cChecker.checkAtEdge(this);
         gp.cChecker.checkEntity(this, gp.aSetter.getObjectMap(gp.currentMap));
+        gp.cChecker.checkBoom(this, gp.boomManager.booms);
 
         if (!collisionOn) {
             switch (direction) {
@@ -210,11 +213,14 @@ public class Entity {
     }
 
     public void placeBoom() {
-        getEntityCoordinates(this);
-        Boom boom = new Boom(col, row, 70, gp);
-        boom.collision = false;
-        boomManager.booms.add(boom);
-        gp.keyHandler.spacePressed = false;
+        if (ownBooms.size() <= getBoomAmount()) {
+            Boom boom = new Boom(col, row, 70, gp);
+            placedBoom = true;
+            boom.collision = false;
+            gp.boomManager.booms.add(boom);
+            ownBooms.add(boom);
+            gp.keyHandler.spacePressed = false;
+        }
     }
 
     public void getEntityCoordinates(Entity entity) {
@@ -274,5 +280,21 @@ public class Entity {
 
     public void setOutOfBoomCoordinate(boolean outOfBoomCoordinate) {
         this.outOfBoomCoordinate = outOfBoomCoordinate;
+    }
+
+    public int getBoomAmount() {
+        return boomAmount;
+    }
+
+    public void setBoomAmount(int boomAmount) {
+        this.boomAmount = boomAmount;
+    }
+
+    public boolean isPlacedBoom() {
+        return placedBoom;
+    }
+
+    public void setPlacedBoom(boolean placedBoom) {
+        this.placedBoom = placedBoom;
     }
 }

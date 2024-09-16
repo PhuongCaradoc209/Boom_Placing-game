@@ -47,8 +47,6 @@ public class AssetSetter {
         gp.enemy[mapNum].add(new Ene_Slime(gp));
         gp.enemy[mapNum].get(i).worldX = 2 * gp.tileSize;
         gp.enemy[mapNum].get(i).worldY = 1 * gp.tileSize;
-
-
     }
 
     public <T extends Entity> void loadTreesFromFile(Class<T> tile, String fileName, GamePanel gp, int mapIndex) {
