@@ -59,7 +59,6 @@ public class ExplosionManager {
         int boomRow = boom.getRow();
 
         int explosionRadius = boom.getRadiusExplosion();
-        System.out.println(Math.abs(playerCol - boomCol));
 
         if (Math.abs(playerCol - boomCol) <= explosionRadius && playerRow == boomRow) {
             return true;

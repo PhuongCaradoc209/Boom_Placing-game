@@ -1,10 +1,12 @@
 package main;
 
 import entity.Entity;
+import object.Boom;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class CollisionChecker {
     GamePanel gp;
@@ -226,6 +228,54 @@ public class CollisionChecker {
             }
         }
         return collisionCoordinates;
+    }
+
+    public void checkBoom(Entity entity, List<Boom> target) {
+        int index = 999;
+        for (int i = 0; i < target.size(); i++) {
+            if (target.get(i) != null) {
+                // Tính toán vùng va chạm của entity
+                Rectangle entitySolidArea = new Rectangle(
+                        (int) (entity.worldX + entity.solidArea.x),
+                        (int) (entity.worldY + entity.solidArea.y),
+                        entity.solidArea.width,
+                        entity.solidArea.height
+                );
+
+                // Tính toán vùng va chạm của target entity
+                Rectangle targetSolidArea = new Rectangle(
+                        (int) (target.get(i).getWorldX() + target.get(i).solidArea.x),
+                        (int) (target.get(i).getWorldY() + target.get(i).solidArea.y),
+                        target.get(i).solidArea.width,
+                        target.get(i).solidArea.height
+                );
+
+                // Mô phỏng chuyển động của entity
+                switch (entity.direction) {
+                    case "up":
+                        entitySolidArea.y -= (int) entity.speed + 5;
+                        break;
+                    case "down":
+                        entitySolidArea.y += (int) entity.speed + 5;
+                        break;
+                    case "left":
+                        entitySolidArea.x -= (int) entity.speed + 5;
+                        break;
+                    case "right":
+                        entitySolidArea.x += (int) entity.speed + 5;
+                        break;
+                }
+
+                if (entitySolidArea.intersects(targetSolidArea) && target.get(i) != entity) {
+                    entity.collisionOn = true;
+                    index = i;
+                }
+                entity.solidArea.x = entity.solidAreaDefaultX;
+                entity.solidArea.y = entity.solidAreaDefaultY;
+                target.get(i).solidArea.x = target.get(i).solidAreaDefaultX;
+                target.get(i).solidArea.y = target.get(i).solidAreaDefaultY;
+            }
+        }
     }
 
     public void checkPlayer(Entity entity) {

@@ -6,11 +6,9 @@ import object.Boom;
 import object.BoomManager;
 
 import javax.imageio.ImageIO;
-import javax.swing.plaf.PanelUI;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class Entity {
@@ -46,6 +44,7 @@ public class Entity {
 
     //BOOM
     public BoomManager boomManager;
+    private boolean outOfBoomCoordinate = false;
 
     public Entity(GamePanel gp) {
         this.gp = gp;
@@ -186,7 +185,9 @@ public class Entity {
 
     public void placeBoom() {
         getEntityCoordinates(this);
-        boomManager.booms.add(new Boom(col, row, 70, gp));
+        Boom boom = new Boom(col, row, 70, gp);
+        boom.collision = false;
+        boomManager.booms.add(boom);
         gp.keyHandler.spacePressed = false;
     }
 
@@ -225,5 +226,27 @@ public class Entity {
 
     public void setRow(int row) {
         this.row = row;
+    }
+
+    public double getWorldX(){
+        return worldX;
+    }
+
+    public void setWorldX(double worldX) {
+        this.worldX = worldX;
+    }
+    public double getWorldY(){
+        return worldY;
+    }
+    public void setWorldY(double worldY) {
+        this.worldY = worldY;
+    }
+
+    public boolean isOutOfBoomCoordinate() {
+        return outOfBoomCoordinate;
+    }
+
+    public void setOutOfBoomCoordinate(boolean outOfBoomCoordinate) {
+        this.outOfBoomCoordinate = outOfBoomCoordinate;
     }
 }
