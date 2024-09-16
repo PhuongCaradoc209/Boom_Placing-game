@@ -139,7 +139,7 @@ public class Player extends Entity {
             gp.cChecker.checkBoom(this, boomManager.booms);
         }
         // CHECK INTERACT TILE COLLISION
-        iTileCoordinate = gp.cChecker.checkEntity(this, gp.aSetter.getObjectMap());
+        iTileCoordinate = gp.cChecker.checkEntity(this, gp.aSetter.getObjectMap(gp.currentMap));
         // CHECK IF AT EDGE
         gp.cChecker.checkAtEdge(this);
         // CHECK OBJ COLLISION

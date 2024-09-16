@@ -131,7 +131,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void update() {
         player.update();
-        for (InteractiveTile tile : aSetter.getObjectMap().values()) {
+        for (InteractiveTile tile : aSetter.getObjectMap(currentMap).values()) {
             if (tile != null) {
                 tile.update();
             }
@@ -159,7 +159,7 @@ public class GamePanel extends JPanel implements Runnable {
             entityList.add(player);
 
             //INTERACTIVE TILE
-            for (InteractiveTile tile : aSetter.getObjectMap().values()) {
+            for (InteractiveTile tile : aSetter.getObjectMap(currentMap).values()) {
                 if (tile != null) {
                     tile.draw(g2);
                 }

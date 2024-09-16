@@ -38,14 +38,14 @@ public class ExplosionManager {
     }
 
     private void check(int x, int y) {
-        if (gp.aSetter.hasObjectAt(x, y)) {
+        if (gp.aSetter.hasObjectAt(x, y, gp.currentMap)) {
             key = x + "," + y;
-            hardness = gp.aSetter.getObjectMap().get(key).getHardness();
+            hardness = gp.aSetter.getObjectMap(gp.currentMap).get(key).getHardness();
             if (hardness == 1)
-                gp.aSetter.removeObject(x, y);
+                gp.aSetter.removeObject(x, y, gp.currentMap);
             else {
-                gp.aSetter.getObjectMap().get(key).spriteNum++;
-                gp.aSetter.getObjectMap().get(key).setHardness(--hardness);
+                gp.aSetter.getObjectMap(gp.currentMap).get(key).spriteNum++;
+                gp.aSetter.getObjectMap(gp.currentMap).get(key).setHardness(--hardness);
             }
         }
     }
