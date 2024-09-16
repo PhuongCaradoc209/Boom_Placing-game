@@ -52,8 +52,7 @@ public class Player extends Entity {
         setPlayerImage();
 
         //SET UP BOOM
-        boomManager.setBoomAmount(2);
-
+        setBoomAmount(2);
     }
 
     public void setPlayerImage() {
@@ -95,6 +94,11 @@ public class Player extends Entity {
 
     public void update() {
         getEntityCoordinates(this);
+        if (key.spacePressed) {
+            if (ownBooms.size() < getBoomAmount()) {
+                placeBoom();
+            }
+        }
 
         if (key.downPressed || key.upPressed || key.leftPressed || key.rightPressed) {
             if (key.upPressed) {
@@ -121,9 +125,6 @@ public class Player extends Entity {
             // STOP SOUND
 //            gp.stopMusic("grass");
         }
-        //BOOM UPDATE
-        boomManager.update();
-
         // UPDATE the solidArea due to zoom in and out
         solidArea.x = (10 * gp.tileSize) / 48;
         solidArea.y = (20 * gp.tileSize) / 48;
@@ -133,19 +134,15 @@ public class Player extends Entity {
         // CHECK TILE COLLISION
         collisionOn = false;
         gp.cChecker.checkTile(this);
-
-//        System.out.println(isOutOfBoomCoordinate());
+        //CHECK BOOM
         if (isOutOfBoomCoordinate()){
-            gp.cChecker.checkBoom(this, boomManager.booms);
+            gp.cChecker.checkBoom(this, gp.boomManager.booms);
         }
         // CHECK INTERACT TILE COLLISION
         iTileCoordinate = gp.cChecker.checkEntity(this, gp.aSetter.getObjectMap(gp.currentMap));
+        gp.cChecker.checkEntity(this, gp.enemy);
         // CHECK IF AT EDGE
         gp.cChecker.checkAtEdge(this);
-        // CHECK OBJ COLLISION
-//        objIndex = gp.cChecker.checkObj(this, true);
-        //
-
         //CHECK EVENT
         gp.eHandler.checkEvent();
 

@@ -3,12 +3,13 @@ package entity;
 import main.GamePanel;
 import main.UtilityTool;
 import object.Boom;
-import object.BoomManager;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Entity {
@@ -43,13 +44,15 @@ public class Entity {
     public BufferedImage image, image1;
 
     //BOOM
-    public BoomManager boomManager;
     private boolean outOfBoomCoordinate = false;
+    public List<Boom> ownBooms;
+    private int boomAmount;
+    private boolean placedBoom = false;
 
     public Entity(GamePanel gp) {
         this.gp = gp;
         solidArea = new Rectangle(0, 0, gp.tileSize, gp.tileSize);
-        boomManager = new BoomManager(gp, this);
+        ownBooms = new ArrayList<>();
     }
 
     public void setAction() {
@@ -59,13 +62,15 @@ public class Entity {
         setAction();
         getEntityCoordinates(this);
 
+        collisionOn = false;
         if (gp.currentMap == 0) {
             gp.cChecker.checkPlayer(this);
         }
         gp.cChecker.checkTile(this);
         gp.cChecker.checkAtEdge(this);
+        gp.cChecker.checkEntity(this, gp.aSetter.getObjectMap(gp.currentMap));
+        gp.cChecker.checkBoom(this, gp.boomManager.booms);
 
-        // IF COLLISION IS FALSE, PLAYER CAN MOVE
         if (!collisionOn) {
             switch (direction) {
                 case "up":
@@ -130,6 +135,12 @@ public class Entity {
                 if (spriteNum == 2) {
                     image = up2;
                 }
+                if (spriteNum == 3) {
+                    image = up3;
+                }
+                if (spriteNum == 4) {
+                    image = up4;
+                }
                 break;
             case "down":
                 if (spriteNum == 1) {
@@ -137,6 +148,12 @@ public class Entity {
                 }
                 if (spriteNum == 2) {
                     image = down2;
+                }
+                if (spriteNum == 3) {
+                    image = down3;
+                }
+                if (spriteNum == 4) {
+                    image = down4;
                 }
                 break;
             case "left":
@@ -146,6 +163,12 @@ public class Entity {
                 if (spriteNum == 2) {
                     image = left2;
                 }
+                if (spriteNum == 3) {
+                    image = left3;
+                }
+                if (spriteNum == 4) {
+                    image = left4;
+                }
                 break;
             case "right":
                 if (spriteNum == 1) {
@@ -153,6 +176,12 @@ public class Entity {
                 }
                 if (spriteNum == 2) {
                     image = right2;
+                }
+                if (spriteNum == 3) {
+                    image = right3;
+                }
+                if (spriteNum == 4) {
+                    image = right4;
                 }
                 break;
         }
@@ -184,11 +213,14 @@ public class Entity {
     }
 
     public void placeBoom() {
-        getEntityCoordinates(this);
-        Boom boom = new Boom(col, row, 70, gp);
-        boom.collision = false;
-        boomManager.booms.add(boom);
-        gp.keyHandler.spacePressed = false;
+        if (ownBooms.size() <= getBoomAmount()) {
+            Boom boom = new Boom(col, row, 70, gp);
+            placedBoom = true;
+            boom.collision = false;
+            gp.boomManager.booms.add(boom);
+            ownBooms.add(boom);
+            gp.keyHandler.spacePressed = false;
+        }
     }
 
     public void getEntityCoordinates(Entity entity) {
@@ -248,5 +280,21 @@ public class Entity {
 
     public void setOutOfBoomCoordinate(boolean outOfBoomCoordinate) {
         this.outOfBoomCoordinate = outOfBoomCoordinate;
+    }
+
+    public int getBoomAmount() {
+        return boomAmount;
+    }
+
+    public void setBoomAmount(int boomAmount) {
+        this.boomAmount = boomAmount;
+    }
+
+    public boolean isPlacedBoom() {
+        return placedBoom;
+    }
+
+    public void setPlacedBoom(boolean placedBoom) {
+        this.placedBoom = placedBoom;
     }
 }

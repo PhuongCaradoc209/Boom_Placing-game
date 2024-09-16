@@ -1,4 +1,5 @@
 package main;
+import enemy.Ene_Slime;
 import entity.Entity;
 import tile_Interact.Box;
 import tile_Interact.InteractiveTile;
@@ -39,7 +40,15 @@ public class AssetSetter {
         loadTreesFromFile(Stone.class,"res/object/stoneCoordinate",gp, mapNum);
     }
 
-    // Update method to accept map index
+    public void setEnemy(){
+        mapNum = 0;
+        i = 0;
+
+        gp.enemy[mapNum].add(new Ene_Slime(gp));
+        gp.enemy[mapNum].get(i).worldX = 2 * gp.tileSize;
+        gp.enemy[mapNum].get(i).worldY = 1 * gp.tileSize;
+    }
+
     public <T extends Entity> void loadTreesFromFile(Class<T> tile, String fileName, GamePanel gp, int mapIndex) {
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             String line;
