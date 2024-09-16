@@ -55,7 +55,7 @@ public class Boom extends Entity {
         downExplosion = new BufferedImage[4];
 
         setUpImage();
-        collision = true;
+        collision = false;
     }
 
     private void setUpImage() {

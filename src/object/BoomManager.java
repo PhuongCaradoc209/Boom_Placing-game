@@ -82,6 +82,7 @@ public class BoomManager {
         if (!entity.solidArea.intersects(boom.solidArea)) {
             {
                 entity.setOutOfBoomCoordinate(true);
+                boom.collision = true;
             }
         }
         entity.solidArea.x = entity.solidAreaDefaultX;
