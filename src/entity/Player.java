@@ -133,19 +133,15 @@ public class Player extends Entity {
         // CHECK TILE COLLISION
         collisionOn = false;
         gp.cChecker.checkTile(this);
-
-//        System.out.println(isOutOfBoomCoordinate());
+        //CHECK BOOM
         if (isOutOfBoomCoordinate()){
             gp.cChecker.checkBoom(this, boomManager.booms);
         }
         // CHECK INTERACT TILE COLLISION
         iTileCoordinate = gp.cChecker.checkEntity(this, gp.aSetter.getObjectMap(gp.currentMap));
+        gp.cChecker.checkEntity(this, gp.enemy);
         // CHECK IF AT EDGE
         gp.cChecker.checkAtEdge(this);
-        // CHECK OBJ COLLISION
-//        objIndex = gp.cChecker.checkObj(this, true);
-        //
-
         //CHECK EVENT
         gp.eHandler.checkEvent();
 

@@ -56,7 +56,10 @@ public class GamePanel extends JPanel implements Runnable {
     //ENTITY
     ArrayList<Entity> entityList = new ArrayList<>();
     //OBJECT
-    public ArrayList<Entity>[] obj = new ArrayList[maxMap];
+    ArrayList<Entity>[] obj = new ArrayList[maxMap];
+    //ENEMY
+    public ArrayList<Entity>[] enemy = new ArrayList[maxMap];
+
     //INTERACT TILE
     public ArrayList<InteractiveTile>[] iTile = new ArrayList[maxMap];
 
@@ -120,10 +123,13 @@ public class GamePanel extends JPanel implements Runnable {
         //CREATE ENTITIES
         for (int i = 0; i < maxMap; i++) {
             obj[i] = new ArrayList<>();
+            enemy[i] = new ArrayList<>();
         }
         //SET ON MAP
         aSetter.setObject();
         aSetter.setInteractiveTile();
+        aSetter.setEnemy();
+
         tempScreen = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_ARGB);
         g2 = (Graphics2D) tempScreen.getGraphics();
         gameState = titleState;
@@ -131,9 +137,16 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void update() {
         player.update();
+
         for (InteractiveTile tile : aSetter.getObjectMap(currentMap).values()) {
             if (tile != null) {
                 tile.update();
+            }
+        }
+
+        for (int i = 0; i < enemy[currentMap].size(); i++) {
+            if (enemy[currentMap].get(i) != null) {
+                enemy[currentMap].get(i).update();
             }
         }
     }
@@ -157,6 +170,12 @@ public class GamePanel extends JPanel implements Runnable {
 
             //ADD ENTITIES TO THE LIST
             entityList.add(player);
+
+            for (Entity entity : enemy[currentMap]) {
+                if (entity != null) {
+                    entityList.add(entity);
+                }
+            }
 
             //INTERACTIVE TILE
             for (InteractiveTile tile : aSetter.getObjectMap(currentMap).values()) {

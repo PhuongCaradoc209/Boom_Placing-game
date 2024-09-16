@@ -1,5 +1,6 @@
 package entity;
 
+import enemy.Ene_Slime;
 import main.GamePanel;
 import main.UtilityTool;
 import object.Boom;
@@ -59,13 +60,14 @@ public class Entity {
         setAction();
         getEntityCoordinates(this);
 
+        collisionOn = false;
         if (gp.currentMap == 0) {
             gp.cChecker.checkPlayer(this);
         }
         gp.cChecker.checkTile(this);
         gp.cChecker.checkAtEdge(this);
+        gp.cChecker.checkEntity(this, gp.aSetter.getObjectMap(gp.currentMap));
 
-        // IF COLLISION IS FALSE, PLAYER CAN MOVE
         if (!collisionOn) {
             switch (direction) {
                 case "up":
@@ -130,6 +132,12 @@ public class Entity {
                 if (spriteNum == 2) {
                     image = up2;
                 }
+                if (spriteNum == 3) {
+                    image = up3;
+                }
+                if (spriteNum == 4) {
+                    image = up4;
+                }
                 break;
             case "down":
                 if (spriteNum == 1) {
@@ -137,6 +145,12 @@ public class Entity {
                 }
                 if (spriteNum == 2) {
                     image = down2;
+                }
+                if (spriteNum == 3) {
+                    image = down3;
+                }
+                if (spriteNum == 4) {
+                    image = down4;
                 }
                 break;
             case "left":
@@ -146,6 +160,12 @@ public class Entity {
                 if (spriteNum == 2) {
                     image = left2;
                 }
+                if (spriteNum == 3) {
+                    image = left3;
+                }
+                if (spriteNum == 4) {
+                    image = left4;
+                }
                 break;
             case "right":
                 if (spriteNum == 1) {
@@ -153,6 +173,12 @@ public class Entity {
                 }
                 if (spriteNum == 2) {
                     image = right2;
+                }
+                if (spriteNum == 3) {
+                    image = right3;
+                }
+                if (spriteNum == 4) {
+                    image = right4;
                 }
                 break;
         }
