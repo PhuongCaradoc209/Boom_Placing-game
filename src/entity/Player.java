@@ -67,6 +67,10 @@ public class Player extends Entity {
         worldY = gp.tileSize * 1.8;
         speed = (double) gp.worldWidth / 800;
         direction = "standDown";
+
+        //PLAYER STATUS
+        setMaxLife(3);
+        setLife(getMaxLife());
     }
 
     public void getPlayerImage() {
@@ -92,6 +96,8 @@ public class Player extends Entity {
     }
 
     public void update() {
+        getEntityCoordinates(this);
+
         if (key.downPressed || key.upPressed || key.leftPressed || key.rightPressed) {
             if (key.upPressed) {
                 direction = "up";
@@ -117,7 +123,6 @@ public class Player extends Entity {
             // STOP SOUND
 //            gp.stopMusic("grass");
         }
-
         //BOOM UPDATE
         boomManager.update();
 
@@ -132,13 +137,13 @@ public class Player extends Entity {
         gp.cChecker.checkTile(this);
         // CHECK INTERACT TILE COLLISION
         iTileCoordinate = gp.cChecker.checkEntity(this, gp.aSetter.getObjectMap());
-//        if (iTileCoordinate != null) {
-//            gp.aSetter.removeObject(iTileCoordinate[0], iTileCoordinate[1]);
-//        }
         // CHECK IF AT EDGE
         gp.cChecker.checkAtEdge(this);
         // CHECK OBJ COLLISION
         objIndex = gp.cChecker.checkObj(this, true);
+
+        //CHECK EVENT
+        gp.eHandler.checkEvent();
 
 //         IF COLLISION IS FALSE, PLAYER CAN MOVE
         if (!collisionOn) {

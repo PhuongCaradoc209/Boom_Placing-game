@@ -6,7 +6,7 @@ import java.awt.event.KeyListener;
 // KeyListener: the listener interface for receiving keyboard events (keystrokes)
 public class KeyHandler implements KeyListener {
 
-    public boolean upPressed, downPressed, leftPressed, rightPressed, enterPressed, spacePressed, escapePressed;
+    public boolean upPressed, downPressed, leftPressed, rightPressed, enterPressed, spacePressed, escapePressed, HPressed;
     public boolean AnnouceCompleteAnimation;
     // DEBUG
     boolean checkDrawTime = false;
@@ -60,6 +60,9 @@ public class KeyHandler implements KeyListener {
         if (key == KeyEvent.VK_SPACE) {
             spacePressed = false;
         }
+        if (key == KeyEvent.VK_H) {
+            HPressed = false;
+        }
     }
 
     public void titleState(int key) {
@@ -104,6 +107,9 @@ public class KeyHandler implements KeyListener {
         }
         if (key == KeyEvent.VK_ESCAPE) {
             escapePressed = true;
+        }
+        if (key == KeyEvent.VK_H) {
+            HPressed = true;
         }
 
         // DEBUG

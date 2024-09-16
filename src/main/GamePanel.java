@@ -2,6 +2,7 @@ package main;
 
 import entity.Entity;
 import entity.Player;
+import event.EventHandler;
 import tile.TileManager;
 import tile_Interact.InteractiveTile;
 
@@ -41,6 +42,7 @@ public class GamePanel extends JPanel implements Runnable {
     public KeyHandler keyHandler = new KeyHandler(this);
     public CollisionChecker cChecker = new CollisionChecker(this);
     public AssetSetter aSetter = new AssetSetter(this);
+    public EventHandler eHandler = new EventHandler(this);
     public UI ui = new UI(this);
 
     //FULL SCREEN

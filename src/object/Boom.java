@@ -48,7 +48,7 @@ public class Boom {
         this.exploded = false;
         this.startExplode = false;
 
-        radiusExplosion = 4;
+        radiusExplosion = 1;
         fontExplosion = new BufferedImage[4];
         rightExplosion = new BufferedImage[4];
         leftExplosion = new BufferedImage[4];
@@ -198,5 +198,29 @@ public class Boom {
 
     public int getRow() {
         return row;
+    }
+
+    public int getRadiusExplosion() {
+        return radiusExplosion;
+    }
+
+    public void setRadiusExplosion(int radiusExplosion) {
+        this.radiusExplosion = radiusExplosion;
+    }
+
+    public int getWorldX(){
+        return worldX;
+    }
+
+    public int getWorldY(){
+        return worldY;
+    }
+
+    public double getScreenX(){
+        return screenX;
+    }
+
+    public double getScreenY(){
+        return screenY;
     }
 }

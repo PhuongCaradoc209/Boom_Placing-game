@@ -19,7 +19,7 @@ public class BoomManager {
         this.gp = gp;
         this.entity = entity;
         this.booms = new ArrayList<>();
-        this.explosionManager = new ExplosionManager(gp);
+        this.explosionManager = new ExplosionManager(gp, entity);
     }
 
     public void update(){

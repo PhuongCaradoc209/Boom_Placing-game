@@ -36,8 +36,13 @@ public class Entity {
     public boolean collision = false;
     public int actionLookCounter = 0;
 
+    //CHARACTER STATUS
+    private int maxLife;
+    private int life;
+
     //OBJ
     public String name;
+    public BufferedImage image, image1;
 
     //BOOM
     public BoomManager boomManager;
@@ -53,6 +58,7 @@ public class Entity {
 
     public void update() {
         setAction();
+        getEntityCoordinates(this);
 
         if (gp.currentMap == 0) {
             gp.cChecker.checkPlayer(this);
@@ -187,5 +193,37 @@ public class Entity {
     public void getEntityCoordinates(Entity entity) {
         col = (int) ((worldX + gp.tileSize / 2) / gp.tileSize);
         row = (int) ((worldY + gp.tileSize / 2) / gp.tileSize);
+    }
+
+    public int getMaxLife() {
+        return maxLife;
+    }
+
+    public void setMaxLife(int maxLife) {
+        this.maxLife = maxLife;
+    }
+
+    public int getLife() {
+        return life;
+    }
+
+    public void setLife(int life) {
+        this.life = life;
+    }
+
+    public int getCol() {
+        return col;
+    }
+
+    public void setCol(int col) {
+        this.col = col;
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public void setRow(int row) {
+        this.row = row;
     }
 }
