@@ -1,5 +1,6 @@
 package event;
 
+import entity.Entity;
 import main.GamePanel;
 
 public class EventHandler {
@@ -31,7 +32,7 @@ public class EventHandler {
         }
     }
 
-    public void checkEvent(){
+    public void checkEvent() {
         healing();
     }
 
@@ -60,12 +61,17 @@ public class EventHandler {
         return hit;
     }
 
-    public void damagePit(){
-        gp.player.setLife(gp.player.getLife() - 1);
+    public void damagePit(Entity entity) {
+        if (entity.getLife() > 1) {
+            entity.setLife(entity.getLife() - 1);
+        } else {
+            if (entity != gp.player)
+                gp.entityManager.checkEntityDied(entity);
+        }
     }
 
-    public void healing(){
-        if (gp.keyHandler.HPressed){
+    public void healing() {
+        if (gp.keyHandler.HPressed) {
             gp.player.setLife(gp.player.getMaxLife());
         }
         gp.keyHandler.HPressed = false;
