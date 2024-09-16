@@ -15,11 +15,14 @@ public class AssetSetter {
     GamePanel gp;
     private int i,mapNum;
     private Random random;
-    private HashMap<String, InteractiveTile> objectMap;
+    private HashMap<String, InteractiveTile>[] objectMaps;
     public AssetSetter(GamePanel gp) {
         this.gp = gp;
         random = new Random();
-        objectMap = new HashMap<>();
+        objectMaps = new HashMap[gp.maxMap];
+        for (int i = 0; i < objectMaps.length; i++) {
+            objectMaps[i] = new HashMap<>();
+        }
     }
 
     public void setObject() {
@@ -31,12 +34,13 @@ public class AssetSetter {
         mapNum = 0;
 
         i = 0;
-        loadTreesFromFile(Tree.class,"res/object/treeCoordinate",gp);
-        loadTreesFromFile(Box.class,"res/object/boxCoordinate",gp);
-        loadTreesFromFile(Stone.class,"res/object/stoneCoordinate",gp);
+        loadTreesFromFile(Tree.class,"res/object/treeCoordinate",gp, mapNum);
+        loadTreesFromFile(Box.class,"res/object/boxCoordinate",gp, mapNum);
+        loadTreesFromFile(Stone.class,"res/object/stoneCoordinate",gp, mapNum);
     }
 
-    public <T extends Entity> void loadTreesFromFile(Class<T> tile, String fileName, GamePanel gp) {
+    // Update method to accept map index
+    public <T extends Entity> void loadTreesFromFile(Class<T> tile, String fileName, GamePanel gp, int mapIndex) {
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = br.readLine()) != null) {
@@ -48,7 +52,7 @@ public class AssetSetter {
                 T object = constructor.newInstance(gp, x, y);
 
                 String key = x + "," + y;
-                objectMap.put(key, (InteractiveTile) object);
+                objectMaps[mapIndex].put(key, (InteractiveTile) object);
             }
         } catch (IOException | InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
@@ -56,17 +60,17 @@ public class AssetSetter {
         }
     }
 
-    public HashMap<String, InteractiveTile> getObjectMap() {
-        return objectMap;
+    public HashMap<String, InteractiveTile> getObjectMap(int mapIndex) {
+        return objectMaps[mapIndex];
     }
 
-    public void removeObject(int x, int y) {
+    public void removeObject(int x, int y, int mapIndex) {
         String key = x + "," + y; // Tạo chuỗi key từ tọa độ
-        objectMap.remove(key);
+        objectMaps[mapIndex].remove(key);
     }
 
-    public boolean hasObjectAt(int x, int y) {
+    public boolean hasObjectAt(int x, int y, int mapIndex) {
         String key = x + "," + y;
-        return objectMap.containsKey(key);
+        return objectMaps[mapIndex].containsKey(key);
     }
 }

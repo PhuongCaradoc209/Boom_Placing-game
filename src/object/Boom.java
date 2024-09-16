@@ -10,8 +10,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
 
-public class Boom {
-    GamePanel gp;
+public class Boom extends Entity {
     private int worldX, worldY;
     private double screenX, screenY;
     private int col, row;
@@ -38,7 +37,7 @@ public class Boom {
     private int radiusExplosion;
 
     public Boom(int col, int row, int countToExplode, GamePanel gp) {
-        this.gp = gp;
+        super(gp);
         boomAnim = new BufferedImage[3];
 
         this.row = row;
@@ -48,7 +47,7 @@ public class Boom {
         this.exploded = false;
         this.startExplode = false;
 
-        radiusExplosion = 4;
+        radiusExplosion = 1;
         fontExplosion = new BufferedImage[4];
         rightExplosion = new BufferedImage[4];
         leftExplosion = new BufferedImage[4];
@@ -56,6 +55,7 @@ public class Boom {
         downExplosion = new BufferedImage[4];
 
         setUpImage();
+        collision = false;
     }
 
     private void setUpImage() {
@@ -174,19 +174,6 @@ public class Boom {
             g2.drawImage(leftExplosion[currentAnimExplosion], (int) screenX - gp.tileSize, (int) screenY, null);
     }
 
-    public BufferedImage setup(String imagePath, int width, int height) {
-        UtilityTool uTool = new UtilityTool();
-        BufferedImage image = null;
-        try {
-            image = ImageIO
-                    .read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(imagePath + ".png")));
-            image = uTool.scaleImage(image, width, height);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return image;
-    }
-
     //Explode
     public boolean isExplode() {
         return exploded;
@@ -198,5 +185,29 @@ public class Boom {
 
     public int getRow() {
         return row;
+    }
+
+    public int getRadiusExplosion() {
+        return radiusExplosion;
+    }
+
+    public void setRadiusExplosion(int radiusExplosion) {
+        this.radiusExplosion = radiusExplosion;
+    }
+
+    public double getScreenX(){
+        return screenX;
+    }
+
+    public double getScreenY(){
+        return screenY;
+    }
+
+    public double getWorldX(){
+        return worldX;
+    }
+
+    public double getWorldY(){
+        return worldY;
     }
 }

@@ -5,13 +5,11 @@ import main.GamePanel;
 //import object.Fishing_Rod;
 //import object.OBJ_FishingRod1;
 import main.KeyHandler;
-import object.Boom;
 import tile.TileManager;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class Player extends Entity {
@@ -67,6 +65,10 @@ public class Player extends Entity {
         worldY = gp.tileSize * 1.8;
         speed = (double) gp.worldWidth / 800;
         direction = "standDown";
+
+        //PLAYER STATUS
+        setMaxLife(3);
+        setLife(getMaxLife());
     }
 
     public void getPlayerImage() {
@@ -92,6 +94,8 @@ public class Player extends Entity {
     }
 
     public void update() {
+        getEntityCoordinates(this);
+
         if (key.downPressed || key.upPressed || key.leftPressed || key.rightPressed) {
             if (key.upPressed) {
                 direction = "up";
@@ -117,7 +121,6 @@ public class Player extends Entity {
             // STOP SOUND
 //            gp.stopMusic("grass");
         }
-
         //BOOM UPDATE
         boomManager.update();
 
@@ -130,15 +133,21 @@ public class Player extends Entity {
         // CHECK TILE COLLISION
         collisionOn = false;
         gp.cChecker.checkTile(this);
+
+//        System.out.println(isOutOfBoomCoordinate());
+        if (isOutOfBoomCoordinate()){
+            gp.cChecker.checkBoom(this, boomManager.booms);
+        }
         // CHECK INTERACT TILE COLLISION
-        iTileCoordinate = gp.cChecker.checkEntity(this, gp.aSetter.getObjectMap());
-//        if (iTileCoordinate != null) {
-//            gp.aSetter.removeObject(iTileCoordinate[0], iTileCoordinate[1]);
-//        }
+        iTileCoordinate = gp.cChecker.checkEntity(this, gp.aSetter.getObjectMap(gp.currentMap));
         // CHECK IF AT EDGE
         gp.cChecker.checkAtEdge(this);
         // CHECK OBJ COLLISION
-        objIndex = gp.cChecker.checkObj(this, true);
+//        objIndex = gp.cChecker.checkObj(this, true);
+        //
+
+        //CHECK EVENT
+        gp.eHandler.checkEvent();
 
 //         IF COLLISION IS FALSE, PLAYER CAN MOVE
         if (!collisionOn) {

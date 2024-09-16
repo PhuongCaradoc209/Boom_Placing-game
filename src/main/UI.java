@@ -1,5 +1,8 @@
 package main;
 
+import entity.Entity;
+import object.OBJ_Heart;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.Area;
@@ -19,6 +22,7 @@ public class UI {
     //GRAPHICS
     private final Area screenArea;
     BufferedImage playerImage;
+    private final BufferedImage heart_full, heart_empty;
 
     // SETTING
     public int commandNum = 0;
@@ -43,6 +47,9 @@ public class UI {
 
         //GRAPHICS
         playerImage = setup("player/standRight_1", 32, 32);
+        Entity heartStatus = new OBJ_Heart(gp);
+        heart_full = heartStatus.image;
+        heart_empty = heartStatus.image1;
     }
 
     public void draw(Graphics2D g2) {
@@ -55,9 +62,39 @@ public class UI {
         if (gp.gameState == gp.titleState) {
             drawTitleScreen();
         }
+        if (gp.gameState == gp.playState) {
+            drawPLayerInformation();
+        }
     }
 
-    public void drawTitleScreen() {
+    private void drawPLayerInformation(){
+        drawPlayerLife();
+    }
+
+    private void drawPlayerLife(){
+        int x = gp.tileSize / 4;
+        int y = gp.tileSize / 4;
+
+        int i = 0;
+
+        // DRAW BLANK HEARTS
+        while (i < gp.player.getMaxLife()) {
+            g2.drawImage(heart_empty, x, y, null);
+            i ++;
+            x += (4*gp.tileSize / 5);
+        }
+        // RESET
+        x = gp.tileSize / 4;
+        y = gp.tileSize / 4;
+        i = 0;
+        while (i < gp.player.getLife()) {
+            g2.drawImage(heart_full, x, y, null);
+            i++;
+            x += (4*gp.tileSize / 5);
+        }
+    }
+
+    private void drawTitleScreen() {
         // DRAW BACKGROUND
         g2.setColor(primaryColor_green);
         g2.fill(screenArea);
@@ -162,11 +199,11 @@ public class UI {
     }
 
     //FEATURE METHOD
-    public int getXforCenteredText(String text) {
+    private int getXforCenteredText(String text) {
         int length = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
         return gp.screenWidth / 2 - length / 2;
     }
-    public BufferedImage setup(String imagePath, int width, int height) {
+    private BufferedImage setup(String imagePath, int width, int height) {
         UtilityTool uTool = new UtilityTool();
         BufferedImage image = null;
         try {
