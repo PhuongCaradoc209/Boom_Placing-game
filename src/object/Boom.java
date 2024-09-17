@@ -73,6 +73,7 @@ public class Boom extends Entity {
 
     public void update() {
         if (startExplode) {
+            gp.triggerScreenShake();
             frameExplosion++;
             if (frameExplosion == intervalExplosion) {
                 frameExplosion = 0;

@@ -1,5 +1,6 @@
 package main;
 import enemy.Ene_Slime;
+import enemy.Ene_WonWon;
 import entity.Entity;
 import tile_Interact.Box;
 import tile_Interact.InteractiveTile;
@@ -45,8 +46,14 @@ public class AssetSetter {
         i = 0;
 
         gp.enemy[mapNum].add(new Ene_Slime(gp));
-        gp.enemy[mapNum].get(i).worldX = 2 * gp.tileSize;
-        gp.enemy[mapNum].get(i).worldY = 1 * gp.tileSize;
+        gp.enemy[mapNum].get(i).worldX = 14 * gp.tileSize;
+        gp.enemy[mapNum].get(i).worldY = 2 * gp.tileSize;
+        i++;
+
+        gp.enemy[mapNum].add(new Ene_WonWon(gp));
+        gp.enemy[mapNum].get(i).worldX = 1 * gp.tileSize;
+        gp.enemy[mapNum].get(i).worldY = 2 * gp.tileSize;
+        i++;
     }
 
     public <T extends Entity> void loadTreesFromFile(Class<T> tile, String fileName, GamePanel gp, int mapIndex) {

@@ -47,6 +47,7 @@ public class GamePanel extends JPanel implements Runnable {
     public EventHandler eHandler = new EventHandler(this);
     public EntityManager entityManager = new EntityManager(this);
     public BoomManager boomManager = new BoomManager(this);
+    public ScreenShakeManager screenShakeManager = new ScreenShakeManager();
 
     public UI ui = new UI(this);
 
@@ -162,6 +163,10 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void drawToScreen() {
         Graphics g = getGraphics();
+        // Áp dụng hiệu ứng rung màn hình khi vẽ
+        if (screenShakeManager.isShaking()) {
+            screenShakeManager.applyShake((Graphics2D) g);
+        }
         g.drawImage(tempScreen, 0, 0, screenWidth2, screenHeight2, null);
         g.dispose();
     }
@@ -169,31 +174,45 @@ public class GamePanel extends JPanel implements Runnable {
     public void drawToTempScreen() {
         //DEBUG
         long drawStart = 0;
-        if (keyHandler.checkDrawTime == true) {
-        drawStart = System.nanoTime();
+        if (keyHandler.checkDrawTime) {
+            drawStart = System.nanoTime();
         }
-        //TITTLE SCREEN
+
+        // Create a temporary graphics context
+        if (g2 == null) {
+            tempScreen = new BufferedImage(screenWidth2, screenHeight2, BufferedImage.TYPE_INT_ARGB);
+            g2 = tempScreen.createGraphics();
+        }
+
+        g2.clearRect(0, 0, screenWidth2, screenHeight2);
+
+
         if (gameState != titleState && currentMap == 0) {
-            //TILE
             tileMgr.draw(g2);
 
-            //ADD ENTITIES TO THE LIST
+            // ADD ENTITIES TO THE LIST
             entityList.add(player);
-
             for (Entity entity : enemy[currentMap]) {
                 if (entity != null) {
                     entityList.add(entity);
                 }
             }
 
-            //INTERACTIVE TILE
+            // ADD BOOMS TO THE LIST
+            for (Entity entity : boomManager.booms) {
+                if (entity != null) {
+                    entityList.add(entity);
+                }
+            }
+
+            // INTERACTIVE TILE
             for (InteractiveTile tile : aSetter.getObjectMap(currentMap).values()) {
                 if (tile != null) {
                     tile.draw(g2);
                 }
             }
 
-            //SORT
+            // SORT
             Collections.sort(entityList, new Comparator<Entity>() {
                 @Override
                 public int compare(Entity e1, Entity e2) {
@@ -201,17 +220,24 @@ public class GamePanel extends JPanel implements Runnable {
                 }
             });
 
-            //DRAW ENTITIES
+            // DRAW ENTITIES
             for (Entity entity : entityList) {
                 entity.draw(g2);
             }
 
-            boomManager.draw(g2);
-
-            //REMOVE ENTITIES TO THE LIST (otherwise, the list become larger after every loop)
+            // REMOVE ENTITIES TO THE LIST
             entityList.clear();
         }
-        //UI
+
+        // UI
         ui.draw(g2);
+
+        if (screenShakeManager.isShaking()) {
+            screenShakeManager.update();
+        }
+    }
+
+    public void triggerScreenShake() {
+        screenShakeManager.startShake(2, 5);
     }
 }
