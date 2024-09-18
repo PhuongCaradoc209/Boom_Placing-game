@@ -19,9 +19,6 @@ public class ExplosionManager {
         }
         for (int[] coord : boom.explosionArea.get("Down")) {
             check(coord[0], coord[1]);
-
-            System.out.println(coord[0] + "," +coord[1]);
-
         }
         for (int[] coord : boom.explosionArea.get("Right")) {
             check(coord[0], coord[1]);
@@ -32,9 +29,9 @@ public class ExplosionManager {
     }
 
     public void hitEntities(Boom boom) {
-        for (int i = 0; i < gp.entityManager.getEntities().size(); i++) { // Loop through all entities in the game
+        for (int i = 0; i < gp.entityManager.getEntities().size(); i++) {
             if (isEntityInExplosionRange(boom, gp.entityManager.getEntities().get(i))) {
-                gp.eHandler.damagePit(gp.entityManager.getEntities().get(i)); // Handle entity damage
+                gp.eHandler.damagePit(gp.entityManager.getEntities().get(i));
             }
         }
     }
@@ -59,14 +56,29 @@ public class ExplosionManager {
         int boomCol = boom.getCol();
         int boomRow = boom.getRow();
 
-        int explosionRadius = boom.getRadiusExplosion();
-
-        // Check if the entity is within the explosion range (both horizontal and vertical directions)
-        if (Math.abs(entityCol - boomCol) <= explosionRadius && entityRow == boomRow) {
+        if (entityRow == boomRow && entityCol == boomCol) {
             return true;
         }
-        if (Math.abs(entityRow - boomRow) <= explosionRadius && entityCol == boomCol) {
-            return true;
+
+        for (int[] coord : boom.explosionArea.get("Up")) {
+            if (coord[0] == entityRow && coord[1] == entityCol) {
+                return true;
+            }
+        }
+        for (int[] coord : boom.explosionArea.get("Down")) {
+            if (coord[0] == entityRow && coord[1] == entityCol) {
+                return true;
+            }
+        }
+        for (int[] coord : boom.explosionArea.get("Right")) {
+            if (coord[0] == entityRow && coord[1] == entityCol) {
+                return true;
+            }
+        }
+        for (int[] coord : boom.explosionArea.get("Left")) {
+            if (coord[0] == entityRow && coord[1] == entityCol) {
+                return true;
+            }
         }
 
         return false;

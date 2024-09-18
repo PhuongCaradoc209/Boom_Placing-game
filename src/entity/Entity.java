@@ -49,6 +49,7 @@ public class Entity {
     public List<Boom> ownBooms;
     private int boomAmount;
     private boolean placedBoom = false;
+    private int boomExplosionRadius;
 
     //ANIMATION
     protected BufferedImage[] deathAnimationFrames;
@@ -64,6 +65,7 @@ public class Entity {
         solidArea = new Rectangle(0, 0, gp.tileSize, gp.tileSize);
         ownBooms = new ArrayList<>();
         canDeath = false;
+        boomExplosionRadius = 1;
     }
 
     public void setAction() {
@@ -222,7 +224,7 @@ public class Entity {
 
     public void placeBoom() {
         if (ownBooms.size() <= getBoomAmount()) {
-            Boom boom = new Boom(col, row, 70, gp);
+            Boom boom = new Boom(col, row, this, gp);
             placedBoom = true;
             boom.collision = false;
             gp.boomManager.booms.add(boom);
@@ -333,5 +335,13 @@ public class Entity {
 
     public void setDead(boolean dead) {
         isDead = dead;
+    }
+
+    public int getBoomExplosionRadius() {
+        return boomExplosionRadius;
+    }
+
+    public void setBoomExplosionRadius(int boomExplosionRadius) {
+        this.boomExplosionRadius = boomExplosionRadius;
     }
 }

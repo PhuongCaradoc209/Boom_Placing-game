@@ -40,7 +40,7 @@ public class Boom extends Entity {
     //EXPLOSION AREA
     protected Map<String, List<int[]>> explosionArea;
 
-    public Boom(int col, int row, int countToExplode, GamePanel gp) {
+    public Boom(int col, int row, Entity entity, GamePanel gp) {
         super(gp);
         boomAnim = new BufferedImage[3];
 
@@ -51,7 +51,7 @@ public class Boom extends Entity {
         this.exploded = false;
         this.startExplode = false;
 
-        radiusExplosion = 3;
+        radiusExplosion = entity.getBoomExplosionRadius();
         fontExplosion = new BufferedImage[4];
         rightExplosion = new BufferedImage[4];
         leftExplosion = new BufferedImage[4];
@@ -98,8 +98,6 @@ public class Boom extends Entity {
     }
 
     public void update() {
-        System.out.println("Boom: " + row + "," + col);
-
         if (startExplode) {
             gp.triggerScreenShake();
             frameExplosion++;
