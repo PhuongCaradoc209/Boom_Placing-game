@@ -14,35 +14,37 @@ public class ExplosionManager {
     }
 
     public void checkDestructibleTiles(Boom boom) {
-        for (int i = 1; i <= boom.getRadiusExplosion(); i++) {
-            // Check upward direction
-            check(boom.getCol(), boom.getRow() - i);
+        for (int[] coord : boom.explosionArea.get("Up")) {
+            check(coord[0], coord[1]);
+        }
+        for (int[] coord : boom.explosionArea.get("Down")) {
+            check(coord[0], coord[1]);
 
-            // Check downward direction
-            check(boom.getCol(), boom.getRow() + i);
+            System.out.println(coord[0] + "," +coord[1]);
 
-            // Check left direction
-            check(boom.getCol() - i, boom.getRow());
-
-            // Check right direction
-            check(boom.getCol() + i, boom.getRow());
+        }
+        for (int[] coord : boom.explosionArea.get("Right")) {
+            check(coord[0], coord[1]);
+        }
+        for (int[] coord : boom.explosionArea.get("Left")) {
+            check(coord[0], coord[1]);
         }
     }
 
     public void hitEntities(Boom boom) {
-        for (int i=0; i<gp.entityManager.getEntities().size();i++) { // Loop through all entities in the game
+        for (int i = 0; i < gp.entityManager.getEntities().size(); i++) { // Loop through all entities in the game
             if (isEntityInExplosionRange(boom, gp.entityManager.getEntities().get(i))) {
                 gp.eHandler.damagePit(gp.entityManager.getEntities().get(i)); // Handle entity damage
             }
         }
     }
 
-    private void check(int x, int y) {
-        if (gp.aSetter.hasObjectAt(x, y, gp.currentMap)) {
-            key = x + "," + y;
+    private void check(int row, int column) {
+        if (gp.aSetter.hasObjectAt(column, row, gp.currentMap)) {
+            key = column + "," + row;
             hardness = gp.aSetter.getObjectMap(gp.currentMap).get(key).getHardness();
             if (hardness == 1)
-                gp.aSetter.removeObject(x, y, gp.currentMap);
+                gp.aSetter.removeObject(column, row, gp.currentMap);
             else {
                 gp.aSetter.getObjectMap(gp.currentMap).get(key).spriteNum++;
                 gp.aSetter.getObjectMap(gp.currentMap).get(key).setHardness(--hardness);
