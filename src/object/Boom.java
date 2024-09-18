@@ -8,7 +8,8 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Objects;
+import java.util.*;
+import java.util.List;
 
 public class Boom extends Entity {
     private int worldX, worldY;
@@ -36,7 +37,10 @@ public class Boom extends Entity {
     private int currentAnimExplosion = 0;
     private int radiusExplosion;
 
-    public Boom(int col, int row, int countToExplode, GamePanel gp) {
+    //EXPLOSION AREA
+    protected Map<String, List<int[]>> explosionArea;
+
+    public Boom(int col, int row, Entity entity, GamePanel gp) {
         super(gp);
         boomAnim = new BufferedImage[3];
 
@@ -47,15 +51,32 @@ public class Boom extends Entity {
         this.exploded = false;
         this.startExplode = false;
 
-        radiusExplosion = 1;
+        radiusExplosion = entity.getBoomExplosionRadius();
         fontExplosion = new BufferedImage[4];
         rightExplosion = new BufferedImage[4];
         leftExplosion = new BufferedImage[4];
         upExplosion = new BufferedImage[4];
         downExplosion = new BufferedImage[4];
 
+        rightBodyExplosion = new BufferedImage[4];
+        leftBodyExplosion = new BufferedImage[4];
+        upBodyExplosion = new BufferedImage[4];
+        downBodyExplosion = new BufferedImage[4];
+
+
+        explosionArea = new HashMap<>();
+        explosionArea.put("Up", new ArrayList<>());
+        explosionArea.put("Down", new ArrayList<>());
+        explosionArea.put("Left", new ArrayList<>());
+        explosionArea.put("Right", new ArrayList<>());
+
         setUpImage();
         collision = false;
+
+        getExplodeArea("Up");
+        getExplodeArea("Down");
+        getExplodeArea("Right");
+        getExplodeArea("Left");
     }
 
     private void setUpImage() {
@@ -68,11 +89,17 @@ public class Boom extends Entity {
             leftExplosion[i] = setup("boomExplo/explosion_" + (i + 1) + "-07", gp.tileSize, gp.tileSize);
             upExplosion[i] = setup("boomExplo/explosion_" + (i + 1) + "-01", gp.tileSize, gp.tileSize);
             downExplosion[i] = setup("boomExplo/explosion_" + (i + 1) + "-09", gp.tileSize, gp.tileSize);
+
+            rightBodyExplosion[i] = setup("boomExplo/explosion_" + (i + 1) + "-04", gp.tileSize, gp.tileSize);
+            leftBodyExplosion[i] = setup("boomExplo/explosion_" + (i + 1) + "-06", gp.tileSize, gp.tileSize);
+            upBodyExplosion[i] = setup("boomExplo/explosion_" + (i + 1) + "-02", gp.tileSize, gp.tileSize);
+            downBodyExplosion[i] = setup("boomExplo/explosion_" + (i + 1) + "-08", gp.tileSize, gp.tileSize);
         }
     }
 
     public void update() {
         if (startExplode) {
+            gp.triggerScreenShake();
             frameExplosion++;
             if (frameExplosion == intervalExplosion) {
                 frameExplosion = 0;
@@ -133,6 +160,26 @@ public class Boom extends Entity {
         g2.drawImage(boomAnim[currentFrame], (int) screenX, (int) screenY, null);
     }
 
+    public void getExplodeArea(String direction){
+        int tempRow = 0, tempCol = 0;
+
+        if (Objects.equals(direction, "Up")) tempRow = -1;
+        else if (Objects.equals(direction, "Down")) tempRow = 1;
+        else if (Objects.equals(direction, "Left")) tempCol = -1;
+        else if (Objects.equals(direction, "Right")) tempCol = 1;
+
+        for (int i = 1; i <= radiusExplosion; i++) {
+            if (row + tempRow * i >=0 && col + tempCol * i >= 0) {
+                if (!gp.tileMgr.tile[gp.tileMgr.mapTileNum[gp.currentMap][row + tempRow * i][col + tempCol * i]].collision){
+                    explosionArea.get(direction).add(new int[]{row + tempRow * i, col + tempCol * i});
+                }
+                else {
+                    return;
+                }
+            }
+        }
+    }
+
     public void drawExplode(Graphics2D g2) {
         screenX = worldX - gp.player.worldX + gp.player.screenX;
         screenY = worldY - gp.player.worldY + gp.player.screenY;
@@ -160,18 +207,38 @@ public class Boom extends Entity {
         screenX -= 10;
         screenY -= 10;
         g2.drawImage(fontExplosion[currentAnimExplosion], (int) screenX, (int) screenY, null);
-        //CHECK UP
-        if (!gp.tileMgr.tile[gp.tileMgr.mapTileNum[gp.currentMap][row - 1][col]].collision)
-            g2.drawImage(upExplosion[currentAnimExplosion], (int) screenX, (int) screenY - gp.tileSize, null);
-        //CHECK DOWN
-        if (!gp.tileMgr.tile[gp.tileMgr.mapTileNum[gp.currentMap][row + 1][col]].collision)
-            g2.drawImage(downExplosion[currentAnimExplosion], (int) screenX, (int) screenY + gp.tileSize, null);
-        //CHECK RIGHT
-        if (!gp.tileMgr.tile[gp.tileMgr.mapTileNum[gp.currentMap][row][col + 1]].collision)
-            g2.drawImage(rightExplosion[currentAnimExplosion], (int) screenX + gp.tileSize, (int) screenY, null);
-        //CHECK LEFT
-        if (!gp.tileMgr.tile[gp.tileMgr.mapTileNum[gp.currentMap][row][col - 1]].collision)
-            g2.drawImage(leftExplosion[currentAnimExplosion], (int) screenX - gp.tileSize, (int) screenY, null);
+
+        //DRAW UP
+        displayExplosion(upBodyExplosion[currentAnimExplosion], upExplosion[currentAnimExplosion], g2, 0, -gp.tileSize, "Up");
+        //DRAW DOWN
+        displayExplosion(downBodyExplosion[currentAnimExplosion], downExplosion[currentAnimExplosion], g2, 0, gp.tileSize, "Down");
+        //DRAW RIGHT
+        displayExplosion(rightBodyExplosion[currentAnimExplosion], rightExplosion[currentAnimExplosion], g2, gp.tileSize, 0, "Right");
+        //DRAW LEFT
+        displayExplosion(leftBodyExplosion[currentAnimExplosion], leftExplosion[currentAnimExplosion], g2, -gp.tileSize, 0, "Left");
+    }
+
+    private void displayExplosion(BufferedImage imageExplosion, BufferedImage imageLast, Graphics2D g2, int gapX, int gapY, String direction) {
+        int tempRow = 0, tempCol = 0;
+
+        if (Objects.equals(direction, "Up")) tempRow = -1;
+        else if (Objects.equals(direction, "Down")) tempRow = 1;
+        else if (Objects.equals(direction, "Left")) tempCol = -1;
+        else if (Objects.equals(direction, "Right")) tempCol = 1;
+
+        //DRAW BODY
+        for (int i = 1; i < radiusExplosion; i++) {
+            if (row + tempRow * i >=0 && col + tempCol * i >= 0) {
+                if (!gp.tileMgr.tile[gp.tileMgr.mapTileNum[gp.currentMap][row + tempRow * i][col + tempCol * i]].collision)
+                    g2.drawImage(imageExplosion, (int) (screenX + gapX * i), (int) (screenY + gapY * i), null);
+                else return;
+            }
+        }
+        //DRAW THE LAST
+        if (row + tempRow * radiusExplosion >=0 && col + tempCol * radiusExplosion >= 0){
+            if (!gp.tileMgr.tile[gp.tileMgr.mapTileNum[gp.currentMap][row + tempRow * radiusExplosion][col + tempCol * radiusExplosion]].collision)
+                g2.drawImage(imageLast, (int) screenX + (gp.tileSize * radiusExplosion) * tempCol, (int) screenY + (gp.tileSize * radiusExplosion) * tempRow, null);
+        }
     }
 
     //Explode
@@ -195,19 +262,19 @@ public class Boom extends Entity {
         this.radiusExplosion = radiusExplosion;
     }
 
-    public double getScreenX(){
+    public double getScreenX() {
         return screenX;
     }
 
-    public double getScreenY(){
+    public double getScreenY() {
         return screenY;
     }
 
-    public double getWorldX(){
+    public double getWorldX() {
         return worldX;
     }
 
-    public double getWorldY(){
+    public double getWorldY() {
         return worldY;
     }
 }

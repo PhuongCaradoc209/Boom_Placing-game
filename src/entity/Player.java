@@ -92,8 +92,10 @@ public class Player extends Entity {
         standRight4 = setup("player/standRight_4", 32, 32);
     }
 
-    public void update() {
+    public void update() {;
         getEntityCoordinates(this);
+        System.out.println(getRow() + " " + getCol());
+
         if (key.spacePressed) {
             if (ownBooms.size() < getBoomAmount()) {
                 placeBoom();

@@ -3,6 +3,7 @@ package enemy;
 import entity.Entity;
 import main.GamePanel;
 
+import java.awt.image.BufferedImage;
 import java.util.Random;
 
 public class Ene_Slime extends Entity {
@@ -25,6 +26,15 @@ public class Ene_Slime extends Entity {
         solidArea.height = (30 * gp.tileSize) / 48;
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
+
+        deathAnimationFrames = new BufferedImage[5]; // Ví dụ có 5 frame
+        loadDeathAnimationFrames("enemy/slime/slime-die-", 5); // Hàm để load các frame
+        currentDeathFrame = 0;
+        deathAnimationSpeed = 10; // Frame sẽ thay đổi sau mỗi 10 lần vẽ
+        deathFrameCounter = 0;
+        setDead(false);
+        deathAnimationComplete = false;
+        canDeath = true;
 
         setBoomAmount(1);
         getImage();
