@@ -65,8 +65,9 @@ public class EventHandler {
         if (entity.getLife() > 1) {
             entity.setLife(entity.getLife() - 1);
         } else {
-            if (entity != gp.player)
-                gp.entityManager.checkEntityDied(entity);
+            if (entity != gp.player) {
+                entity.setDead(true);
+            }
         }
     }
 

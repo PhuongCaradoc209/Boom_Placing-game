@@ -28,6 +28,7 @@ public class Ene_WonWon extends Entity {
 
         setBoomAmount(1);
         getImage();
+        canDeath = false;
     }
 
     public void getImage() {

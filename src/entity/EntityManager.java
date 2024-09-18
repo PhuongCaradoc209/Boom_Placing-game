@@ -29,11 +29,14 @@ public class EntityManager {
     public void updateEntities() {
         for (Entity entity : entities) {
             entity.update();
+            checkEntityDied(entity);
         }
     }
 
     public void checkEntityDied(Entity entity) {
-        removeEntity(entity);
-        gp.enemy[gp.currentMap].remove(entity);
+        if (entity.deathAnimationComplete){
+            removeEntity(entity);
+            gp.enemy[gp.currentMap].remove(entity);
+        }
     }
 }

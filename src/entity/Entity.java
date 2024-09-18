@@ -38,6 +38,7 @@ public class Entity {
     //CHARACTER STATUS
     private int maxLife;
     private int life;
+    private boolean isDead = false;
 
     //OBJ
     public String name;
@@ -49,56 +50,69 @@ public class Entity {
     private int boomAmount;
     private boolean placedBoom = false;
 
+    //ANIMATION
+    protected BufferedImage[] deathAnimationFrames;
+    protected int currentDeathFrame;
+    protected int deathAnimationSpeed;
+    protected int deathFrameCounter;
+    protected boolean deathAnimationComplete;
+
+    protected boolean canDeath;
+
     public Entity(GamePanel gp) {
         this.gp = gp;
         solidArea = new Rectangle(0, 0, gp.tileSize, gp.tileSize);
         ownBooms = new ArrayList<>();
+        canDeath = false;
     }
 
     public void setAction() {
     }
 
     public void update() {
-        setAction();
-        getEntityCoordinates(this);
+        if (isDead && canDeath) updateDeathAnimation();
+        else {
+            setAction();
+            getEntityCoordinates(this);
 
-        collisionOn = false;
-        if (gp.currentMap == 0) {
-            gp.cChecker.checkPlayer(this);
-        }
-        gp.cChecker.checkTile(this);
-        gp.cChecker.checkAtEdge(this);
-        gp.cChecker.checkEntity(this, gp.aSetter.getObjectMap(gp.currentMap));
-        gp.cChecker.checkBoom(this, gp.boomManager.booms);
-
-        if (!collisionOn) {
-            switch (direction) {
-                case "up":
-                    worldY -= speed;
-                    break;
-                case "down":
-                    worldY += speed;
-                    break;
-                case "right":
-                    worldX += speed;
-                    break;
-                case "left":
-                    worldX -= speed;
-                    break;
+            collisionOn = false;
+            if (gp.currentMap == 0) {
+                gp.cChecker.checkPlayer(this);
             }
-        }
+            gp.cChecker.checkTile(this);
+            gp.cChecker.checkAtEdge(this);
+            gp.cChecker.checkEntity(this, gp.aSetter.getObjectMap(gp.currentMap));
+            gp.cChecker.checkBoom(this, gp.boomManager.booms);
 
-        spriteCounter++;
-        if (spriteCounter > 15) {
-            if (spriteNum == 1)
-                spriteNum = 2;
-            else if (spriteNum == 2)
-                spriteNum = 3;
-            else if (spriteNum == 3)
-                spriteNum = 4;
-            else if (spriteNum == 4)
-                spriteNum = 1;
-            spriteCounter = 0;
+            if (!collisionOn) {
+                switch (direction) {
+                    case "up":
+                        worldY -= speed;
+                        break;
+                    case "down":
+                        worldY += speed;
+                        break;
+                    case "right":
+                        worldX += speed;
+                        break;
+                    case "left":
+                        worldX -= speed;
+                        break;
+                }
+            }
+
+            spriteCounter++;
+            if (spriteCounter > 15) {
+                if (spriteNum == 1)
+                    spriteNum = 2;
+                else if (spriteNum == 2)
+                    spriteNum = 3;
+                else if (spriteNum == 3)
+                    spriteNum = 4;
+                else if (spriteNum == 4)
+                    spriteNum = 1;
+                spriteCounter = 0;
+            }
         }
     }
 
@@ -185,18 +199,12 @@ public class Entity {
                 }
                 break;
         }
-        // IF PLAYER AT THE EDGE
-//        if (worldX + gp.tileSize > gp.player.worldX - gp.player.screenX &&
-//                worldX - gp.tileSize < gp.player.worldX + gp.player.screenX &&
-//                worldY + gp.tileSize > gp.player.worldY - gp.player.screenY &&
-//                worldY - gp.tileSize < gp.player.worldY + gp.player.screenY) {
-//            g2.drawImage(image, (int) screenX, (int) screenY, size, size, null);
-//        } else if (gp.player.screenX > gp.player.worldX ||
-//                gp.player.screenY > gp.player.worldY ||
-//                rightOffSet > gp.worldWidth - gp.player.worldX ||
-//                bottomOffSet > gp.worldHeight - gp.player.worldY) {
-        g2.drawImage(image, (int) screenX, (int) screenY, size, size, null);
-//        }
+        if (isDead && !deathAnimationComplete && canDeath) {
+            // Vẽ animation chết
+            g2.drawImage(deathAnimationFrames[currentDeathFrame], (int) screenX, (int) screenY, size, size, null);
+        }else{
+            g2.drawImage(image, (int) screenX, (int) screenY, size, size, null);
+        }
     }
 
     public BufferedImage setup(String imagePath, int width, int height) {
@@ -220,6 +228,27 @@ public class Entity {
             gp.boomManager.booms.add(boom);
             ownBooms.add(boom);
             gp.keyHandler.spacePressed = false;
+        }
+    }
+
+    protected void loadDeathAnimationFrames(String path, int frames){
+        for (int i = 0; i < frames; i++) {
+            deathAnimationFrames[i] = setup(path + (i+1), gp.tileSize, gp.tileSize);
+        }
+    }
+
+    private void updateDeathAnimation() {
+        if (!deathAnimationComplete) {
+            deathFrameCounter++;
+
+            if (deathFrameCounter >= deathAnimationSpeed) {
+                currentDeathFrame++;
+                deathFrameCounter = 0;
+
+                if (currentDeathFrame >= deathAnimationFrames.length) {
+                    deathAnimationComplete = true;
+                }
+            }
         }
     }
 
@@ -296,5 +325,13 @@ public class Entity {
 
     public void setPlacedBoom(boolean placedBoom) {
         this.placedBoom = placedBoom;
+    }
+
+    public boolean isDead() {
+        return isDead;
+    }
+
+    public void setDead(boolean dead) {
+        isDead = dead;
     }
 }
