@@ -1,5 +1,8 @@
 package entity;
 
+import buff.Buff;
+import buff.BuffManager;
+import buff.Buff_RadiusBoom;
 import main.GamePanel;
 import main.UtilityTool;
 import object.Boom;
@@ -60,12 +63,17 @@ public class Entity {
 
     protected boolean canDeath;
 
+    //BUFF
+    BuffManager ownBuffManager;
+
     public Entity(GamePanel gp) {
         this.gp = gp;
         solidArea = new Rectangle(0, 0, gp.tileSize, gp.tileSize);
         ownBooms = new ArrayList<>();
         canDeath = false;
         boomExplosionRadius = 1;
+
+        ownBuffManager = new BuffManager(gp);
     }
 
     public void setAction() {
@@ -85,6 +93,7 @@ public class Entity {
             gp.cChecker.checkAtEdge(this);
             gp.cChecker.checkEntity(this, gp.aSetter.getObjectMap(gp.currentMap));
             gp.cChecker.checkBoom(this, gp.boomManager.booms);
+            getBuff(gp.cChecker.checkCollectBuff(this));
 
             if (!collisionOn) {
                 switch (direction) {
@@ -249,6 +258,18 @@ public class Entity {
 
                 if (currentDeathFrame >= deathAnimationFrames.length) {
                     deathAnimationComplete = true;
+                }
+            }
+        }
+    }
+
+    public void getBuff(Buff buff){
+        if (buff != null){
+            for (int i = 0 ; i < gp.buffManagerGame.buffs.size();i++){
+                if (gp.buffManagerGame.buffs.get(i).equals(buff)){
+                    ownBuffManager.addBuff(gp.buffManagerGame.buffs.get(i), this);
+                    gp.buffManagerGame.buffs.remove(i);
+                    return;
                 }
             }
         }

@@ -17,6 +17,7 @@ public class InteractiveTile extends Entity {
     }
 
     public void update(){
+
     }
 
     public int getHardness(){
