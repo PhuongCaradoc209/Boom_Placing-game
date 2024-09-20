@@ -52,7 +52,7 @@ public class Player extends Entity {
         setPlayerImage();
 
         //SET UP BOOM
-        setBoomAmount(2);
+        setBoomAmount(1);
     }
 
     public void setPlayerImage() {

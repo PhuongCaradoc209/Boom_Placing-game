@@ -12,6 +12,7 @@ public class BuffManager {
     private GamePanel gp;
     public List<Buff> buffs;
     private int appearCounter;
+
     public BuffManager(GamePanel gp) {
         buffs = new ArrayList<Buff>();
         this.gp = gp;
@@ -19,23 +20,20 @@ public class BuffManager {
 
     public void addBuff(Buff buff, Entity target) {
         appearCounter = 0;
-        for(Buff b : buffs) {
-            switch (b.getName()){
-                case "Buff_RadiusBoom":
-                    appearCounter++;
-                    break;
+        for (Buff b : buffs) {
+            if (b.getClass() == buff.getClass()) {
+                appearCounter++;
             }
         }
 
-        if (appearCounter < buff.maxAmount || buff.maxAmount == -1)
-        {
+        if (appearCounter < buff.maxAmount || buff.maxAmount == -1) {
             buffs.add(buff);
             buff.setTarget(target);
             buff.applyEffect();
         }
     }
 
-    public void addBuff(Buff buff){
+    public void addBuff(Buff buff) {
         buffs.add(buff);
     }
 
@@ -58,16 +56,13 @@ public class BuffManager {
 
     public void randomBuff(int row, int col, Entity target) {
         Random random = new Random();
-//        int i = random.nextInt(200) + 1;
-        int i = 50;
+        int i = random.nextInt(200) + 1;
         if (i <= 50) {
             addBuff(new Buff_RadiusBoom(target, row, col, gp));
         } else if (i <= 100) {
-
+            addBuff(new Buff_BoomAmount(target, row, col, gp));
         } else if (i <= 150) {
-
         } else {
-
         }
     }
 }
