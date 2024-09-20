@@ -28,6 +28,10 @@ public abstract class Buff {
     protected int maxAmount;
     private String name;
 
+    private double time = 0;
+    private double amplitude = 5; // biên độ dao động
+    private double speed = 0.075;  // tốc độ dao động
+
     public Buff(Entity target, int row, int col, GamePanel gp) {
         this.target = target;
         this.row = row;
@@ -80,8 +84,12 @@ public abstract class Buff {
         if (bottomOffSet >= gp.worldHeight - gp.player.worldY) {
             screenY = gp.screenHeight - (gp.worldHeight - target.worldY);
         }
-        g2.drawImage(buffImage, (int) screenX + gp.tileSize / 6, (int) screenY + gp.tileSize / 6, 2 * gp.tileSize / 3, 2 * gp.tileSize / 3, null);
+        // Tạo hiệu ứng dao động
+        time += speed;
+        double oscillation = Math.sin(time) * amplitude;
 
+        // Vẽ hình ảnh với hiệu ứng dao động Y
+        g2.drawImage(buffImage, (int) screenX + gp.tileSize / 6, (int) (screenY + oscillation) + gp.tileSize / 6, 2 * gp.tileSize / 3, 2 * gp.tileSize / 3, null);
     }
 
 
