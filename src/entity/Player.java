@@ -52,7 +52,7 @@ public class Player extends Entity {
         setPlayerImage();
 
         //SET UP BOOM
-        setBoomAmount(2);
+        setBoomAmount(1);
     }
 
     public void setPlayerImage() {
@@ -94,7 +94,6 @@ public class Player extends Entity {
 
     public void update() {;
         getEntityCoordinates(this);
-        System.out.println(getRow() + " " + getCol());
 
         if (key.spacePressed) {
             if (ownBooms.size() < getBoomAmount()) {
@@ -147,6 +146,8 @@ public class Player extends Entity {
         gp.cChecker.checkAtEdge(this);
         //CHECK EVENT
         gp.eHandler.checkEvent();
+
+        getBuff( gp.cChecker.checkCollectBuff(this));
 
 //         IF COLLISION IS FALSE, PLAYER CAN MOVE
         if (!collisionOn) {

@@ -1,5 +1,6 @@
 package main;
 
+import buff.BuffManager;
 import entity.Entity;
 import entity.EntityManager;
 import entity.Player;
@@ -48,6 +49,7 @@ public class GamePanel extends JPanel implements Runnable {
     public EntityManager entityManager = new EntityManager(this);
     public BoomManager boomManager = new BoomManager(this);
     public ScreenShakeManager screenShakeManager = new ScreenShakeManager();
+    public BuffManager buffManagerGame = new BuffManager(this);
 
     public UI ui = new UI(this);
 
@@ -224,6 +226,9 @@ public class GamePanel extends JPanel implements Runnable {
             for (Entity entity : entityList) {
                 entity.draw(g2);
             }
+
+            //DRAW BUFF
+            buffManagerGame.draw(g2);
 
             // REMOVE ENTITIES TO THE LIST
             entityList.clear();

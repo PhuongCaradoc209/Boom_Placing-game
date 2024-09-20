@@ -3,6 +3,8 @@ package object;
 import entity.Entity;
 import main.GamePanel;
 
+import java.util.Objects;
+
 public class ExplosionManager {
     private GamePanel gp;
 
@@ -15,16 +17,16 @@ public class ExplosionManager {
 
     public void checkDestructibleTiles(Boom boom) {
         for (int[] coord : boom.explosionArea.get("Up")) {
-            check(coord[0], coord[1]);
+            checkInteractTileAt(coord[0], coord[1]);
         }
         for (int[] coord : boom.explosionArea.get("Down")) {
-            check(coord[0], coord[1]);
+            checkInteractTileAt(coord[0], coord[1]);
         }
         for (int[] coord : boom.explosionArea.get("Right")) {
-            check(coord[0], coord[1]);
+            checkInteractTileAt(coord[0], coord[1]);
         }
         for (int[] coord : boom.explosionArea.get("Left")) {
-            check(coord[0], coord[1]);
+            checkInteractTileAt(coord[0], coord[1]);
         }
     }
 
@@ -36,12 +38,18 @@ public class ExplosionManager {
         }
     }
 
-    private void check(int row, int column) {
+    private void checkInteractTileAt(int row, int column) {
         if (gp.aSetter.hasObjectAt(column, row, gp.currentMap)) {
             key = column + "," + row;
             hardness = gp.aSetter.getObjectMap(gp.currentMap).get(key).getHardness();
             if (hardness == 1)
+            {
+                if (Objects.equals(gp.aSetter.getObjectMap(gp.currentMap).get(key).name, "Box"))
+                {
+                    gp.buffManagerGame.randomBuff(row,column,gp.aSetter.getObjectMap(gp.currentMap).get(key));
+                }
                 gp.aSetter.removeObject(column, row, gp.currentMap);
+            }
             else {
                 gp.aSetter.getObjectMap(gp.currentMap).get(key).spriteNum++;
                 gp.aSetter.getObjectMap(gp.currentMap).get(key).setHardness(--hardness);

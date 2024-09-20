@@ -1,5 +1,6 @@
 package main;
 
+import buff.Buff;
 import entity.Entity;
 import object.Boom;
 
@@ -320,5 +321,45 @@ public class CollisionChecker {
         entity.solidArea.y = entity.solidAreaDefaultY;
         gp.player.solidArea.x = gp.player.solidAreaDefaultX;
         gp.player.solidArea.y = gp.player.solidAreaDefaultY;
+    }
+
+    public Buff checkCollectBuff(Entity entity) {
+        for (int i = 0; i < gp.buffManagerGame.buffs.size(); i++) {
+            if (gp.buffManagerGame.buffs.get(i) != null) {
+                
+                entity.solidArea.x = (int) (entity.worldX + entity.solidArea.x);
+                entity.solidArea.y = (int) (entity.worldY + entity.solidArea.y);
+
+               gp.buffManagerGame.buffs.get(i).solidArea.x = (int) (gp.buffManagerGame.buffs.get(i).getWorldX() +gp.buffManagerGame.buffs.get(i).solidArea.x);
+               gp.buffManagerGame.buffs.get(i).solidArea.y = (int) (gp.buffManagerGame.buffs.get(i).getWorldY() +gp.buffManagerGame.buffs.get(i).solidArea.y);
+
+                switch (entity.direction) {
+                    //SIMULATING ENTITY'S MOVEMENT AND CHECK WHERE IT WILL BE AFTER IT MOVED
+                    case "up":
+                        entity.solidArea.y -= entity.speed;
+                        break;
+
+                    case "down":
+                        entity.solidArea.y += entity.speed;
+                        break;
+
+                    case "right":
+                        entity.solidArea.x += entity.speed;
+                        break;
+
+                    case "left":
+                        entity.solidArea.x -= entity.speed;
+                        break;
+                }
+                if (entity.solidArea.intersects(gp.buffManagerGame.buffs.get(i).solidArea)) {
+                    return gp.buffManagerGame.buffs.get(i);
+                }
+                entity.solidArea.x = entity.solidAreaDefaultX;
+                entity.solidArea.y = entity.solidAreaDefaultY;
+                gp.buffManagerGame.buffs.get(i).solidArea.x = gp.buffManagerGame.buffs.get(i).solidAreaDefaultX;
+                gp.buffManagerGame.buffs.get(i).solidArea.y = gp.buffManagerGame.buffs.get(i).solidAreaDefaultY;
+            }
+        }
+        return null;
     }
 }
