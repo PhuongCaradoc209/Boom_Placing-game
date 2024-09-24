@@ -80,6 +80,8 @@ public class Entity {
     }
 
     public void update() {
+        checkPlaceBomb();
+
         if (isDead && canDeath) updateDeathAnimation();
         else {
             setAction();
@@ -271,6 +273,19 @@ public class Entity {
                     gp.buffManagerGame.buffs.remove(i);
                     return;
                 }
+            }
+        }
+    }
+
+    public void checkPlaceBomb() {
+        for (String key : gp.aSetter.getObjectMap(gp.currentMap).keySet()) {
+            String[] coordinates = key.split(",");
+            int tileCol = Integer.parseInt(coordinates[0]);
+            int tileRow = Integer.parseInt(coordinates[1]);
+
+            if (Math.abs(col - tileCol) < 2 && Math.abs(row - tileRow) < 2) {
+                placeBoom();
+                return;
             }
         }
     }
