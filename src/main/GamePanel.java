@@ -1,5 +1,6 @@
 package main;
 
+import UI.UI;
 import buff.BuffManager;
 import entity.Entity;
 import entity.EntityManager;
@@ -75,6 +76,7 @@ public class GamePanel extends JPanel implements Runnable {
     public int gameState;
     public final int titleState = 0;
     public final int playState = 1;
+    public final int mapSelectState = 2;
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));

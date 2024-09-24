@@ -2,7 +2,7 @@ package buff;
 
 import entity.Entity;
 import main.GamePanel;
-import main.UtilityTool;
+import UI.UtilityTool;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

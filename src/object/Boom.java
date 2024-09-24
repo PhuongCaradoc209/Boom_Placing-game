@@ -2,12 +2,9 @@ package object;
 
 import entity.Entity;
 import main.GamePanel;
-import main.UtilityTool;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
