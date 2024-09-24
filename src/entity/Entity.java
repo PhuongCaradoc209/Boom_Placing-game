@@ -2,9 +2,8 @@ package entity;
 
 import buff.Buff;
 import buff.BuffManager;
-import buff.Buff_RadiusBoom;
 import main.GamePanel;
-import main.UtilityTool;
+import UI.UtilityTool;
 import object.Boom;
 
 import javax.imageio.ImageIO;
@@ -80,7 +79,7 @@ public class Entity {
     }
 
     public void update() {
-        checkPlaceBomb();
+//        checkPlaceBomb();
 
         if (isDead && canDeath) updateDeathAnimation();
         else {

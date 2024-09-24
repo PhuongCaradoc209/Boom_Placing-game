@@ -1,6 +1,7 @@
-package main;
+package UI;
 
 import entity.Entity;
+import main.GamePanel;
 import object.OBJ_Heart;
 
 import javax.imageio.ImageIO;
@@ -19,9 +20,14 @@ public class UI {
     // FONT AND TEXT
     Font pixel;
 
+    //
+    private UI_mapSelection mapSelection;
+
     //GRAPHICS
     private final Area screenArea;
+    BufferedImage image;
     BufferedImage playerImage;
+    BufferedImage mapImage_1;
     private final BufferedImage heart_full, heart_empty;
 
     // SETTING
@@ -42,11 +48,19 @@ public class UI {
             throw new RuntimeException(e);
         }
 
+        mapSelection = new UI_mapSelection(gp);
+
         // SET UP SCREEN AREA
         screenArea = new Area(new Rectangle2D.Double(0, 0, gp.screenWidth, gp.screenHeight));
 
         //GRAPHICS
+        //TITLE SCREEN
         playerImage = setup("player/standRight_1", 32, 32);
+
+        //MAP SELECT SCREEN
+        mapImage_1 = setup("maps/map_1", 256, 256);
+
+        //PLAYER LIFE
         Entity heartStatus = new OBJ_Heart(gp);
         heart_full = heartStatus.image;
         heart_empty = heartStatus.image1;
@@ -62,8 +76,13 @@ public class UI {
         if (gp.gameState == gp.titleState) {
             drawTitleScreen();
         }
-        if (gp.gameState == gp.playState) {
+        //PLAY STATE
+        else if (gp.gameState == gp.playState) {
             drawPLayerInformation();
+        }
+        //MAP SELECT STATE
+        else if (gp.gameState == gp.mapSelectState){
+            drawMapSelectScreen();
         }
     }
 
@@ -139,7 +158,7 @@ public class UI {
             g2.drawImage(playerImage, x - 3*gp.tileSize/2, y - gp.tileSize, gp.tileSize, gp.tileSize, null);
             g2.setColor(Color.white);
             if (gp.keyHandler.enterPressed == true) {
-                gp.gameState = gp.playState;
+                gp.gameState = gp.mapSelectState;
             }
         }
 
@@ -165,7 +184,7 @@ public class UI {
             g2.drawImage(playerImage, x - 3*gp.tileSize/2, y - gp.tileSize, gp.tileSize, gp.tileSize, null);
             g2.setColor(Color.white);
             if (gp.keyHandler.enterPressed == true) {
-                gp.gameState = gp.playState;
+                gp.gameState = gp.mapSelectState;
             }
         }
 
@@ -195,6 +214,16 @@ public class UI {
             }
         }
         //Reset enterPressed
+        gp.keyHandler.enterPressed = false;
+    }
+
+    private void drawMapSelectScreen(){
+        mapSelection.draw(g2);
+        if (gp.keyHandler.enterPressed) {
+            System.out.println(mapSelection.getSelectedMapIndex());
+            gp.tileMgr.loadMap("/maps/mapdata_" + (mapSelection.getSelectedMapIndex() + 1), mapSelection.getSelectedMapIndex());
+            gp.gameState = gp.playState;
+        }
         gp.keyHandler.enterPressed = false;
     }
 

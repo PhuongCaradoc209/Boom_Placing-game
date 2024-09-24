@@ -6,7 +6,8 @@ import java.awt.event.KeyListener;
 // KeyListener: the listener interface for receiving keyboard events (keystrokes)
 public class KeyHandler implements KeyListener {
 
-    public boolean upPressed, downPressed, leftPressed, rightPressed, enterPressed, spacePressed, escapePressed, HPressed;
+    public boolean upPressed, downPressed, leftPressed, rightPressed, enterPressed,
+            spacePressed, escapePressed, HPressed;
     public boolean AnnouceCompleteAnimation;
     // DEBUG
     boolean checkDrawTime = false;
@@ -27,10 +28,10 @@ public class KeyHandler implements KeyListener {
         if (gp.gameState == gp.titleState) {
             titleState(key);
         }
-//
-//        if (gp.gameState == gp.selectPlayerState) {
-//            selectPlayerState(key);
-//        }
+
+        if (gp.gameState == gp.mapSelectState) {
+            mapSelectState(key);
+        }
         if (gp.currentMap == 0) {
             // PLAY STATE
             if (gp.gameState == gp.playState) {
@@ -65,7 +66,7 @@ public class KeyHandler implements KeyListener {
         }
     }
 
-    public void titleState(int key) {
+    private void titleState(int key) {
         if (key == KeyEvent.VK_W) {
             gp.ui.commandNum--;
 //            gp.playSoundEffect("select_sound", 6);
@@ -86,7 +87,17 @@ public class KeyHandler implements KeyListener {
         }
     }
 
-    public void gamePlayerState(int key) {
+    private void mapSelectState(int key) {
+        if (key == KeyEvent.VK_LEFT) {
+            leftPressed = true;
+        } else if (key == KeyEvent.VK_RIGHT) {
+            rightPressed = true;
+        } else if (key == KeyEvent.VK_ENTER) {
+            enterPressed = true;
+        }
+    }
+
+    private void gamePlayerState(int key) {
         if (key == KeyEvent.VK_W) {
             upPressed = true;
         }

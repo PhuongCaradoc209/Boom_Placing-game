@@ -1,7 +1,7 @@
 package tile;
 
 import main.GamePanel;
-import main.UtilityTool;
+import UI.UtilityTool;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -43,7 +43,6 @@ public class TileManager {
         mapTileNum = new int[gp.maxMap][gp.maxWorldRow][gp.maxWorldCol];
 
         getTileImage();
-        loadMap("/maps/mapdata", 0);
     }
 
     public void getTileImage() {
@@ -77,7 +76,7 @@ public class TileManager {
         }
     }
 
-    private void loadMap(String filePath, int map) {
+    public void loadMap(String filePath, int map) {
         try {
             InputStream is = getClass().getResourceAsStream(filePath);
             assert is != null;
