@@ -8,8 +8,8 @@ public class OBJ_Heart extends Entity {
         super(gp);
         name = "heart";
         size = 3*gp.tileSize/5;
-        image = setup("object/heart_full", size, size);
-        image1 = setup("object/heart_empty",size, size);
+        image = setup("object/heart_full_1", size, size);
+        image1 = setup("object/heart_empty_1",size, size);
 
         collision = false;
     }
