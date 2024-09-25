@@ -3,6 +3,8 @@ package event;
 import entity.Entity;
 import main.GamePanel;
 
+import javax.swing.*;
+
 public class EventHandler {
     GamePanel gp;
     private EventRect[][][] eventRect;
@@ -62,11 +64,13 @@ public class EventHandler {
     }
 
     public void damagePit(Entity entity) {
-        if (entity.getLife() > 1) {
+        if (entity.getLife() > 1 && !entity.invisible) {
             entity.setLife(entity.getLife() - 1);
+            entity.invisible = true;
         } else {
             if (entity != gp.player) {
                 entity.setDead(true);
+                System.out.println(entity.isDead());
             }
         }
     }

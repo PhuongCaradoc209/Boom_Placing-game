@@ -32,9 +32,7 @@ public class Ene_Slime extends Entity {
         currentDeathFrame = 0;
         deathAnimationSpeed = 10; // Frame sẽ thay đổi sau mỗi 10 lần vẽ
         deathFrameCounter = 0;
-        setDead(false);
-        deathAnimationComplete = false;
-        canDeath = true;
+        hasTwoAnimationDeath = true;
 
         setBoomAmount(1);
         getImage();
