@@ -13,6 +13,7 @@ import java.util.Objects;
 public class UI_mapSelection {
     GamePanel gp;
     private List<BufferedImage> mapList;
+    private List<String> titleMap;
     private int selectedMapIndex = 0;
     private int scrollOffset = 0;
 
@@ -60,23 +61,8 @@ public class UI_mapSelection {
 
     public void draw(Graphics2D g2) {
         //BACKGROUND
-        g2.setColor(new Color(0x809d49));
+        g2.setColor(new Color(0x6256CA));
         g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
-
-        // TITTLE NAME
-        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 96F));
-        g2.setColor(Color.white);
-        String text = "Map Selection";
-        x = getCenter(gp.screenWidth, (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth());
-        y = gp.tileSize + 10;
-
-        // SHADOW TEXT
-        g2.setColor(Color.BLACK);
-        g2.drawString(text, x + 5, y + 5);
-
-        // MAIN COLOR TEXT
-        g2.setColor(Color.white);
-        g2.drawString(text, x, y);
 
         if (gp.keyHandler.leftPressed) {
             updateSelection(-1);
@@ -100,6 +86,21 @@ public class UI_mapSelection {
                 g2.drawImage(mapList.get(i), x, y, size, size, null);
             }
         }
+
+        // TITTLE NAME
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 96F));
+        g2.setColor(Color.white);
+        String text = "Map " + (selectedMapIndex + 1);
+        x = getCenter(gp.screenWidth, (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth());
+        y = gp.tileSize + 20;
+
+        // SHADOW TEXT
+        g2.setColor(Color.BLACK);
+        g2.drawString(text, x + 5, y + 5);
+
+        // MAIN COLOR TEXT
+        g2.setColor(Color.white);
+        g2.drawString(text, x, y);
     }
 
     private BufferedImage setup(String imagePath, int width, int height) {
