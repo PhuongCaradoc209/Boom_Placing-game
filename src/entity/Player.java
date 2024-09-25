@@ -179,6 +179,14 @@ public class Player extends Entity {
                 spriteNum = 1;
             spriteCounter = 0;
         }
+
+        if (invisible){
+            invisibleCounter++;
+            if (invisibleCounter > 60){
+                invisible = false;
+                invisibleCounter = 0;
+            }
+        }
     }
 
 //    private void setTileSound(TileManager tileM) {
@@ -300,6 +308,10 @@ public class Player extends Entity {
                 }
                 break;
         }
+
+        if (invisible)
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
+
         // STOP MOVING THE CAMERA AT EDGE (PLAYER CAN NOT MOVE IF AT EDGE)
         x = screenX;
         y = screenY;
@@ -322,5 +334,8 @@ public class Player extends Entity {
             y = gp.screenHeight - (gp.worldHeight - worldY);
         }
         g.drawImage(image, (int) x, (int) y, size, size, null);
+
+        //reset
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
     }
 }

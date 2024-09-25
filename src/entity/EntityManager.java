@@ -27,9 +27,9 @@ public class EntityManager {
     }
 
     public void updateEntities() {
-        for (Entity entity : entities) {
-            entity.update();
-            checkEntityDied(entity);
+        for (int i = 0; i < entities.size(); i++) {
+            entities.get(i).update();
+            checkEntityDied(entities.get(i));
         }
     }
 

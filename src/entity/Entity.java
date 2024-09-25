@@ -24,7 +24,7 @@ public class Entity {
     public BufferedImage
             up1, up2, up3, up4,
             down1, down2, down3, down4,
-            right1, right2 , right3, right4,
+            right1, right2, right3, right4,
             left1, left2, left3, left4,
             standRight1, standRight2, standRight3, standRight4,
             standLeft1, standLeft2, standLeft3, standLeft4;
@@ -40,6 +40,7 @@ public class Entity {
     //CHARACTER STATUS
     private int maxLife;
     private int life;
+    private boolean alive = true;
     private boolean isDead = false;
 
     //OBJ
@@ -53,14 +54,19 @@ public class Entity {
     private boolean placedBoom = false;
     private int boomExplosionRadius;
 
-    //ANIMATION
+    //DEATH ANIMATION
+    protected boolean hasTwoAnimationDeath;
     protected BufferedImage[] deathAnimationFrames;
     protected int currentDeathFrame;
     protected int deathAnimationSpeed;
     protected int deathFrameCounter;
     protected boolean deathAnimationComplete;
+    private boolean deathAnimation_1_completed = false;
 
-    protected boolean canDeath;
+    //COUNTER
+    public boolean invisible = false;
+    protected int invisibleCounter = 0;
+    private int dyingCounter = 0;
 
     //BUFF
     BuffManager ownBuffManager;
@@ -69,8 +75,9 @@ public class Entity {
         this.gp = gp;
         solidArea = new Rectangle(0, 0, gp.tileSize, gp.tileSize);
         ownBooms = new ArrayList<>();
-        canDeath = false;
         boomExplosionRadius = 1;
+        hasTwoAnimationDeath = false;
+        deathAnimationComplete = false;
 
         ownBuffManager = new BuffManager(gp);
     }
@@ -81,7 +88,7 @@ public class Entity {
     public void update() {
 //        checkPlaceBomb();
 
-        if (isDead && canDeath) updateDeathAnimation();
+        if (deathAnimation_1_completed && hasTwoAnimationDeath) updateDeathAnimation_2();
         else {
             setAction();
             getEntityCoordinates(this);
@@ -124,6 +131,13 @@ public class Entity {
                 else if (spriteNum == 4)
                     spriteNum = 1;
                 spriteCounter = 0;
+            }
+            if (invisible) {
+                invisibleCounter++;
+                if (invisibleCounter > 60) {
+                    invisible = false;
+                    invisibleCounter = 0;
+                }
             }
         }
     }
@@ -211,12 +225,26 @@ public class Entity {
                 }
                 break;
         }
-        if (isDead && !deathAnimationComplete && canDeath) {
-            // Vẽ animation chết
+//        if (isDead && !deathAnimationComplete && canDeath) {
+//            g2.drawImage(deathAnimationFrames[currentDeathFrame], (int) screenX, (int) screenY, size, size, null);
+//        }else{
+//
+//        }
+
+        if (invisible) {
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
+        }
+
+        if (isDead) {
+            deadAnimation_1(g2);
+            g2.drawImage(image, (int) screenX, (int) screenY, size, size, null);
+        } else if (deathAnimation_1_completed && hasTwoAnimationDeath) {
             g2.drawImage(deathAnimationFrames[currentDeathFrame], (int) screenX, (int) screenY, size, size, null);
-        }else{
+        } else {
             g2.drawImage(image, (int) screenX, (int) screenY, size, size, null);
         }
+
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
     }
 
     public BufferedImage setup(String imagePath, int width, int height) {
@@ -243,13 +271,52 @@ public class Entity {
         }
     }
 
-    protected void loadDeathAnimationFrames(String path, int frames){
-        for (int i = 0; i < frames; i++) {
-            deathAnimationFrames[i] = setup(path + (i+1), gp.tileSize, gp.tileSize);
+    private void deadAnimation_1(Graphics2D g2) {
+        dyingCounter++;
+        int i = 5;
+        if (dyingCounter <= i) {
+            changeAlpha(g2, 0f);
+        }
+        if (dyingCounter > i && dyingCounter <= 2 * i) {
+            changeAlpha(g2, 1f);
+        }
+        if (dyingCounter > 2 * i && dyingCounter <= 3 * i) {
+            changeAlpha(g2, 0f);
+        }
+        if (dyingCounter > 3 * i && dyingCounter <= 4 * i) {
+            changeAlpha(g2, 1f);
+        }
+        if (dyingCounter > 4 * i && dyingCounter <= 5 * i) {
+            changeAlpha(g2, 0f);
+        }
+        if (dyingCounter > 5 * i && dyingCounter <= 6 * i) {
+            changeAlpha(g2, 1f);
+        }
+        if (dyingCounter > 6 * i && dyingCounter <= 7 * i) {
+            changeAlpha(g2, 0f);
+        }
+        if (dyingCounter > 7 * i && dyingCounter <= 8 * i) {
+            changeAlpha(g2, 1f);
+        }
+        if (dyingCounter > 8 * i) {
+            deathAnimation_1_completed = true;
+            isDead = false;
+            alive = false;
+            if (!hasTwoAnimationDeath) deathAnimationComplete = true;
         }
     }
 
-    private void updateDeathAnimation() {
+    private void changeAlpha(Graphics2D g2, float alphaValue) {
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alphaValue));
+    }
+
+    protected void loadDeathAnimationFrames(String path, int frames) {
+        for (int i = 0; i < frames; i++) {
+            deathAnimationFrames[i] = setup(path + (i + 1), gp.tileSize, gp.tileSize);
+        }
+    }
+
+    private void updateDeathAnimation_2() {
         if (!deathAnimationComplete) {
             deathFrameCounter++;
 
@@ -264,10 +331,10 @@ public class Entity {
         }
     }
 
-    public void getBuff(Buff buff){
-        if (buff != null){
-            for (int i = 0 ; i < gp.buffManagerGame.buffs.size();i++){
-                if (gp.buffManagerGame.buffs.get(i).equals(buff)){
+    public void getBuff(Buff buff) {
+        if (buff != null) {
+            for (int i = 0; i < gp.buffManagerGame.buffs.size(); i++) {
+                if (gp.buffManagerGame.buffs.get(i).equals(buff)) {
                     ownBuffManager.addBuff(gp.buffManagerGame.buffs.get(i), this);
                     gp.buffManagerGame.buffs.remove(i);
                     return;
@@ -326,16 +393,18 @@ public class Entity {
         this.row = row;
     }
 
-    public double getWorldX(){
+    public double getWorldX() {
         return worldX;
     }
 
     public void setWorldX(double worldX) {
         this.worldX = worldX;
     }
-    public double getWorldY(){
+
+    public double getWorldY() {
         return worldY;
     }
+
     public void setWorldY(double worldY) {
         this.worldY = worldY;
     }

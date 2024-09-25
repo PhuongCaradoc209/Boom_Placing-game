@@ -155,6 +155,7 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
+        System.out.println(entityManager.getEntities().size());
         entityManager.updateEntities();
         boomManager.update();
 
