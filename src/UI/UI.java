@@ -220,7 +220,6 @@ public class UI {
     private void drawMapSelectScreen(){
         mapSelection.draw(g2);
         if (gp.keyHandler.enterPressed) {
-            System.out.println(mapSelection.getSelectedMapIndex());
             gp.tileMgr.loadMap("/maps/mapdata_" + (mapSelection.getSelectedMapIndex() + 1), mapSelection.getSelectedMapIndex());
             gp.gameState = gp.playState;
         }
