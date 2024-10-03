@@ -4,6 +4,7 @@ import main.GamePanel;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,8 +29,6 @@ public class UI_mapSelection {
     private final Color shadow;
     private final BufferedImage arrow_left;
     private final BufferedImage arrow_right;
-    private BufferedImage temp_arrow_left;
-    private BufferedImage temp_arrow_right;
     private float arrowHoverProgress = 0.0f; // Giá trị từ 0.0 đến 1.0
     private float hoverSpeed = 0.1f; // Tốc độ thay đổi
 
@@ -48,8 +47,6 @@ public class UI_mapSelection {
         shadow = new Color(0, 0, 0, 50);
         arrow_left = setup("icon/arrow_left", 16, 16);
         arrow_right = setup("icon/arrow_right", 16, 16);
-        temp_arrow_left = arrow_left;
-        temp_arrow_right = arrow_right;
     }
 
     public void updateSelection(int direction) {
@@ -97,23 +94,35 @@ public class UI_mapSelection {
         // DRAW MAPS
         for (int i = scrollOffset; i < Math.min(scrollOffset + numberOfMapDisplayOnScreen, mapList.size()); i++) {
             x = (i - scrollOffset) * 300 + x_Map;
-            y = gp.tileSize * 2;
+            y = gp.tileSize*2 - 50;
             if (i == selectedMapIndex) {
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
                 g2.setColor(shadow);
-                g2.fillRoundRect(x - strokeWidth - 20, y - strokeWidth - 20, size + 2 * strokeWidth + 40, size + 2 * strokeWidth + 40, 25, 25);
+                g2.fillRoundRect(x - strokeWidth - 5, y - 2, size + 2 * strokeWidth + 10, size + 2 * strokeWidth + 40, 25, 25);
 
                 g2.setColor(Color.black);
-                g2.fillRoundRect(x - strokeWidth, y - strokeWidth, size + 2 * strokeWidth, size + 2 * strokeWidth, 25, 25);
+                g2.fillRoundRect(x - strokeWidth, y - 3, size + 2 * strokeWidth, size + 2 * strokeWidth + 20, 25, 25);
+
+                g2.setColor(new Color(0x1f393a));
+                g2.fillRoundRect(x - strokeWidth + 5, y - 2, size + 2 * strokeWidth - 10, size + 2 * strokeWidth - 5, 25, 25);
+
+                RoundRectangle2D roundedRect = new RoundRectangle2D.Float(x, y, size, size, 25, 25);
+                g2.setClip(roundedRect); // Set clip theo hình chữ nhật bo góc
+
                 g2.drawImage(mapList.get(i), x, y, size, size, null);
+
+                g2.setClip(null);
+
             }
         }
 
         // TITTLE NAME
-        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 96F));
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 80F));
         g2.setColor(Color.white);
         String text = "Map " + (selectedMapIndex + 1);
         x = getCenter(gp.screenWidth, (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth());
-        y = gp.tileSize + 20;
+        y = gp.tileSize;
 
         // SHADOW TEXT
         g2.setColor(Color.BLACK);
@@ -125,22 +134,18 @@ public class UI_mapSelection {
 
         // DRAW ARROWS
         if (selectedMapIndex != mapList.size() - 1) {
-            drawArrowWithInterpolation(g2, temp_arrow_right, gp.screenWidth - gp.tileSize - 10, getCenter(gp.screenHeight, gp.tileSize), gp.tileSize, gp.tileSize, arrowHoverProgress);
+            drawArrowWithInterpolation(g2, arrow_right, gp.screenWidth - gp.tileSize, getCenter(gp.screenHeight, gp.tileSize), gp.tileSize - 20, gp.tileSize - 20, arrowHoverProgress);
         }
         if (selectedMapIndex != 0) {
-            drawArrowWithInterpolation(g2, temp_arrow_left, 0, getCenter(gp.screenHeight, gp.tileSize), gp.tileSize, gp.tileSize, arrowHoverProgress);
+            drawArrowWithInterpolation(g2, arrow_left, 10, getCenter(gp.screenHeight, gp.tileSize), gp.tileSize - 20, gp.tileSize - 20, arrowHoverProgress);
         }
-
-        temp_arrow_left = arrow_left;
-        temp_arrow_right = arrow_right;
     }
 
     private BufferedImage setup(String imagePath, int width, int height) {
         UtilityTool uTool = new UtilityTool();
         BufferedImage image = null;
         try {
-            image = ImageIO
-                    .read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(imagePath + ".png")));
+            image = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(imagePath + ".png")));
             image = uTool.scaleImage(image, width, height);
         } catch (IOException e) {
             e.printStackTrace();
