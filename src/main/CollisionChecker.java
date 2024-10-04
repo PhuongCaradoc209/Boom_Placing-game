@@ -278,7 +278,8 @@ public class CollisionChecker {
         }
     }
 
-    public void checkPlayer(Entity entity) {
+    public boolean checkPlayer(Entity entity) {
+        boolean check = false;
         //get the entity's solid area position within the game world
         entity.solidArea.x = (int) (entity.worldX + entity.solidArea.x);
         entity.solidArea.y = (int) (entity.worldY + entity.solidArea.y);
@@ -292,6 +293,7 @@ public class CollisionChecker {
                 entity.solidArea.y -= entity.speed;
                 if (entity.solidArea.intersects(gp.player.solidArea)) {
                     entity.collisionOn = true;
+                    check = true;
                 }
                 break;
 
@@ -299,6 +301,7 @@ public class CollisionChecker {
                 entity.solidArea.y += entity.speed;
                 if (entity.solidArea.intersects(gp.player.solidArea)) {
                     entity.collisionOn = true;
+                    check = true;
                 }
                 break;
 
@@ -306,6 +309,7 @@ public class CollisionChecker {
                 entity.solidArea.x += entity.speed;
                 if (entity.solidArea.intersects(gp.player.solidArea)) {
                     entity.collisionOn = true;
+                    check = true;
                 }
                 break;
 
@@ -313,6 +317,7 @@ public class CollisionChecker {
                 entity.solidArea.x -= entity.speed;
                 if (entity.solidArea.intersects(gp.player.solidArea)) {
                     entity.collisionOn = true;
+                    check = true;
                 }
                 break;
         }
@@ -320,6 +325,7 @@ public class CollisionChecker {
         entity.solidArea.y = entity.solidAreaDefaultY;
         gp.player.solidArea.x = gp.player.solidAreaDefaultX;
         gp.player.solidArea.y = gp.player.solidAreaDefaultY;
+        return check;
     }
 
     public Buff checkCollectBuff(Entity entity) {

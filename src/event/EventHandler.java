@@ -70,7 +70,6 @@ public class EventHandler {
         } else {
             if (entity != gp.player) {
                 entity.setDead(true);
-                System.out.println(entity.isDead());
             }
         }
     }

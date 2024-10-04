@@ -1,12 +1,14 @@
 package main;
 
 import UI.UI;
+import ai.PathFinder;
 import buff.BuffManager;
 import entity.Entity;
 import entity.EntityManager;
 import entity.Player;
 import event.EventHandler;
 import object.BoomManager;
+import object.Bullet_Slime;
 import tile.TileManager;
 import tile_Interact.InteractiveTile;
 
@@ -51,6 +53,7 @@ public class GamePanel extends JPanel implements Runnable {
     public BoomManager boomManager = new BoomManager(this);
     public ScreenShakeManager screenShakeManager = new ScreenShakeManager();
     public BuffManager buffManagerGame = new BuffManager(this);
+    public PathFinder pathFinder = new PathFinder(this);
 
     public UI ui = new UI(this);
 
@@ -66,6 +69,8 @@ public class GamePanel extends JPanel implements Runnable {
     ArrayList<Entity> entityList = new ArrayList<>();
     //OBJECT
     ArrayList<Entity>[] obj = new ArrayList[maxMap];
+    //PROJECTILE
+    public ArrayList<Entity> projectileList = new ArrayList<>();
     //ENEMY
     public ArrayList<Entity>[] enemy = new ArrayList[maxMap];
 
@@ -155,12 +160,23 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
-        entityManager.updateEntities();
-        boomManager.update();
+        if (gameState == playState) {
+            entityManager.updateEntities();
+            boomManager.update();
 
-        for (InteractiveTile tile : aSetter.getObjectMap(currentMap).values()) {
-            if (tile != null) {
-                tile.update();
+            for (InteractiveTile tile : aSetter.getObjectMap(currentMap).values()) {
+                if (tile != null) {
+                    tile.update();
+                }
+            }
+
+            for (int i = 0; i < projectileList.size(); i++) {
+                if (projectileList.get(i) != null) {
+                    if (projectileList.get(i).alive)
+                        projectileList.get(i).update();
+                    else
+                        projectileList.remove(i);
+                }
             }
         }
     }
@@ -193,6 +209,13 @@ public class GamePanel extends JPanel implements Runnable {
 
         if (gameState != titleState && currentMap == 0) {
             tileMgr.draw(g2);
+
+            //PROJECTILE
+            for (Entity entity : projectileList) {
+                if (entity != null) {
+                    entityList.add(entity);
+                }
+            }
 
             // ADD ENTITIES TO THE LIST
             entityList.add(player);

@@ -2,11 +2,14 @@ package enemy;
 
 import entity.Entity;
 import main.GamePanel;
+import object.Bullet_Slime;
 
 import java.awt.image.BufferedImage;
 import java.util.Random;
 
 public class Ene_Slime extends Entity {
+    private int i;
+    int goalCol, goalRow;
 
     public Ene_Slime(GamePanel gp) {
         super(gp);
@@ -34,8 +37,11 @@ public class Ene_Slime extends Entity {
         deathFrameCounter = 0;
         hasTwoAnimationDeath = true;
 
+        projectile = new Bullet_Slime(gp);
         setBoomAmount(1);
         getImage();
+
+        onPath = true;
     }
 
     public void getImage() {
@@ -51,20 +57,43 @@ public class Ene_Slime extends Entity {
     }
 
     public void setAction() {
-        actionLookCounter++;
-        if (actionLookCounter == 100) {
-            Random random = new Random();
-            int i = random.nextInt(200) + 1;
-            if (i <= 50) {
-                direction = "down";
-            } else if (i <= 100) {
-                direction = "left";
-            } else if (i <= 150) {
-                direction = "right";
-            } else {
-                direction = "up";
+        if (onPath){
+            int goalCol = (int) ((gp.player.worldX + gp.player.solidArea.x)/gp.tileSize);
+            int goalRow = (int) ((gp.player.worldY + gp.player.solidArea.y)/gp.tileSize);
+            searchPath(goalRow,goalCol);
+        }
+        else {
+            actionLookCounter++;
+            if (actionLookCounter == 100) {
+                Random random = new Random();
+                int i = random.nextInt(200) + 1;
+                if (i <= 50) {
+                    direction = "down";
+                } else if (i <= 100) {
+                    direction = "left";
+                } else if (i <= 150) {
+                    direction = "right";
+                } else {
+                    direction = "up";
+                }
+                actionLookCounter = 0;
             }
-            actionLookCounter = 0;
+        }
+
+
+        i = new Random().nextInt(100) + 1;
+        if (i > 99 && !projectile.alive && shotAvailableCounter == 100) {
+            //SET DEFAULT COORDINATES, DIRECTION AND USER
+            projectile.set(worldX, worldY, direction, true, this);
+
+            //ADD IT TO THE LIST
+            gp.projectileList.add(projectile);
+
+            shotAvailableCounter = 0;
+        }
+
+        if (shotAvailableCounter < 100){
+            shotAvailableCounter++;
         }
     }
 }
