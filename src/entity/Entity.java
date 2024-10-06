@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 public class Entity {
     public GamePanel gp;
@@ -21,7 +22,7 @@ public class Entity {
     private int col, row;
     public double speed;
 
-    public BufferedImage
+    protected BufferedImage
             up1, up2, up3, up4,
             down1, down2, down3, down4,
             right1, right2, right3, right4,
@@ -40,7 +41,7 @@ public class Entity {
     //CHARACTER STATUS
     private int maxLife;
     private int life;
-    private boolean alive = true;
+    public boolean alive = true;
     private boolean isDead = false;
 
     //OBJ
@@ -67,9 +68,16 @@ public class Entity {
     public boolean invisible = false;
     protected int invisibleCounter = 0;
     private int dyingCounter = 0;
+    protected int shotAvailableCounter = 0;
 
     //BUFF
     BuffManager ownBuffManager;
+
+    //WEAPON
+    protected Projectile projectile;
+
+    //PATH
+    protected boolean onPath = false;
 
     public Entity(GamePanel gp) {
         this.gp = gp;
@@ -85,6 +93,18 @@ public class Entity {
     public void setAction() {
     }
 
+    public void checkCollision() {
+        collisionOn = false;
+        if (gp.currentMap == 0) {
+            gp.cChecker.checkPlayer(this);
+        }
+        gp.cChecker.checkTile(this);
+        gp.cChecker.checkAtEdge(this);
+        gp.cChecker.checkEntity(this, gp.aSetter.getObjectMap(gp.currentMap));
+        gp.cChecker.checkBoom(this, gp.boomManager.booms);
+        getBuff(gp.cChecker.checkCollectBuff(this));
+    }
+
     public void update() {
 //        checkPlaceBomb();
 
@@ -93,15 +113,7 @@ public class Entity {
             setAction();
             getEntityCoordinates(this);
 
-            collisionOn = false;
-            if (gp.currentMap == 0) {
-                gp.cChecker.checkPlayer(this);
-            }
-            gp.cChecker.checkTile(this);
-            gp.cChecker.checkAtEdge(this);
-            gp.cChecker.checkEntity(this, gp.aSetter.getObjectMap(gp.currentMap));
-            gp.cChecker.checkBoom(this, gp.boomManager.booms);
-            getBuff(gp.cChecker.checkCollectBuff(this));
+            checkCollision();
 
             if (!collisionOn) {
                 switch (direction) {
@@ -353,6 +365,79 @@ public class Entity {
                 placeBoom();
                 return;
             }
+        }
+    }
+
+    public void searchPath(int goalRow, int goalCol) {
+        int startCol = (int) (worldX + solidArea.x) / gp.tileSize;
+        int startRow = (int) (worldY + solidArea.y) / gp.tileSize;
+
+        gp.pathFinder.setNode(startRow, startCol, goalRow, goalCol);
+
+        if (gp.pathFinder.search()) {
+            //NEXT WORLD X & Y
+            int nextX = gp.pathFinder.pathList.getFirst().col * gp.tileSize;
+            int nextY = gp.pathFinder.pathList.getFirst().row * gp.tileSize;
+
+            double enLeftX = worldX + solidArea.x;
+            double enRightX = worldX + solidArea.x + solidArea.width;
+            double enTopY = worldY + solidArea.y;
+            double enBottomY = worldY + solidArea.y + solidArea.height;
+
+            if (enTopY > nextY && enLeftX >= nextX && enRightX < nextX + gp.tileSize) {
+                direction = "up";
+            } else if (enTopY < nextY && enLeftX >= nextX && enRightX < nextX + gp.tileSize) {
+                direction = "down";
+            } else if (enTopY >= nextY && enBottomY < nextY + gp.tileSize) {
+                //left or right
+                if (enLeftX > nextX) direction = "left";
+                else if (enLeftX < nextX) direction = "right";
+            } else if (enTopY > nextY && enLeftX > nextX) {
+                //up or left
+                direction = "up";
+                checkCollision();
+                if (collisionOn) {
+                    direction = "left";
+                }
+            } else if (enTopY > nextY && enLeftX < nextX) {
+                //up or right
+                direction = "up";
+                checkCollision();
+                if (collisionOn) {
+                    direction = "right";
+                }
+            } else if (enTopY < nextY && enLeftX > nextX) {
+                //down or left
+                direction = "down";
+                checkCollision();
+                if (collisionOn) {
+                    direction = "left";
+                }
+            } else if (enTopY < nextY && enLeftX < nextX) {
+                //down or right
+                direction = "down";
+                checkCollision();
+                if (collisionOn) {
+                    direction = "right";
+                }
+            }
+        }
+    }
+
+    public void fire(){
+        int i = new Random().nextInt(100) + 1;
+        if (i > 99 && !projectile.alive && shotAvailableCounter == 100) {
+            //SET DEFAULT COORDINATES, DIRECTION AND USER
+            projectile.set(worldX, worldY, direction, true, this);
+
+            //ADD IT TO THE LIST
+            gp.projectileList.add(projectile);
+
+            shotAvailableCounter = 0;
+        }
+
+        if (shotAvailableCounter < 100){
+            shotAvailableCounter++;
         }
     }
 

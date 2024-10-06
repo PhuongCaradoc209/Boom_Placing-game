@@ -5,6 +5,7 @@ import main.GamePanel;
 //import object.Fishing_Rod;
 //import object.OBJ_FishingRod1;
 import main.KeyHandler;
+import object.Bullet_Slime;
 import tile.TileManager;
 
 import java.awt.*;
@@ -132,20 +133,20 @@ public class Player extends Entity {
         solidArea.width = (28 * gp.tileSize) / 48;
         solidArea.height = (30 * gp.tileSize) / 48;
 
-//        // CHECK TILE COLLISION
-//        collisionOn = false;
-//        gp.cChecker.checkTile(this);
-//        //CHECK BOOM
-//        if (isOutOfBoomCoordinate()){
-//            gp.cChecker.checkBoom(this, gp.boomManager.booms);
-//        }
-//        // CHECK INTERACT TILE COLLISION
-//        iTileCoordinate = gp.cChecker.checkEntity(this, gp.aSetter.getObjectMap(gp.currentMap));
-//        gp.cChecker.checkEntity(this, gp.enemy);
-//        // CHECK IF AT EDGE
-//        gp.cChecker.checkAtEdge(this);
-//        //CHECK EVENT
-//        gp.eHandler.checkEvent();
+        // CHECK TILE COLLISION
+        collisionOn = false;
+        gp.cChecker.checkTile(this);
+        //CHECK BOOM
+        if (isOutOfBoomCoordinate()){
+            gp.cChecker.checkBoom(this, gp.boomManager.booms);
+        }
+        // CHECK INTERACT TILE COLLISION
+        iTileCoordinate = gp.cChecker.checkEntity(this, gp.aSetter.getObjectMap(gp.currentMap));
+        gp.cChecker.checkEntity(this, gp.enemy);
+        // CHECK IF AT EDGE
+        gp.cChecker.checkAtEdge(this);
+        //CHECK EVENT
+        gp.eHandler.checkEvent();
 
         getBuff( gp.cChecker.checkCollectBuff(this));
 

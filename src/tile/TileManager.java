@@ -18,7 +18,7 @@ public class TileManager {
     public int[][][] mapTileNum;
     ArrayList<String> fileNames = new ArrayList<>();
     ArrayList<String> collisionStatus = new ArrayList<>();
-
+    boolean drawPath = true;
 
     public TileManager(GamePanel gp) {
         this.gp = gp;
@@ -150,6 +150,36 @@ public class TileManager {
                 worldCol = 0;
                 worldRow++;
             }
+        }
+
+        if (drawPath){
+             g2.setColor(new Color(255, 0, 0, 70));
+             for (int i = 0; i < gp.pathFinder.pathList.size(); i++) {
+                 int worldX = gp.pathFinder.pathList.get(i).col * gp.tileSize;
+                 int worldY = gp.pathFinder.pathList.get(i).row * gp.tileSize;
+                 double screenX = worldX - gp.player.worldX + gp.player.screenX;
+                 double screenY = worldY - gp.player.worldY + gp.player.screenY;
+
+                 if (gp.player.screenX >= gp.player.worldX) {
+                     screenX = worldX;
+                 }
+                 //LEFT
+                 if (gp.player.screenY >= gp.player.worldY) {
+                     screenY = worldY;
+                 }
+                 //RIGHT
+                 double rightOffSet = gp.screenWidth - gp.player.screenX;
+                 if (rightOffSet >= gp.worldWidth - gp.player.worldX) {
+                     screenX = gp.screenWidth - (gp.worldWidth - worldX);
+                 }
+                 //BOTTOM
+                 double bottomOffSet = gp.screenHeight - gp.player.screenY;
+                 if (bottomOffSet >= gp.worldHeight - gp.player.worldY) {
+                     screenY = gp.screenHeight - (gp.worldHeight - worldY);
+                 }
+
+                 g2.fillRect((int) screenX, (int) screenY, gp.tileSize, gp.tileSize);
+             }
         }
     }
 }
