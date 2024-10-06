@@ -61,6 +61,13 @@ public class Ene_Slime extends Entity {
             int goalCol = (int) ((gp.player.worldX + gp.player.solidArea.x)/gp.tileSize);
             int goalRow = (int) ((gp.player.worldY + gp.player.solidArea.y)/gp.tileSize);
             searchPath(goalRow,goalCol);
+
+//            int i = new Random().nextInt(200);
+//            if (i>197 && !projectile.alive && shotAvailableCounter == 30){
+//                projectile.set(worldX, worldY, direction,true,this);
+//                gp.projectileList.add(projectile);
+//                shotAvailableCounter = 0;
+//            }
         }
         else {
             actionLookCounter++;

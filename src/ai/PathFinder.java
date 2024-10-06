@@ -91,8 +91,8 @@ public class PathFinder {
                 String[] parts = key.split(",");
 
                 // Parse row and col as integers
-                tempRow = Integer.parseInt(parts[0]);
-                tempCol = Integer.parseInt(parts[1]);
+                tempRow = Integer.parseInt(parts[1]);
+                tempCol = Integer.parseInt(parts[0]);
 
                 node[tempRow][tempCol].solid = true;
             }

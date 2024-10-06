@@ -134,21 +134,21 @@ public class Player extends Entity {
         solidArea.height = (30 * gp.tileSize) / 48;
 
         // CHECK TILE COLLISION
-//        collisionOn = false;
-//        gp.cChecker.checkTile(this);
-//        //CHECK BOOM
-//        if (isOutOfBoomCoordinate()){
-//            gp.cChecker.checkBoom(this, gp.boomManager.booms);
-//        }
-//        // CHECK INTERACT TILE COLLISION
-//        iTileCoordinate = gp.cChecker.checkEntity(this, gp.aSetter.getObjectMap(gp.currentMap));
-//        gp.cChecker.checkEntity(this, gp.enemy);
-//        // CHECK IF AT EDGE
-//        gp.cChecker.checkAtEdge(this);
-//        //CHECK EVENT
-//        gp.eHandler.checkEvent();
-//
-//        getBuff( gp.cChecker.checkCollectBuff(this));
+        collisionOn = false;
+        gp.cChecker.checkTile(this);
+        //CHECK BOOM
+        if (isOutOfBoomCoordinate()){
+            gp.cChecker.checkBoom(this, gp.boomManager.booms);
+        }
+        // CHECK INTERACT TILE COLLISION
+        iTileCoordinate = gp.cChecker.checkEntity(this, gp.aSetter.getObjectMap(gp.currentMap));
+        gp.cChecker.checkEntity(this, gp.enemy);
+        // CHECK IF AT EDGE
+        gp.cChecker.checkAtEdge(this);
+        //CHECK EVENT
+        gp.eHandler.checkEvent();
+
+        getBuff( gp.cChecker.checkCollectBuff(this));
 
 //         IF COLLISION IS FALSE, PLAYER CAN MOVE
         if (!collisionOn) {
