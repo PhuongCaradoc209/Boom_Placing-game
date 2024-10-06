@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 public class Entity {
     public GamePanel gp;
@@ -420,13 +421,23 @@ public class Entity {
                     direction = "right";
                 }
             }
+        }
+    }
 
-            //IF REACHES THE GOAL, STOP SEARCH
-//            int nextCol = gp.pathFinder.pathList.getFirst().col;
-//            int nextRow = gp.pathFinder.pathList.getFirst().row;
-//            if (nextCol == goalCol && nextRow == goalRow) {
-//                onPath = false;
-//            }
+    public void fire(){
+        int i = new Random().nextInt(100) + 1;
+        if (i > 99 && !projectile.alive && shotAvailableCounter == 100) {
+            //SET DEFAULT COORDINATES, DIRECTION AND USER
+            projectile.set(worldX, worldY, direction, true, this);
+
+            //ADD IT TO THE LIST
+            gp.projectileList.add(projectile);
+
+            shotAvailableCounter = 0;
+        }
+
+        if (shotAvailableCounter < 100){
+            shotAvailableCounter++;
         }
     }
 

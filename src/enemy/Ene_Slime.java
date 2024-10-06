@@ -40,8 +40,6 @@ public class Ene_Slime extends Entity {
         projectile = new Bullet_Slime(gp);
         setBoomAmount(1);
         getImage();
-
-        onPath = true;
     }
 
     public void getImage() {
@@ -56,18 +54,38 @@ public class Ene_Slime extends Entity {
         down4 = left4 = setup("enemy/slime/slime-left-3", gp.tileSize, gp.tileSize);
     }
 
+    public void update(){
+        super.update();
+
+        int xDistance = (int) Math.abs(worldX - gp.player.worldX);
+        int yDistance = (int) Math.abs(worldY - gp.player.worldY);
+        int tileDistance = (xDistance + yDistance) / gp.tileSize;
+
+        if (!onPath && tileDistance < 3){
+            int i = new Random().nextInt(100) + 1;
+            if (i > 50){
+                onPath = true;
+            }
+        }
+        if (onPath && tileDistance > 3){
+            onPath = false;
+        }
+    }
+
     public void setAction() {
         if (onPath){
+            fire();
+
             int goalCol = (int) ((gp.player.worldX + gp.player.solidArea.x)/gp.tileSize);
             int goalRow = (int) ((gp.player.worldY + gp.player.solidArea.y)/gp.tileSize);
             searchPath(goalRow,goalCol);
 
-//            int i = new Random().nextInt(200);
-//            if (i>197 && !projectile.alive && shotAvailableCounter == 30){
-//                projectile.set(worldX, worldY, direction,true,this);
-//                gp.projectileList.add(projectile);
-//                shotAvailableCounter = 0;
-//            }
+            int i = new Random().nextInt(200);
+            if (i>197 && !projectile.alive && shotAvailableCounter == 30){
+                projectile.set(worldX, worldY, direction,true,this);
+                gp.projectileList.add(projectile);
+                shotAvailableCounter = 0;
+            }
         }
         else {
             actionLookCounter++;
@@ -85,22 +103,6 @@ public class Ene_Slime extends Entity {
                 }
                 actionLookCounter = 0;
             }
-        }
-
-
-        i = new Random().nextInt(100) + 1;
-        if (i > 99 && !projectile.alive && shotAvailableCounter == 100) {
-            //SET DEFAULT COORDINATES, DIRECTION AND USER
-            projectile.set(worldX, worldY, direction, true, this);
-
-            //ADD IT TO THE LIST
-            gp.projectileList.add(projectile);
-
-            shotAvailableCounter = 0;
-        }
-
-        if (shotAvailableCounter < 100){
-            shotAvailableCounter++;
         }
     }
 }
