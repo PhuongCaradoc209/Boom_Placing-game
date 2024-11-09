@@ -83,6 +83,7 @@ public class GamePanel extends JPanel implements Runnable {
     public final int playState = 1;
     public final int mapSelectState = 2;
     public final int optionState = 3;
+    public final int characterStatus = 4;
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -128,7 +129,7 @@ public class GamePanel extends JPanel implements Runnable {
             }
 
             if (timer >= 1000000000) {
-                System.out.println("FPS" + drawCount);
+//                System.out.println("FPS" + drawCount);
                 drawCount = 0;
                 timer = 0;
             }

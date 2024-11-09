@@ -21,7 +21,7 @@ public abstract class Buff {
     private int row, col;
     private double worldX, worldY;
 
-    BufferedImage buffImage;
+    public BufferedImage buffImage;
     public Rectangle solidArea;
     public int solidAreaDefaultX, solidAreaDefaultY;
 

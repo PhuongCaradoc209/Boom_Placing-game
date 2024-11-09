@@ -41,6 +41,10 @@ public class KeyHandler implements KeyListener {
             else if (gp.gameState == gp.optionState) {
                 optionState(key);
             }
+            // CHARACTER STATUS STATE
+            else if (gp.gameState == gp.characterStatus) {
+                menuState(key);
+            }
         }
     }
 
@@ -121,7 +125,7 @@ public class KeyHandler implements KeyListener {
             spacePressed = true;
         }
         if (key == KeyEvent.VK_ESCAPE) {
-            gp.gameState = gp.optionState;
+            gp.gameState = gp.characterStatus;
 //            gp.playSoundEffect("Menu", 10);
 //            gp.music.stop("Bird");
 //            gp.music.stop("Background");
@@ -136,20 +140,68 @@ public class KeyHandler implements KeyListener {
         }
     }
 
-    public void optionState(int key) {
+    private void menuState(int key) {
         if (key == KeyEvent.VK_ESCAPE) {
 //            gp.playSoundEffect("Menu", 10);
             gp.gameState = gp.playState;
-            gp.ui.subState = 0;
+        }
+
+        if (key == KeyEvent.VK_D) {
+            rightPressed = true;
+//            gp.playSoundEffect("clickItem", 14);
+        }
+
+        if (key == KeyEvent.VK_A) {
+            leftPressed = true;
+        }
+
+        //CONTROL SUB STATE
+        switch (gp.ui.subMenuState){
+            case 0:
+                //CONTROL COMMAND
+                int maxCommandNum;
+                maxCommandNum = 1;
+                if (key == KeyEvent.VK_W) {
+                    gp.ui.commandNum_Menu--;
+//                    gp.playSoundEffect("Menu_Button", 11);
+                    if (gp.ui.commandNum_Menu < 0) {
+                        gp.ui.commandNum_Menu = maxCommandNum;
+                    }
+                }
+                if (key == KeyEvent.VK_S) {
+                    gp.ui.commandNum_Menu++;
+//                    gp.playSoundEffect("Menu_Button", 11);
+                    if (gp.ui.commandNum_Menu > maxCommandNum) {
+                        gp.ui.commandNum_Menu = 0;
+                    }
+                }
+                break;
+            case 1:
+                optionState(key);
+        }
+    }
+
+    private void characterStatusState(int key) {
+        if (key == KeyEvent.VK_ESCAPE) {
+//            gp.playSoundEffect("Menu", 10);
+            gp.gameState = gp.playState;
+        }
+    }
+
+    private void optionState(int key) {
+        if (key == KeyEvent.VK_ESCAPE) {
+//            gp.playSoundEffect("Menu", 10);
+            gp.gameState = gp.playState;
+            gp.ui.subOptionState = 0;
         }
         if (key == KeyEvent.VK_ENTER) {
             enterPressed = true;
 //            gp.playSoundEffect("clickItem", 14);
         }
         int maxCommandNum;
-        switch (gp.ui.subState) {
+        switch (gp.ui.subOptionState) {
             case 0:
-                maxCommandNum = 5;
+                maxCommandNum = 4;
                 if (key == KeyEvent.VK_W) {
                     gp.ui.commandNum--;
 //                    gp.playSoundEffect("Menu_Button", 11);
@@ -165,7 +217,7 @@ public class KeyHandler implements KeyListener {
                     }
                 }
                 if (key == KeyEvent.VK_A) {
-                    if (gp.ui.subState == 0) {
+                    if (gp.ui.subOptionState == 0) {
 //                        if (gp.ui.commandNum == 1 && gp.music.volumeScale > 0) {
 //                            gp.music.volumeScale--;
 //                            gp.music.checkVolume();
@@ -178,7 +230,7 @@ public class KeyHandler implements KeyListener {
                     }
                 }
                 if (key == KeyEvent.VK_D) {
-                    if (gp.ui.subState == 0) {
+                    if (gp.ui.subOptionState == 0) {
 //                        if (gp.ui.commandNum == 1 && gp.music.volumeScale >= 0) {
 //                            if (gp.music.volumeScale < 5) {
 //                                gp.music.volumeScale++;

@@ -31,19 +31,28 @@ public class UI {
 
     //IMAGES
     BufferedImage image;
-    BufferedImage playerImage;
+    BufferedImage playerImage_1, playerImage_2, playerImage_3, playerImage_4;
     BufferedImage mapImage_1;
     private final BufferedImage heart_full, heart_empty;
 
+    //SETTING FOR MENU
+    public int commandNum_Menu = 0;
+    public int subMenuState = 0;
+
     // SETTING
     public int commandNum = 0;
-    public int subState = 0;
+    public int subOptionState = 0;
 
     //COLOR
     final Color primaryColor_green = new Color(0x809d49);
     final Color primaryColor_greenOutline = new Color(0x236B06);
     final Color colorOfVolume = new Color(0x4155be);
 
+    //PLAYER ANIMATION
+    private BufferedImage[] playerFrames;
+    private int frameIndex = 0;
+    private int frameCounter = 0;
+    private int frameThreshold = 15;
 
     public UI(GamePanel gp) {
         this.gp = gp;
@@ -63,7 +72,14 @@ public class UI {
 
         //GRAPHICS
         //TITLE SCREEN
-        playerImage = setup("player/standRight_1", 32, 32);
+        playerImage_1 = setup("player/standRight_1", 32, 32);
+        playerImage_2 = setup("player/standRight_2", 32, 32);
+        playerImage_3 = setup("player/standRight_3", 32, 32);
+        playerImage_4 = setup("player/standRight_4", 32, 32);
+
+        playerFrames = new BufferedImage[] {
+                playerImage_1, playerImage_2, playerImage_3, playerImage_4
+        };
 
         //MAP SELECT SCREEN
         mapImage_1 = setup("maps/map_1", 256, 256);
@@ -111,34 +127,42 @@ public class UI {
         // OPTION STATE
         else if (gp.gameState == gp.optionState) {
             drawPLayerInformation();
-            drawOptionScreen();
+//            drawOptionScreen();
+        }
+        // CHARACTER STATUS STATE
+        else if (gp.gameState == gp.characterStatus) {
+//            drawCharacterStatus();
+            drawMenu();
         }
     }
 
     private void drawPLayerInformation() {
-        drawPlayerLife();
+        drawPlayerLife(gp.tileSize/4, gp.tileSize/4, gp.tileSize/2);
     }
 
-    private void drawPlayerLife() {
-        int x = gp.tileSize / 4;
-        int y = gp.tileSize / 4;
-
+    private void drawPlayerLife(int startX, int startY, int size) {
+        // Draw blank hearts
+        int x = startX;
+        int y = startY;
         int i = 0;
 
         // DRAW BLANK HEARTS
         while (i < gp.player.getMaxLife()) {
-            g2.drawImage(heart_empty, x, y, null);
+            g2.drawImage(heart_empty, x, y, size, size, null);
             i++;
-            x += (4 * gp.tileSize / 5);
+            x += (size * 1.2); // Adjust the spacing between hearts (size * 1.2 for padding)
         }
-        // RESET
-        x = gp.tileSize / 4;
-        y = gp.tileSize / 4;
+
+        // Reset position for full hearts
+        x = startX;
+        y = startY;
         i = 0;
+
+        // DRAW FULL HEARTS
         while (i < gp.player.getLife()) {
-            g2.drawImage(heart_full, x, y, null);
+            g2.drawImage(heart_full, x, y, size, size, null);
             i++;
-            x += (4 * gp.tileSize / 5);
+            x += (size * 1.2); // Adjust the spacing between hearts (size * 1.2 for padding)
         }
     }
 
@@ -184,7 +208,7 @@ public class UI {
         if (commandNum == 0) {
             g2.setColor(new Color(0xF9F07A));
             g2.drawString(text, x, y);
-            g2.drawImage(playerImage, x - 3 * gp.tileSize / 2, y - gp.tileSize, gp.tileSize, gp.tileSize, null);
+            g2.drawImage(playerImage_1, x - 3 * gp.tileSize / 2, y - gp.tileSize, gp.tileSize, gp.tileSize, null);
             g2.setColor(Color.white);
             if (gp.keyHandler.enterPressed == true) {
                 gp.gameState = gp.mapSelectState;
@@ -210,7 +234,7 @@ public class UI {
         if (commandNum == 1) {
             g2.setColor(new Color(0xF9F07A));
             g2.drawString(text, x, y);
-            g2.drawImage(playerImage, x - 3 * gp.tileSize / 2, y - gp.tileSize, gp.tileSize, gp.tileSize, null);
+            g2.drawImage(playerImage_1, x - 3 * gp.tileSize / 2, y - gp.tileSize, gp.tileSize, gp.tileSize, null);
             g2.setColor(Color.white);
             if (gp.keyHandler.enterPressed == true) {
                 gp.gameState = gp.mapSelectState;
@@ -236,7 +260,7 @@ public class UI {
         if (commandNum == 2) {
             g2.setColor(new Color(0xF9F07A));
             g2.drawString(text, x, y);
-            g2.drawImage(playerImage, x - 3 * gp.tileSize / 2, y - gp.tileSize, gp.tileSize, gp.tileSize, null);
+            g2.drawImage(playerImage_1, x - 3 * gp.tileSize / 2, y - gp.tileSize, gp.tileSize, gp.tileSize, null);
             g2.setColor(Color.white);
             if (gp.keyHandler.enterPressed == true) {
                 System.exit(0);
@@ -255,34 +279,144 @@ public class UI {
         gp.keyHandler.enterPressed = false;
     }
 
-    public void drawOptionScreen() {
+    private void drawMenu(){
         g2.setColor(new Color(0.222f, 0.222f, 0.222f, 0.7f));
         g2.fill(screenArea);
 
         // SUB WINDOW
-        int frameWidth = gp.tileSize * 5;
+        int frameWidth = gp.tileSize * 6;
         int frameHeight = gp.tileSize * 7;
         int frameX = getCenterForElement(gp.screenWidth, frameWidth);
         int frameY = getCenterForElement(gp.screenHeight, frameHeight);
 
-        // drawSubWindow(frameX, frameY, frameWidth, frameHeight);
-        drawSubWindow1(frameX, frameY, frameWidth, frameHeight, new Color(0x94a2e3), Color.BLACK, 5, 25);
-        g2.setColor(Color.white);
+        int frameButtonY = frameY + 20;
+        int spaceButton = 20;
+        int buttonWidth = gp.tileSize;
+        int buttonHeight = gp.tileSize;
+
+        Color selected = new Color(0xD6C0B3);
+        Color unSelected = new Color(0x493628);
+
+        Color characterButton = unSelected;
+        Color optionButton = unSelected;
+
+        if (commandNum_Menu == 0) {
+            characterButton = selected;
+        }
+        if (commandNum_Menu == 1) {
+            optionButton = selected;
+            if (gp.keyHandler.rightPressed){
+                subMenuState = 1;
+                commandNum = 0;
+            }
+            if (gp.keyHandler.leftPressed){
+                subMenuState = 0;
+                commandNum = 0;
+            }
+        }
+
+        //CHARACTER STATUS BUTTON
+        drawSubWindow1(frameX - 60, frameButtonY, gp.tileSize, gp.tileSize, characterButton, new Color(0x493628), 0, 25);
+
+        frameButtonY += (spaceButton + buttonHeight);
+
+        //OPTION STATUS BUTTON
+        drawSubWindow1(frameX - 60, frameButtonY, gp.tileSize, gp.tileSize, optionButton, new Color(0x493628), 0, 25);
+
+        // Draw the sub-window
+        drawSubWindow1(frameX, frameY, frameWidth, frameHeight, new Color(0xD6C0B3), new Color(0x493628), 10, 25);
+        g2.setColor(new Color(0x54473F));
         g2.setFont(g2.getFont().deriveFont(32F));
-        switch (subState) {
+
+        switch (commandNum_Menu) {
+            case 0:
+                drawCharacterStatus(frameWidth,frameHeight, frameX, frameY);
+                break;
+
+            case 1:
+                drawOptionScreen(frameWidth, frameHeight, frameX, frameY);
+                break;
+
+            case 3:
+                break;
+        }
+        gp.keyHandler.rightPressed = false;
+    }
+
+    private void drawCharacterStatus(int frameWidth, int frameHeight, int frameX, int frameY) {
+        // DRAW CHARACTER IMAGE
+        int imageX = frameX + 20;
+        int imageY = frameY + gp.tileSize + 40;
+        int imageWidth = gp.tileSize * 2;
+        int imageHeight = gp.tileSize * 2;
+        drawCharacterAnimation(imageX, imageY, imageWidth, imageHeight);
+
+        // CHARACTER SHADOW
+        g2.setColor(new Color(0, 0, 0, 0.3f));
+        int ovalWidth = gp.tileSize + 30;
+        int ovalHeight = gp.tileSize / 4;
+
+        int ovalX = getCenterForElement(imageX + imageWidth + frameX + 15, ovalWidth);
+        int ovalY = imageY + imageHeight - gp.tileSize / 8;
+
+        g2.fillOval(ovalX, ovalY, ovalWidth, ovalHeight);
+
+        //DRAW PLAYER STATUS
+        g2.setColor(new Color(0x493628));
+        int textY = gp.tileSize*3/2;
+        int lineSpacing = gp.tileSize / 2;
+
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 60F));
+        String title = "Player";
+        int titleWidth = g2.getFontMetrics().stringWidth(title);
+        int textX = frameX + (frameWidth - titleWidth) / 2;
+
+        g2.drawString(title, textX, textY);
+        textY += lineSpacing * 2;
+
+        textX += 20;
+        lineSpacing += 20;
+
+        //DRAW LIFE
+        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 35F));
+        g2.drawString("Life", textX, textY);
+        drawPlayerLife(textX + 100, textY - 35, 40);
+
+        textY += lineSpacing;
+
+        //DRAW BUFF
+        g2.drawString("Buff", textX, textY);
+        int tempX = textX + 100;
+        int temp2X = tempX;
+        int iconSpacing = 45;
+        for (int i = 0; i < gp.player.ownBuffManager.buffs.size(); i++) {
+            if (i % 3 == 0 && i != 0){
+                tempX = temp2X;
+                textY += lineSpacing;
+            }
+            g2.drawImage(gp.player.ownBuffManager.buffs.get(i).buffImage, tempX, textY - 35, 40, 40, null);
+            tempX += iconSpacing;
+        }
+        textY += lineSpacing;
+        //DRAW DEBUFF
+        g2.drawString("Debuff", textX, textY);
+    }
+
+    private void drawOptionScreen(int frameWidth, int frameHeight, int frameX, int frameY) {
+        switch (subOptionState) {
             case 0:
                 option_top(frameX, frameY);
                 break;
 
             case 1:
-                options_control(frameX, frameY);
                 break;
 
             case 2:
-                options_endGameConfirmation(frameX, frameY);
+                options_control(frameX, frameY);
                 break;
 
             case 3:
+                options_endGameConfirmation(frameX, frameY);
                 break;
         }
         gp.keyHandler.enterPressed = false;
@@ -335,7 +469,7 @@ public class UI {
         if (commandNum == 2) {
             g2.drawString(">", textX - 25, textY);
             if (gp.keyHandler.enterPressed) {
-                subState = 2;
+                subOptionState = 2;
                 commandNum = 0;
             }
         }
@@ -346,7 +480,7 @@ public class UI {
         if (commandNum == 3) {
             g2.drawString(">", textX - 25, textY);
             if (gp.keyHandler.enterPressed) {
-                subState = 3;
+                subOptionState = 3;
                 commandNum = 0;
             }
 
@@ -364,8 +498,6 @@ public class UI {
         }
 
         g2.setColor(colorOfVolume);
-
-
 //        //SAVE
 //        gp.config.saveConfig();
     }
@@ -378,43 +510,33 @@ public class UI {
         String text = "CONTROL";
         textY = frameY + gp.tileSize;
         g2.setFont(font8);
-        g2.drawString(text, center(text, gp.tileSize * 6, gp.tileSize * 8), textY);
-        g2.setFont(font4b);
+        textX = getCenterForElement(gp.tileSize * 6, g2.getFontMetrics().stringWidth(text));
+        g2.drawString(text, frameX + textX, textY);
 
-        textX = frameX + gp.tileSize * 3 / 2;
-        int textX1 = textX + gp.tileSize * 4;
+        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 33F));
+
+        textX = frameX + gp.tileSize;
+        int textX1 = textX + gp.tileSize * 3;
         textY += gp.tileSize;
         g2.drawString("Move", textX, textY);
         g2.drawString("W,A,S,D", textX1, textY);
 
         textY += gp.tileSize;
-        g2.drawString("Fishing", textX, textY);
+        g2.drawString("Placing boom", textX, textY);
         g2.drawString("Space", textX1, textY);
-
-        textY += gp.tileSize;
-        g2.drawString("Bag", textX, textY);
-        g2.drawString("B", textX1, textY);
 
         textY += gp.tileSize;
         g2.drawString("Menu", textX, textY);
         g2.drawString("ESC", textX1, textY);
 
-        textY += gp.tileSize;
-        g2.drawString("Collection", textX, textY);
-        g2.drawString("C", textX1, textY);
-
-        textY += gp.tileSize;
-        g2.drawString("Fish tank", textX, textY);
-        g2.drawString("L", textX1, textY);
-
         // BACK
         textX = frameX + gp.tileSize;
-        textY = frameY + gp.tileSize * 9;
+        textY = frameY + gp.tileSize * 6;
         g2.drawString("Back", textX, textY);
         if (commandNum == 0) {
             g2.drawString(">", textX - 25, textY);
             if (gp.keyHandler.enterPressed) {
-                subState = 0;
+                subOptionState = 0;
                 commandNum = 3;
             }
         }
@@ -422,7 +544,7 @@ public class UI {
 
     private void options_endGameConfirmation(int frameX, int frameY) {
         int textX = frameX + gp.tileSize;
-        int textY = frameY + gp.tileSize * 3;
+        int textY = frameY + gp.tileSize ;
 
         currentDialogue = "Quit the game and /nreturn to the tittle screen?";
 
@@ -439,7 +561,7 @@ public class UI {
         if (commandNum == 0) {
             g2.drawString(">", textX - 25, textY);
             if (gp.keyHandler.enterPressed) {
-                subState = 0;
+                subOptionState = 0;
                 gp.gameState = gp.titleState;
             }
         }
@@ -452,7 +574,7 @@ public class UI {
         if (commandNum == 1) {
             g2.drawString(">", textX - 25, textY);
             if (gp.keyHandler.enterPressed) {
-                subState = 0;
+                subOptionState = 0;
                 commandNum = 4;
             }
         }
@@ -464,12 +586,31 @@ public class UI {
         return gp.screenWidth / 2 - length / 2;
     }
 
-    protected void drawSubWindow1(int x, int y, int width, int height, Color cbg, Color cs, int strokeSize, int arc) {
-        g2.setColor(cbg);
-        g2.fillRoundRect(x, y, width, height, arc, arc);
-        g2.setColor(cs);
+    protected void drawSubWindow1(int x, int y, int width, int height, Color backgroundColor, Color strokeColor, int strokeSize, int arc) {
+        // Adjust coordinates and dimensions to account for the stroke width
+        int adjustedX = x + strokeSize / 2;
+        int adjustedY = y + strokeSize / 2;
+        int adjustedWidth = width - strokeSize;
+        int adjustedHeight = height - strokeSize;
+
+        // Set the color for the background and draw the filled rounded rectangle
+        g2.setColor(backgroundColor);
+        g2.fillRoundRect(adjustedX, adjustedY, adjustedWidth, adjustedHeight, arc, arc);
+
+        // Set the color and size for the stroke and draw the outline of the rounded rectangle
+        g2.setColor(strokeColor);
         g2.setStroke(new BasicStroke(strokeSize));
-        g2.drawRoundRect(x, y, width, height, arc, arc);
+        g2.drawRoundRect(adjustedX, adjustedY, adjustedWidth, adjustedHeight, arc, arc);
+    }
+
+    private void drawCharacterAnimation(int x, int y, int width, int height) {
+        frameCounter++;
+
+        if (frameCounter >= frameThreshold) {
+            frameIndex = (frameIndex + 1) % playerFrames.length;
+            frameCounter = 0;
+        }
+        g2.drawImage(playerFrames[frameIndex], x, y, width, height, null);
     }
 
     protected int center(String s, int imageX, int imageWidth) {
