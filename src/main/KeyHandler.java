@@ -37,12 +37,8 @@ public class KeyHandler implements KeyListener {
             if (gp.gameState == gp.playState) {
                 gamePlayerState(key);
             }
-            // OPTIONS STATE
-            else if (gp.gameState == gp.optionState) {
-                optionState(key);
-            }
-            // CHARACTER STATUS STATE
-            else if (gp.gameState == gp.characterStatus) {
+            // MENU STATE
+            else if (gp.gameState == gp.menuState) {
                 menuState(key);
             }
         }
@@ -76,17 +72,17 @@ public class KeyHandler implements KeyListener {
 
     private void titleState(int key) {
         if (key == KeyEvent.VK_W) {
-            gp.ui.commandNum--;
+            gp.ui.commandNum_Title--;
 //            gp.playSoundEffect("select_sound", 6);
-            if (gp.ui.commandNum < 0) {
-                gp.ui.commandNum = 2;
+            if (gp.ui.commandNum_Title < 0) {
+                gp.ui.commandNum_Title = 2;
             }
         }
         if (key == KeyEvent.VK_S) {
-            gp.ui.commandNum++;
+            gp.ui.commandNum_Title++;
 //            gp.playSoundEffect("select_sound", 6);
-            if (gp.ui.commandNum > 2) {
-                gp.ui.commandNum = 0;
+            if (gp.ui.commandNum_Title > 2) {
+                gp.ui.commandNum_Title = 0;
             }
         }
         if (key == KeyEvent.VK_ENTER) {
@@ -125,7 +121,7 @@ public class KeyHandler implements KeyListener {
             spacePressed = true;
         }
         if (key == KeyEvent.VK_ESCAPE) {
-            gp.gameState = gp.characterStatus;
+            gp.gameState = gp.menuState;
 //            gp.playSoundEffect("Menu", 10);
 //            gp.music.stop("Bird");
 //            gp.music.stop("Background");
@@ -178,6 +174,10 @@ public class KeyHandler implements KeyListener {
                 break;
             case 1:
                 optionState(key);
+                break;
+            case 2:
+                characterStatusState(key);
+                break;
         }
     }
 
@@ -185,6 +185,38 @@ public class KeyHandler implements KeyListener {
         if (key == KeyEvent.VK_ESCAPE) {
 //            gp.playSoundEffect("Menu", 10);
             gp.gameState = gp.playState;
+        }
+        int maxCommandNum;
+        maxCommandNum = 2;
+        if (key == KeyEvent.VK_W) {
+            gp.ui.commandNum--;
+            if (gp.ui.commandNum < 0) {
+                gp.ui.commandNum = maxCommandNum;
+            }
+        }
+        if (key == KeyEvent.VK_S) {
+            gp.ui.commandNum++;
+//                    gp.playSoundEffect("Menu_Button", 11);
+            if (gp.ui.commandNum > maxCommandNum) {
+                gp.ui.commandNum = 0;
+            }
+        }
+        int maxCommandNum_Buff = gp.player.ownBuffManager.buffs.size() - 1;
+
+        if (gp.ui.commandNum == 1){
+            if (key == KeyEvent.VK_A){
+                gp.ui.commandNum_Buff--;
+                if (gp.ui.commandNum_Buff < -2) {
+                    gp.ui.commandNum_Buff = -2;
+                }
+            }
+            if (key == KeyEvent.VK_D){
+                if (gp.ui.commandNum_Buff == -2) gp.ui.commandNum_Buff++;
+                gp.ui.commandNum_Buff++;
+                if (gp.ui.commandNum_Buff > maxCommandNum_Buff) {
+                    gp.ui.commandNum_Buff = -2;
+                }
+            }
         }
     }
 

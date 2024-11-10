@@ -8,7 +8,6 @@ import entity.EntityManager;
 import entity.Player;
 import event.EventHandler;
 import object.BoomManager;
-import object.Bullet_Slime;
 import tile.TileManager;
 import tile_Interact.InteractiveTile;
 
@@ -82,8 +81,7 @@ public class GamePanel extends JPanel implements Runnable {
     public final int titleState = 0;
     public final int playState = 1;
     public final int mapSelectState = 2;
-    public final int optionState = 3;
-    public final int characterStatus = 4;
+    public final int menuState = 3;
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));

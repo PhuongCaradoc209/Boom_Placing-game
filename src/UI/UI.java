@@ -11,6 +11,8 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class UI {
@@ -24,6 +26,8 @@ public class UI {
     protected String currentDialogue = "";
     protected String currentNotification = "";
     protected String currentTittle = "";
+    List<String> lines;
+    int lineHeight, yOffset;
 
     //GRAPHICS
     protected final Area screenArea;
@@ -34,19 +38,27 @@ public class UI {
     BufferedImage playerImage_1, playerImage_2, playerImage_3, playerImage_4;
     BufferedImage mapImage_1;
     private final BufferedImage heart_full, heart_empty;
+    BufferedImage iconSelected;
 
     //SETTING FOR MENU
     public int commandNum_Menu = 0;
+    public int commandNum_Buff = -2;
     public int subMenuState = 0;
 
-    // SETTING
-    public int commandNum = 0;
+    //TITLE SETTING
+    public int commandNum_Title = 0;
+
+    //OPTION SETTING
+    public int commandNum = -1;
     public int subOptionState = 0;
 
     //COLOR
     final Color primaryColor_green = new Color(0x809d49);
     final Color primaryColor_greenOutline = new Color(0x236B06);
     final Color colorOfVolume = new Color(0x4155be);
+    final Color menuBackground = new Color(0xF7DCB9);
+    final Color menuBorder = new Color(0x914F1E);
+    final Color menuSubBackground = new Color(0xDEAC80);
 
     //PLAYER ANIMATION
     private BufferedImage[] playerFrames;
@@ -77,9 +89,12 @@ public class UI {
         playerImage_3 = setup("player/standRight_3", 32, 32);
         playerImage_4 = setup("player/standRight_4", 32, 32);
 
-        playerFrames = new BufferedImage[] {
+        playerFrames = new BufferedImage[]{
                 playerImage_1, playerImage_2, playerImage_3, playerImage_4
         };
+
+        //ICON SELECTED
+        iconSelected = setup("icon/selectedIcon_1", 32, 32);
 
         //MAP SELECT SCREEN
         mapImage_1 = setup("maps/map_1", 256, 256);
@@ -124,20 +139,15 @@ public class UI {
         else if (gp.gameState == gp.mapSelectState) {
             drawMapSelectScreen();
         }
-        // OPTION STATE
-        else if (gp.gameState == gp.optionState) {
-            drawPLayerInformation();
-//            drawOptionScreen();
-        }
-        // CHARACTER STATUS STATE
-        else if (gp.gameState == gp.characterStatus) {
+        // MENU STATE
+        else if (gp.gameState == gp.menuState) {
 //            drawCharacterStatus();
             drawMenu();
         }
     }
 
     private void drawPLayerInformation() {
-        drawPlayerLife(gp.tileSize/4, gp.tileSize/4, gp.tileSize/2);
+        drawPlayerLife(gp.tileSize / 4, gp.tileSize / 4, gp.tileSize / 2);
     }
 
     private void drawPlayerLife(int startX, int startY, int size) {
@@ -205,7 +215,7 @@ public class UI {
         // DRAW TEXT
         g2.setColor(Color.white);
         g2.drawString(text, x, y);
-        if (commandNum == 0) {
+        if (commandNum_Title == 0) {
             g2.setColor(new Color(0xF9F07A));
             g2.drawString(text, x, y);
             g2.drawImage(playerImage_1, x - 3 * gp.tileSize / 2, y - gp.tileSize, gp.tileSize, gp.tileSize, null);
@@ -231,7 +241,7 @@ public class UI {
         // DRAW TEXT
         g2.setColor(Color.white);
         g2.drawString(text, x, y);
-        if (commandNum == 1) {
+        if (commandNum_Title == 1) {
             g2.setColor(new Color(0xF9F07A));
             g2.drawString(text, x, y);
             g2.drawImage(playerImage_1, x - 3 * gp.tileSize / 2, y - gp.tileSize, gp.tileSize, gp.tileSize, null);
@@ -257,7 +267,7 @@ public class UI {
         // DRAW TEXT
         g2.setColor(Color.white);
         g2.drawString(text, x, y);
-        if (commandNum == 2) {
+        if (commandNum_Title == 2) {
             g2.setColor(new Color(0xF9F07A));
             g2.drawString(text, x, y);
             g2.drawImage(playerImage_1, x - 3 * gp.tileSize / 2, y - gp.tileSize, gp.tileSize, gp.tileSize, null);
@@ -279,7 +289,7 @@ public class UI {
         gp.keyHandler.enterPressed = false;
     }
 
-    private void drawMenu(){
+    private void drawMenu() {
         g2.setColor(new Color(0.222f, 0.222f, 0.222f, 0.7f));
         g2.fill(screenArea);
 
@@ -302,16 +312,25 @@ public class UI {
 
         if (commandNum_Menu == 0) {
             characterButton = selected;
+            if (gp.keyHandler.rightPressed && subMenuState == 0) {
+                subMenuState = 2;
+                commandNum = 0;
+            }
+
+            if (gp.keyHandler.leftPressed && commandNum_Buff == -2) {
+                subMenuState = 0;
+                commandNum = -1;
+            }
         }
         if (commandNum_Menu == 1) {
             optionButton = selected;
-            if (gp.keyHandler.rightPressed){
+            if (gp.keyHandler.rightPressed) {
                 subMenuState = 1;
                 commandNum = 0;
             }
-            if (gp.keyHandler.leftPressed){
+            if (gp.keyHandler.leftPressed) {
                 subMenuState = 0;
-                commandNum = 0;
+                commandNum = -1;
             }
         }
 
@@ -324,13 +343,13 @@ public class UI {
         drawSubWindow1(frameX - 60, frameButtonY, gp.tileSize, gp.tileSize, optionButton, new Color(0x493628), 0, 25);
 
         // Draw the sub-window
-        drawSubWindow1(frameX, frameY, frameWidth, frameHeight, new Color(0xD6C0B3), new Color(0x493628), 10, 25);
+        drawSubWindow1(frameX, frameY, frameWidth, frameHeight, menuBackground, menuBorder, 10, 25);
         g2.setColor(new Color(0x54473F));
         g2.setFont(g2.getFont().deriveFont(32F));
 
         switch (commandNum_Menu) {
             case 0:
-                drawCharacterStatus(frameWidth,frameHeight, frameX, frameY);
+                drawCharacterStatus(frameWidth, frameHeight, frameX, frameY);
                 break;
 
             case 1:
@@ -363,7 +382,7 @@ public class UI {
 
         //DRAW PLAYER STATUS
         g2.setColor(new Color(0x493628));
-        int textY = gp.tileSize*3/2;
+        int textY = gp.tileSize * 3 / 2;
         int lineSpacing = gp.tileSize / 2;
 
         g2.setFont(g2.getFont().deriveFont(Font.BOLD, 60F));
@@ -377,29 +396,62 @@ public class UI {
         textX += 20;
         lineSpacing += 20;
 
+        String textContent;
+        int textContentY = textY + gp.tileSize * 3;
+        int rectWidth = frameWidth - 100;
+        int rectX = frameX + getCenterForElement(frameWidth, rectWidth);
+
+        g2.setColor(menuSubBackground);
+        g2.fillRoundRect(rectX, textContentY - 50, rectWidth, gp.tileSize * 2, 10, 10);
+
         //DRAW LIFE
+        g2.setColor(new Color(0x493628));
         g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 35F));
         g2.drawString("Life", textX, textY);
         drawPlayerLife(textX + 100, textY - 35, 40);
-
+        if (commandNum == 0) {
+            g2.drawString(">", textX - 25, textY);
+            textContent = "This shows the player's current life status";
+            drawTextBlock(g2, textContent, rectX, textContentY, rectWidth);
+        }
         textY += lineSpacing;
 
         //DRAW BUFF
+        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 35F));
         g2.drawString("Buff", textX, textY);
         int tempX = textX + 100;
         int temp2X = tempX;
         int iconSpacing = 45;
         for (int i = 0; i < gp.player.ownBuffManager.buffs.size(); i++) {
-            if (i % 3 == 0 && i != 0){
+            if (i % 3 == 0 && i != 0) {
                 tempX = temp2X;
                 textY += lineSpacing;
             }
             g2.drawImage(gp.player.ownBuffManager.buffs.get(i).buffImage, tempX, textY - 35, 40, 40, null);
+            if (commandNum == 1 && commandNum_Buff == i) {
+                g2.drawImage(iconSelected, tempX, textY - 35, 40, 40, null);
+                g2.drawString(gp.player.ownBuffManager.buffs.get(i).getName() + " (Max: " + gp.player.ownBuffManager.buffs.get(i).getMaxAmount() + ")", rectX + 10, textContentY);
+                String description = gp.player.ownBuffManager.buffs.get(i).getDescription();
+                drawTextBlock(g2, description, rectX, textContentY + g2.getFontMetrics().getHeight(), rectWidth);
+            }
+
             tempX += iconSpacing;
         }
+        if (commandNum == 1) {
+            g2.drawString(">", textX - 25, textY);
+            if (commandNum_Buff == -1 || commandNum_Buff == -2) {
+                textContent = "Buffs provide temporary boosts to the player";
+                drawTextBlock(g2, textContent, rectX, textContentY, rectWidth);
+            }
+        }
+
         textY += lineSpacing;
         //DRAW DEBUFF
+        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 35F));
         g2.drawString("Debuff", textX, textY);
+        if (commandNum == 2) {
+            g2.drawString(">", textX - 25, textY);
+        }
     }
 
     private void drawOptionScreen(int frameWidth, int frameHeight, int frameX, int frameY) {
@@ -425,7 +477,6 @@ public class UI {
     private void option_top(int frameX, int frameY) {
         int textX;
         int textY;
-
         // TITLE
         g2.setFont(font);
         String text = "OPTIONS";
@@ -483,7 +534,6 @@ public class UI {
                 subOptionState = 3;
                 commandNum = 0;
             }
-
         }
 
         // BACK
@@ -537,14 +587,14 @@ public class UI {
             g2.drawString(">", textX - 25, textY);
             if (gp.keyHandler.enterPressed) {
                 subOptionState = 0;
-                commandNum = 3;
+                commandNum = 2;
             }
         }
     }
 
     private void options_endGameConfirmation(int frameX, int frameY) {
         int textX = frameX + gp.tileSize;
-        int textY = frameY + gp.tileSize ;
+        int textY = frameY + gp.tileSize;
 
         currentDialogue = "Quit the game and /nreturn to the tittle screen?";
 
@@ -575,7 +625,7 @@ public class UI {
             g2.drawString(">", textX - 25, textY);
             if (gp.keyHandler.enterPressed) {
                 subOptionState = 0;
-                commandNum = 4;
+                commandNum = 3;
             }
         }
     }
@@ -621,6 +671,46 @@ public class UI {
     private int getCenterForElement(int parentWidth, int childWidth) {
         return (parentWidth - childWidth) / 2;
     }
+
+    private void drawTextBlock(Graphics2D g2, String textContent, int rectX, int textContentY, int rectWidth) {
+        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 25F));
+        List<String> lines = splitTextIntoLines(g2, textContent, rectWidth - 20);
+        int lineHeight = g2.getFontMetrics().getHeight();
+        int yOffset = textContentY;
+
+        for (String line : lines) {
+            g2.drawString(line, rectX + 10, yOffset);
+            yOffset += lineHeight;
+        }
+    }
+
+    private List<String> splitTextIntoLines(Graphics2D g2, String text, int maxWidth) {
+        List<String> lines = new ArrayList<>();
+        FontMetrics metrics = g2.getFontMetrics();
+        String[] words = text.split(" ");
+        StringBuilder currentLine = new StringBuilder();
+
+        for (String word : words) {
+            String testLine = currentLine + (currentLine.length() == 0 ? "" : " ") + word;
+            int testLineWidth = metrics.stringWidth(testLine);
+
+            if (testLineWidth <= maxWidth) {
+                currentLine.append((currentLine.length() == 0 ? "" : " ") + word);
+            } else {
+                if (currentLine.length() > 0) {
+                    lines.add(currentLine.toString());
+                }
+                currentLine = new StringBuilder(word);
+            }
+        }
+
+        if (currentLine.length() > 0) {
+            lines.add(currentLine.toString());
+        }
+
+        return lines;
+    }
+
 
     private BufferedImage setup(String imagePath, int width, int height) {
         UtilityTool uTool = new UtilityTool();

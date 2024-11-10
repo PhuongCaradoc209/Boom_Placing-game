@@ -25,8 +25,9 @@ public abstract class Buff {
     public Rectangle solidArea;
     public int solidAreaDefaultX, solidAreaDefaultY;
 
-    protected int maxAmount;
+    private int maxAmount;
     private String name;
+    private String description;
 
     private double time = 0;
     private double amplitude = 5; // biên độ dao động
@@ -172,5 +173,21 @@ public abstract class Buff {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public int getMaxAmount() {
+        return maxAmount;
+    }
+
+    public void setMaxAmount(int maxAmount) {
+        this.maxAmount = maxAmount;
     }
 }
