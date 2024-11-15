@@ -39,6 +39,8 @@ public class UI {
     BufferedImage mapImage_1;
     private final BufferedImage heart_full, heart_empty;
     BufferedImage iconSelected;
+    BufferedImage controlIcon;
+    BufferedImage playerIcon;
 
     //SETTING FOR MENU
     public int commandNum_Menu = 0;
@@ -56,9 +58,11 @@ public class UI {
     final Color primaryColor_green = new Color(0x809d49);
     final Color primaryColor_greenOutline = new Color(0x236B06);
     final Color colorOfVolume = new Color(0x4155be);
-    final Color menuBackground = new Color(0xF7DCB9);
-    final Color menuBorder = new Color(0x914F1E);
-    final Color menuSubBackground = new Color(0xDEAC80);
+    final Color menuBackground = new Color(0x574852);
+    final Color menuBorder = new Color(0xba9158);
+    final Color menuSubBackground = new Color(0xba9158);
+    final Color menuColorFont1 = new Color(0xd2b287);
+    final Color menuColorFont2 = new Color(0x574852);
 
     //PLAYER ANIMATION
     private BufferedImage[] playerFrames;
@@ -93,8 +97,10 @@ public class UI {
                 playerImage_1, playerImage_2, playerImage_3, playerImage_4
         };
 
-        //ICON SELECTED
+        //ICON
         iconSelected = setup("icon/selectedIcon_1", 32, 32);
+        controlIcon = setup("icon/control", 32, 32);
+        playerIcon = setup("icon/player", 32, 32);
 
         //MAP SELECT SCREEN
         mapImage_1 = setup("maps/map_1", 256, 256);
@@ -304,8 +310,8 @@ public class UI {
         int buttonWidth = gp.tileSize;
         int buttonHeight = gp.tileSize;
 
-        Color selected = new Color(0xD6C0B3);
-        Color unSelected = new Color(0x493628);
+        Color selected = new Color(0xba9158);
+        Color unSelected = new Color(0x574852);
 
         Color characterButton = unSelected;
         Color optionButton = unSelected;
@@ -317,7 +323,7 @@ public class UI {
                 commandNum = 0;
             }
 
-            if (gp.keyHandler.leftPressed && commandNum_Buff == -2) {
+            if (gp.keyHandler.leftPressed && (commandNum_Buff == -2 || commandNum != 1)) {
                 subMenuState = 0;
                 commandNum = -1;
             }
@@ -336,15 +342,26 @@ public class UI {
 
         //CHARACTER STATUS BUTTON
         drawSubWindow1(frameX - 60, frameButtonY, gp.tileSize, gp.tileSize, characterButton, new Color(0x493628), 0, 25);
-
+        g2.drawImage(playerIcon,
+                frameX - 68 + (gp.tileSize - gp.tileSize + 10) / 2,
+                frameButtonY + (gp.tileSize - gp.tileSize + 10) / 2,
+                gp.tileSize - 10,
+                gp.tileSize - 10,
+                null);
         frameButtonY += (spaceButton + buttonHeight);
 
         //OPTION STATUS BUTTON
         drawSubWindow1(frameX - 60, frameButtonY, gp.tileSize, gp.tileSize, optionButton, new Color(0x493628), 0, 25);
+        g2.drawImage(controlIcon,
+                frameX - 68 + (gp.tileSize - gp.tileSize + 10) / 2,
+                frameButtonY + (gp.tileSize - gp.tileSize + 10) / 2,
+                gp.tileSize - 10,
+                gp.tileSize - 10,
+                null);
 
         // Draw the sub-window
         drawSubWindow1(frameX, frameY, frameWidth, frameHeight, menuBackground, menuBorder, 10, 25);
-        g2.setColor(new Color(0x54473F));
+        g2.setColor(menuColorFont1);
         g2.setFont(g2.getFont().deriveFont(32F));
 
         switch (commandNum_Menu) {
@@ -381,7 +398,7 @@ public class UI {
         g2.fillOval(ovalX, ovalY, ovalWidth, ovalHeight);
 
         //DRAW PLAYER STATUS
-        g2.setColor(new Color(0x493628));
+        g2.setColor(menuColorFont1);
         int textY = gp.tileSize * 3 / 2;
         int lineSpacing = gp.tileSize / 2;
 
@@ -405,18 +422,20 @@ public class UI {
         g2.fillRoundRect(rectX, textContentY - 50, rectWidth, gp.tileSize * 2, 10, 10);
 
         //DRAW LIFE
-        g2.setColor(new Color(0x493628));
+        g2.setColor(menuColorFont1);
         g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 35F));
         g2.drawString("Life", textX, textY);
         drawPlayerLife(textX + 100, textY - 35, 40);
         if (commandNum == 0) {
             g2.drawString(">", textX - 25, textY);
+            g2.setColor(menuColorFont2);
             textContent = "This shows the player's current life status";
             drawTextBlock(g2, textContent, rectX, textContentY, rectWidth);
         }
         textY += lineSpacing;
 
         //DRAW BUFF
+        g2.setColor(menuColorFont1);
         g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 35F));
         g2.drawString("Buff", textX, textY);
         int tempX = textX + 100;
@@ -429,17 +448,22 @@ public class UI {
             }
             g2.drawImage(gp.player.ownBuffManager.buffs.get(i).buffImage, tempX, textY - 35, 40, 40, null);
             if (commandNum == 1 && commandNum_Buff == i) {
+                g2.setFont(g2.getFont().deriveFont(Font.BOLD, 35F));
+                g2.setColor(menuColorFont2);
                 g2.drawImage(iconSelected, tempX, textY - 35, 40, 40, null);
-                g2.drawString(gp.player.ownBuffManager.buffs.get(i).getName() + " (Max: " + gp.player.ownBuffManager.buffs.get(i).getMaxAmount() + ")", rectX + 10, textContentY);
+                g2.drawString(gp.player.ownBuffManager.buffs.get(i).getName() + " (Max: " + gp.player.ownBuffManager.buffs.get(i).getMaxAmount() + ")", rectX + 20, textContentY);
                 String description = gp.player.ownBuffManager.buffs.get(i).getDescription();
                 drawTextBlock(g2, description, rectX, textContentY + g2.getFontMetrics().getHeight(), rectWidth);
             }
-
             tempX += iconSpacing;
         }
         if (commandNum == 1) {
+            g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 35F));
+            g2.setColor(menuColorFont1);
             g2.drawString(">", textX - 25, textY);
             if (commandNum_Buff == -1 || commandNum_Buff == -2) {
+                g2.setColor(menuColorFont2);
+                g2.setFont(g2.getFont().deriveFont(Font.BOLD, 35F));
                 textContent = "Buffs provide temporary boosts to the player";
                 drawTextBlock(g2, textContent, rectX, textContentY, rectWidth);
             }
@@ -447,6 +471,7 @@ public class UI {
 
         textY += lineSpacing;
         //DRAW DEBUFF
+        g2.setColor(menuColorFont1);
         g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 35F));
         g2.drawString("Debuff", textX, textY);
         if (commandNum == 2) {
@@ -479,7 +504,7 @@ public class UI {
         int textY;
         // TITLE
         g2.setFont(font);
-        String text = "OPTIONS";
+        String text = "CONTROL";
         textX = getXforCenteredText(text);
         textY = frameY + gp.tileSize / 2;
         g2.drawString(text, textX, textY + gp.tileSize * 3 / 4);
@@ -674,12 +699,12 @@ public class UI {
 
     private void drawTextBlock(Graphics2D g2, String textContent, int rectX, int textContentY, int rectWidth) {
         g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 25F));
-        List<String> lines = splitTextIntoLines(g2, textContent, rectWidth - 20);
+        List<String> lines = splitTextIntoLines(g2, textContent, rectWidth - 40);
         int lineHeight = g2.getFontMetrics().getHeight();
         int yOffset = textContentY;
 
         for (String line : lines) {
-            g2.drawString(line, rectX + 10, yOffset);
+            g2.drawString(line, rectX + 20, yOffset);
             yOffset += lineHeight;
         }
     }
@@ -710,7 +735,6 @@ public class UI {
 
         return lines;
     }
-
 
     private BufferedImage setup(String imagePath, int width, int height) {
         UtilityTool uTool = new UtilityTool();
