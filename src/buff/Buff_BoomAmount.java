@@ -10,8 +10,9 @@ public class Buff_BoomAmount extends Buff {
         setDeBuff(false);
 
         getImage();
-        maxAmount = 2; //3
-        setName("Buff_BoomAmount");
+        setMaxAmount(2); //3
+        setName("Multi-Bomb");
+        setDescription("Adds one extra bomb for each buff, allowing the player to place more bombs simultaneously.");
     }
     @Override
     public void getImage() {

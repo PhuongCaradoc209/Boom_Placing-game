@@ -71,7 +71,7 @@ public class Entity {
     protected int shotAvailableCounter = 0;
 
     //BUFF
-    BuffManager ownBuffManager;
+    public BuffManager ownBuffManager;
 
     //WEAPON
     protected Projectile projectile;

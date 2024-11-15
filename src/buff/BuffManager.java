@@ -26,7 +26,7 @@ public class BuffManager {
             }
         }
 
-        if (appearCounter < buff.maxAmount || buff.maxAmount == -1) {
+        if (appearCounter < buff.getMaxAmount() || buff.getMaxAmount() == -1) {
             buffs.add(buff);
             buff.setTarget(target);
             buff.applyEffect();

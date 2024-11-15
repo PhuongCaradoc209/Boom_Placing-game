@@ -37,9 +37,9 @@ public class KeyHandler implements KeyListener {
             if (gp.gameState == gp.playState) {
                 gamePlayerState(key);
             }
-            // OPTIONS STATE
-            else if (gp.gameState == gp.optionState) {
-                optionState(key);
+            // MENU STATE
+            else if (gp.gameState == gp.menuState) {
+                menuState(key);
             }
         }
     }
@@ -72,17 +72,17 @@ public class KeyHandler implements KeyListener {
 
     private void titleState(int key) {
         if (key == KeyEvent.VK_W) {
-            gp.ui.commandNum--;
+            gp.ui.commandNum_Title--;
 //            gp.playSoundEffect("select_sound", 6);
-            if (gp.ui.commandNum < 0) {
-                gp.ui.commandNum = 2;
+            if (gp.ui.commandNum_Title < 0) {
+                gp.ui.commandNum_Title = 2;
             }
         }
         if (key == KeyEvent.VK_S) {
-            gp.ui.commandNum++;
+            gp.ui.commandNum_Title++;
 //            gp.playSoundEffect("select_sound", 6);
-            if (gp.ui.commandNum > 2) {
-                gp.ui.commandNum = 0;
+            if (gp.ui.commandNum_Title > 2) {
+                gp.ui.commandNum_Title = 0;
             }
         }
         if (key == KeyEvent.VK_ENTER) {
@@ -121,7 +121,7 @@ public class KeyHandler implements KeyListener {
             spacePressed = true;
         }
         if (key == KeyEvent.VK_ESCAPE) {
-            gp.gameState = gp.optionState;
+            gp.gameState = gp.menuState;
 //            gp.playSoundEffect("Menu", 10);
 //            gp.music.stop("Bird");
 //            gp.music.stop("Background");
@@ -136,20 +136,104 @@ public class KeyHandler implements KeyListener {
         }
     }
 
-    public void optionState(int key) {
+    private void menuState(int key) {
         if (key == KeyEvent.VK_ESCAPE) {
 //            gp.playSoundEffect("Menu", 10);
             gp.gameState = gp.playState;
-            gp.ui.subState = 0;
+        }
+
+        if (key == KeyEvent.VK_D) {
+            rightPressed = true;
+//            gp.playSoundEffect("clickItem", 14);
+        }
+
+        if (key == KeyEvent.VK_A) {
+            leftPressed = true;
+        }
+
+        //CONTROL SUB STATE
+        switch (gp.ui.subMenuState){
+            case 0:
+                //CONTROL COMMAND
+                int maxCommandNum;
+                maxCommandNum = 1;
+                if (key == KeyEvent.VK_W) {
+                    gp.ui.commandNum_Menu--;
+//                    gp.playSoundEffect("Menu_Button", 11);
+                    if (gp.ui.commandNum_Menu < 0) {
+                        gp.ui.commandNum_Menu = maxCommandNum;
+                    }
+                }
+                if (key == KeyEvent.VK_S) {
+                    gp.ui.commandNum_Menu++;
+//                    gp.playSoundEffect("Menu_Button", 11);
+                    if (gp.ui.commandNum_Menu > maxCommandNum) {
+                        gp.ui.commandNum_Menu = 0;
+                    }
+                }
+                break;
+            case 1:
+                optionState(key);
+                break;
+            case 2:
+                characterStatusState(key);
+                break;
+        }
+    }
+
+    private void characterStatusState(int key) {
+        if (key == KeyEvent.VK_ESCAPE) {
+//            gp.playSoundEffect("Menu", 10);
+            gp.gameState = gp.playState;
+        }
+        int maxCommandNum;
+        maxCommandNum = 2;
+        if (key == KeyEvent.VK_W) {
+            gp.ui.commandNum--;
+            if (gp.ui.commandNum < 0) {
+                gp.ui.commandNum = maxCommandNum;
+            }
+        }
+        if (key == KeyEvent.VK_S) {
+            gp.ui.commandNum++;
+//                    gp.playSoundEffect("Menu_Button", 11);
+            if (gp.ui.commandNum > maxCommandNum) {
+                gp.ui.commandNum = 0;
+            }
+        }
+        int maxCommandNum_Buff = gp.player.ownBuffManager.buffs.size() - 1;
+
+        if (gp.ui.commandNum == 1){
+            if (key == KeyEvent.VK_A){
+                gp.ui.commandNum_Buff--;
+                if (gp.ui.commandNum_Buff < -2) {
+                    gp.ui.commandNum_Buff = -2;
+                }
+            }
+            if (key == KeyEvent.VK_D){
+                if (gp.ui.commandNum_Buff == -2) gp.ui.commandNum_Buff++;
+                gp.ui.commandNum_Buff++;
+                if (gp.ui.commandNum_Buff > maxCommandNum_Buff) {
+                    gp.ui.commandNum_Buff = -2;
+                }
+            }
+        }
+    }
+
+    private void optionState(int key) {
+        if (key == KeyEvent.VK_ESCAPE) {
+//            gp.playSoundEffect("Menu", 10);
+            gp.gameState = gp.playState;
+            gp.ui.subOptionState = 0;
         }
         if (key == KeyEvent.VK_ENTER) {
             enterPressed = true;
 //            gp.playSoundEffect("clickItem", 14);
         }
         int maxCommandNum;
-        switch (gp.ui.subState) {
+        switch (gp.ui.subOptionState) {
             case 0:
-                maxCommandNum = 5;
+                maxCommandNum = 4;
                 if (key == KeyEvent.VK_W) {
                     gp.ui.commandNum--;
 //                    gp.playSoundEffect("Menu_Button", 11);
@@ -165,7 +249,7 @@ public class KeyHandler implements KeyListener {
                     }
                 }
                 if (key == KeyEvent.VK_A) {
-                    if (gp.ui.subState == 0) {
+                    if (gp.ui.subOptionState == 0) {
 //                        if (gp.ui.commandNum == 1 && gp.music.volumeScale > 0) {
 //                            gp.music.volumeScale--;
 //                            gp.music.checkVolume();
@@ -178,7 +262,7 @@ public class KeyHandler implements KeyListener {
                     }
                 }
                 if (key == KeyEvent.VK_D) {
-                    if (gp.ui.subState == 0) {
+                    if (gp.ui.subOptionState == 0) {
 //                        if (gp.ui.commandNum == 1 && gp.music.volumeScale >= 0) {
 //                            if (gp.music.volumeScale < 5) {
 //                                gp.music.volumeScale++;

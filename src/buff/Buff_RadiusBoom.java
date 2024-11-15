@@ -10,8 +10,9 @@ public class Buff_RadiusBoom extends Buff {
         setDeBuff(false);
 
         getImage();
-        maxAmount = 2;
-        setName("Buff_RadiusBoom");
+        setMaxAmount(2);
+        setName("Blast Radius+");
+        setDescription("Increases the bomb's explosion radius by one additional cell.");
     }
     @Override
     public void getImage() {
