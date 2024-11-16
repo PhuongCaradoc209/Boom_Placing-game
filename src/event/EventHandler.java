@@ -68,9 +68,8 @@ public class EventHandler {
             entity.setLife(entity.getLife() - 1);
             entity.invisible = true;
         } else {
-            if (entity != gp.player) {
-                entity.setDead(true);
-            }
+            entity.setLife(entity.getLife() - 1);
+            entity.setDead(true);
         }
     }
 

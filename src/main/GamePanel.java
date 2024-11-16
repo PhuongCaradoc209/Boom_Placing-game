@@ -30,7 +30,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     //WORLD SETTINGS
     public final int maxMap = 1;
-    public int currentMap = 0;
+    public int currentMap;
     public final int maxWorldCol = 16;
     public final int maxWorldRow = 16;
     public final int worldWidth = maxWorldCol * tileSize;//2400
@@ -82,6 +82,7 @@ public class GamePanel extends JPanel implements Runnable {
     public final int playState = 1;
     public final int mapSelectState = 2;
     public final int menuState = 3;
+    public final int gameOverState = 4;
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -148,9 +149,11 @@ public class GamePanel extends JPanel implements Runnable {
         entityManager.addEntity(player);
 
         //ADD ENTITY FOR MANAGER
-        for (Entity entity : enemy[currentMap]) {
-            if (entity != null) {
-                entityManager.addEntity(entity);
+        for (int i = 0; i < maxMap; i++) {
+            for (Entity entity : enemy[i]) {
+                if (entity != null) {
+                    entityManager.addEntity(entity);
+                }
             }
         }
 
