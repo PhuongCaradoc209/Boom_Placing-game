@@ -54,9 +54,6 @@ public class UI {
     public int commandNum = -1;
     public int subOptionState = 0;
 
-    //GAME OVER SETTINGS
-    public int commandNum_Over = 0;
-
     //COLOR
     final Color primaryColor_green = new Color(0x809d49);
     final Color primaryColor_greenOutline = new Color(0x236B06);
@@ -668,25 +665,12 @@ public class UI {
         y = gp.tileSize * 4;
         g2.drawString(text, x, y);
 
-
-        //RETRY
-        g2.setFont(g2.getFont().deriveFont(50f));
-        g2.setColor(Color.white);
-        text = "Retry";
-        x = getXforCenteredText(text);
-        y += gp.tileSize;
-        g2.drawString(text, x, y);
-        if (commandNum_Over == 0){
-            g2.drawString(">", x - 40, y);
-        }
-
         text = "Quit";
         x= getXforCenteredText(text);
         y += gp.tileSize;
         g2.drawString(text, x, y);
-        if (commandNum_Over == 1){
             g2.drawString(">", x - 40, y);
-        }
+
     }
 
     //FEATURE METHOD
