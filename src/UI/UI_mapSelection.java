@@ -83,7 +83,6 @@ public class UI_mapSelection {
             arrowHoverProgress = 0.0f;
         }
 
-        // Tăng dần giá trị arrowHoverProgress lên đến 1.0f
         if (arrowHoverProgress < 1.0f) {
             arrowHoverProgress += hoverSpeed;
             if (arrowHoverProgress > 1.0f) {

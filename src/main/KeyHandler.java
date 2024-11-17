@@ -12,6 +12,7 @@ public class KeyHandler implements KeyListener {
     // DEBUG
     boolean checkDrawTime = false;
     GamePanel gp;
+
     public KeyHandler(GamePanel gp) {
         this.gp = gp;
     }
@@ -40,6 +41,10 @@ public class KeyHandler implements KeyListener {
             // MENU STATE
             else if (gp.gameState == gp.menuState) {
                 menuState(key);
+            }
+            //GAME OVER STATE
+            else if (gp.gameState == gp.gameOverState) {
+                gameOverState(key);
             }
         }
     }
@@ -152,7 +157,7 @@ public class KeyHandler implements KeyListener {
         }
 
         //CONTROL SUB STATE
-        switch (gp.ui.subMenuState){
+        switch (gp.ui.subMenuState) {
             case 0:
                 //CONTROL COMMAND
                 int maxCommandNum;
@@ -203,14 +208,14 @@ public class KeyHandler implements KeyListener {
         }
         int maxCommandNum_Buff = gp.player.ownBuffManager.buffs.size() - 1;
 
-        if (gp.ui.commandNum == 1){
-            if (key == KeyEvent.VK_A){
+        if (gp.ui.commandNum == 1) {
+            if (key == KeyEvent.VK_A) {
                 gp.ui.commandNum_Buff--;
                 if (gp.ui.commandNum_Buff < -2) {
                     gp.ui.commandNum_Buff = -2;
                 }
             }
-            if (key == KeyEvent.VK_D){
+            if (key == KeyEvent.VK_D) {
                 if (gp.ui.commandNum_Buff == -2) gp.ui.commandNum_Buff++;
                 gp.ui.commandNum_Buff++;
                 if (gp.ui.commandNum_Buff > maxCommandNum_Buff) {
@@ -295,6 +300,12 @@ public class KeyHandler implements KeyListener {
                         gp.ui.commandNum = 0;
                     }
                 }
+        }
+    }
+
+    private void gameOverState(int key) {
+        if (key == KeyEvent.VK_ENTER) {
+            gp.gameState = gp.titleState;
         }
     }
 }

@@ -22,7 +22,7 @@ public class UI {
 
     // FONT AND TEXT
     Font pixel;
-    protected Font font, font1, font1a, font2, font3, font3a, font4, font4a, font4b, font5, font6, font7, font8;
+    protected Font font, font_title, font_text_plain, font_text_bold;
     protected String currentDialogue = "";
     protected String currentNotification = "";
     protected String currentTittle = "";
@@ -112,18 +112,9 @@ public class UI {
 
         // SET UP FONT
         font = pixel.deriveFont(Font.BOLD, 60f);
-        font1 = pixel.deriveFont(Font.BOLD, 30f);
-        font1a = pixel.deriveFont(Font.PLAIN, 32f);
-        font2 = pixel.deriveFont(Font.BOLD, 10f);
-        font3 = pixel.deriveFont(Font.BOLD, 20f);
-        font3a = pixel.deriveFont(Font.PLAIN, 20f);
-        font4 = pixel.deriveFont(Font.BOLD, 25f);
-        font4a = pixel.deriveFont(Font.PLAIN, 22f);
-        font4b = pixel.deriveFont(Font.PLAIN, 25f);
-        font5 = pixel.deriveFont(Font.BOLD, 38f);
-        font6 = pixel.deriveFont(Font.PLAIN, 18f);
-        font7 = pixel.deriveFont(Font.BOLD, 15f);
-        font8 = pixel.deriveFont(Font.BOLD, 45f);
+        font_title = pixel.deriveFont(Font.BOLD, 48f);
+        font_text_plain = pixel.deriveFont(Font.PLAIN, 35f);
+        font_text_bold = pixel.deriveFont(Font.BOLD, 35f);
     }
 
     public void draw(Graphics2D g2) {
@@ -149,6 +140,10 @@ public class UI {
         else if (gp.gameState == gp.menuState) {
 //            drawCharacterStatus();
             drawMenu();
+        }
+        //GAME OVER START
+        else if (gp.gameState == gp.gameOverState){
+            drawGameOver();
         }
     }
 
@@ -290,6 +285,7 @@ public class UI {
         mapSelection.draw(g2);
         if (gp.keyHandler.enterPressed) {
             gp.tileMgr.loadMap("/maps/mapdata_" + (mapSelection.getSelectedMapIndex() + 1), mapSelection.getSelectedMapIndex());
+            gp.currentMap = mapSelection.getSelectedMapIndex();
             gp.gameState = gp.playState;
         }
         gp.keyHandler.enterPressed = false;
@@ -402,7 +398,7 @@ public class UI {
         int textY = gp.tileSize * 3 / 2;
         int lineSpacing = gp.tileSize / 2;
 
-        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 60F));
+        g2.setFont(font);
         String title = "Player";
         int titleWidth = g2.getFontMetrics().stringWidth(title);
         int textX = frameX + (frameWidth - titleWidth) / 2;
@@ -423,7 +419,7 @@ public class UI {
 
         //DRAW LIFE
         g2.setColor(menuColorFont1);
-        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 35F));
+        g2.setFont(font_text_plain);
         g2.drawString("Life", textX, textY);
         drawPlayerLife(textX + 100, textY - 35, 40);
         if (commandNum == 0) {
@@ -448,7 +444,7 @@ public class UI {
             }
             g2.drawImage(gp.player.ownBuffManager.buffs.get(i).buffImage, tempX, textY - 35, 40, 40, null);
             if (commandNum == 1 && commandNum_Buff == i) {
-                g2.setFont(g2.getFont().deriveFont(Font.BOLD, 35F));
+                g2.setFont(font_text_bold);
                 g2.setColor(menuColorFont2);
                 g2.drawImage(iconSelected, tempX, textY - 35, 40, 40, null);
                 g2.drawString(gp.player.ownBuffManager.buffs.get(i).getName() + " (Max: " + gp.player.ownBuffManager.buffs.get(i).getMaxAmount() + ")", rectX + 20, textContentY);
@@ -458,12 +454,12 @@ public class UI {
             tempX += iconSpacing;
         }
         if (commandNum == 1) {
-            g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 35F));
+            g2.setFont(font_text_plain);
             g2.setColor(menuColorFont1);
             g2.drawString(">", textX - 25, textY);
             if (commandNum_Buff == -1 || commandNum_Buff == -2) {
                 g2.setColor(menuColorFont2);
-                g2.setFont(g2.getFont().deriveFont(Font.BOLD, 35F));
+                g2.setFont(font_text_bold);
                 textContent = "Buffs provide temporary boosts to the player";
                 drawTextBlock(g2, textContent, rectX, textContentY, rectWidth);
             }
@@ -472,7 +468,7 @@ public class UI {
         textY += lineSpacing;
         //DRAW DEBUFF
         g2.setColor(menuColorFont1);
-        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 35F));
+        g2.setFont(font_text_plain);
         g2.drawString("Debuff", textX, textY);
         if (commandNum == 2) {
             g2.drawString(">", textX - 25, textY);
@@ -503,12 +499,12 @@ public class UI {
         int textX;
         int textY;
         // TITLE
-        g2.setFont(font);
+        g2.setFont(font_title);
         String text = "CONTROL";
         textX = getXforCenteredText(text);
         textY = frameY + gp.tileSize / 2;
         g2.drawString(text, textX, textY + gp.tileSize * 3 / 4);
-        g2.setFont(font1a);
+        g2.setFont(font_text_plain);
 
         // MUSIC
         textX -= gp.tileSize / 2;
@@ -584,7 +580,7 @@ public class UI {
         // DISPLAY TITTLE AND KEY
         String text = "CONTROL";
         textY = frameY + gp.tileSize;
-        g2.setFont(font8);
+        g2.setFont(font_title);
         textX = getCenterForElement(gp.tileSize * 6, g2.getFontMetrics().stringWidth(text));
         g2.drawString(text, frameX + textX, textY);
 
@@ -653,6 +649,29 @@ public class UI {
                 commandNum = 3;
             }
         }
+    }
+
+    private void drawGameOver(){
+        g2.setColor(new Color(0.222f, 0.222f, 0.222f, 0.85f));
+        g2.fill(screenArea);
+
+        int x, y;
+        String text;
+
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 110f));
+        g2.setColor(Color.red);
+        text = "You Are Dead";
+        x = getXforCenteredText(text);
+        y = gp.tileSize * 4;
+        g2.drawString(text, x, y);
+
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 65f));
+        g2.setColor(Color.white);
+        text = "Quit";
+        x= getXforCenteredText(text);
+        y += gp.tileSize;
+        g2.drawString(text, x, y);
+        g2.drawString(">", x - 40, y);
     }
 
     //FEATURE METHOD

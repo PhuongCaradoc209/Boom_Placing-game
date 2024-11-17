@@ -69,6 +69,12 @@ public class Player extends Entity {
         //PLAYER STATUS
         setMaxLife(3);
         setLife(getMaxLife());
+        setDead(false);
+        invisible = false;
+
+        //CLEAR BUFF
+        ownBuffManager.buffs.clear();
+        setBoomAmount(1);
     }
 
     public void getPlayerImage() {
@@ -188,6 +194,7 @@ public class Player extends Entity {
                 invisibleCounter = 0;
             }
         }
+        if (isDead()) gp.gameState = gp.gameOverState;
     }
 
 //    private void setTileSound(TileManager tileM) {
