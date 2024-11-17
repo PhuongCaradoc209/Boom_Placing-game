@@ -305,7 +305,7 @@ public class KeyHandler implements KeyListener {
 
     private void gameOverState(int key) {
         if (key == KeyEvent.VK_ENTER) {
-            gp.gameState = gp.mapSelectState;
+            gp.gameState = gp.titleState;
         }
     }
 }

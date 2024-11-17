@@ -665,12 +665,13 @@ public class UI {
         y = gp.tileSize * 4;
         g2.drawString(text, x, y);
 
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 65f));
+        g2.setColor(Color.white);
         text = "Quit";
         x= getXforCenteredText(text);
         y += gp.tileSize;
         g2.drawString(text, x, y);
-            g2.drawString(">", x - 40, y);
-
+        g2.drawString(">", x - 40, y);
     }
 
     //FEATURE METHOD
