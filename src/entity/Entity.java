@@ -427,10 +427,8 @@ public class Entity {
     public void fire(){
         int i = new Random().nextInt(100) + 1;
         if (i > 99 && !projectile.alive && shotAvailableCounter == 100) {
-            //SET DEFAULT COORDINATES, DIRECTION AND USER
             projectile.set(worldX, worldY, direction, true, this);
 
-            //ADD IT TO THE LIST
             gp.projectileList.add(projectile);
 
             shotAvailableCounter = 0;

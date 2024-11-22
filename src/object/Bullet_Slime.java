@@ -7,62 +7,53 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class Bullet_Slime extends Projectile {
-    private BufferedImage up5, down5, right5, left5;
+    private BufferedImage[][] animationFrames;
+    private int currentFrameIndex;
+    private int frameCounter;
+    private int frameDelay;
     GamePanel gp;
+
     public Bullet_Slime(GamePanel gp) {
         super(gp);
         this.gp = gp;
-        size = gp.tileSize;
+        size = gp.tileSize * 2 + 20;
 
         name = "Bullet_Slime";
-        speed = 5;
-        setMaxLife(60);
+        speed = 2;
+        setMaxLife(120);
         setLife(getMaxLife());
         setAttack(1);
-        getImage();
+        frameCounter = 0;
+        frameDelay = 5; // Adjust as needed for smoother/slower animation
+        currentFrameIndex = 0;
+        loadAnimationFrames();
     }
 
-    public void getImage(){
-//        up1 = setup("projectile/slime/bullet_slime_1", 44, 32);
-//        up2 = setup("projectile/slime/bullet_slime_2", 44, 32);
-//        up3 = setup("projectile/slime/bullet_slime_3", 44, 32);
-//        up4 = setup("projectile/slime/bullet_slime_4", 44, 32);
-//        up5 = setup("projectile/slime/bullet_slime_5", 44, 32);
-//
-//        right1 = setup("projectile/slime/bullet_slime_1", 44, 32);
-//        right2 = setup("projectile/slime/bullet_slime_2", 44, 32);
-//        right3 = setup("projectile/slime/bullet_slime_3", 44, 32);
-//        right4 = setup("projectile/slime/bullet_slime_4", 44, 32);
-//        right5 = setup("projectile/slime/bullet_slime_5", 44, 32);
-//
-//        down1 = setup("projectile/slime/bullet_slime_1", 44, 32);
-//        down2 = setup("projectile/slime/bullet_slime_2", 44, 2);
-//        down3 = setup("projectile/slime/bullet_slime_3", 44, 32);
-//        down4 = setup("projectile/slime/bullet_slime_4", 44, 32);
-//        down5 = setup("projectile/slime/bullet_slime_5", 44, 32);
-//
-//        left1 = setup("projectile/slime/bullet_slime_1_left", 44, 32);
-//        left2 = setup("projectile/slime/bullet_slime_2_left", 44, 32);
-//        left3 = setup("projectile/slime/bullet_slime_3_left", 44, 32);
-//        left4 = setup("projectile/slime/bullet_slime_4_left", 44, 32);
-//        left5 = setup("projectile/slime/bullet_slime_5_left", 44, 32);
+    public void loadAnimationFrames() {
+        animationFrames = new BufferedImage[4][30]; // 4 directions, each with 30 frames
 
-
-        up1 = setup("projectile/slime/fireball_up_1", 16, 16);
-        up2 = setup("projectile/slime/fireball_up_2", 16, 16);
-
-        right1 = setup("projectile/slime/fireball_right_1", 16, 16);
-        right2 = setup("projectile/slime/fireball_right_2", 16, 16);
-
-        left1 = setup("projectile/slime/fireball_left_1", 16, 16);
-        left2 = setup("projectile/slime/fireball_left_2", 16, 16);
-
-        down1 = setup("projectile/slime/fireball_down_1", 16, 16);
-        down2 = setup("projectile/slime/fireball_down_2", 16, 16);
+        for (int i = 0; i < 30; i++) {
+            animationFrames[0][i] = setup("projectile/slime/up/4_" + (i), 100, 100); // Up animation
+            animationFrames[1][i] = setup("projectile/slime/down/2_" + (i), 100, 100); // Down animation
+            animationFrames[2][i] = setup("projectile/slime/left/1_" + (i), 100, 100); // Left animation
+            animationFrames[3][i] = setup("projectile/slime/right/3_" + (i), 100, 100); // Right animation
+        }
     }
 
+    @Override
+    public void update() {
+        super.update();
+
+        // Increment frame counter and update the current frame if necessary
+        frameCounter++;
+        if (frameCounter >= frameDelay) {
+            currentFrameIndex = (currentFrameIndex + 1) % 30;
+            frameCounter = 0;
+        }
+    }
+
+    @Override
     public void draw(Graphics2D g2) {
-        BufferedImage image = null;
         double screenX = worldX - gp.player.worldX + gp.player.screenX;
         double screenY = worldY - gp.player.worldY + gp.player.screenY;
 
@@ -85,77 +76,31 @@ public class Bullet_Slime extends Projectile {
         if (bottomOffSet >= gp.worldHeight - gp.player.worldY) {
             screenY = gp.screenHeight - (gp.worldHeight - worldY);
         }
-        ////////////////////////
+
+        int dirIndex = switch (direction) {
+            case "up" -> 0;
+            case "down" -> 1;
+            case "left" -> 2;
+            case "right" -> 3;
+            default -> 0;
+        };
+
+        BufferedImage currentFrame = animationFrames[dirIndex][currentFrameIndex];
         switch (direction) {
             case "up":
-                if (spriteNum == 1) {
-                    image = up1;
-                }
-                if (spriteNum == 2) {
-                    image = up2;
-                }
-//                if (spriteNum == 3) {
-//                    image = up3;
-//                }
-//                if (spriteNum == 4) {
-//                    image = up4;
-//                }
-//                if (spriteNum == 5) {
-//                    image = up5;
-//                }
+                g2.drawImage(currentFrame, (int) screenX - 30, (int) screenY, size, size, null);
                 break;
             case "down":
-                if (spriteNum == 1) {
-                    image = down1;
-                }
-                if (spriteNum == 2) {
-                    image = down2;
-                }
-//                if (spriteNum == 3) {
-//                    image = down3;
-//                }
-//                if (spriteNum == 4) {
-//                    image = down4;
-//                }
-//                if (spriteNum == 5) {
-//                    image = down5;
-//                }
+                g2.drawImage(currentFrame, (int) screenX - 30, (int) screenY, size, size, null);
                 break;
             case "left":
-                if (spriteNum == 1) {
-                    image = left1;
-                }
-                if (spriteNum == 2) {
-                    image = left2;
-                }
-//                if (spriteNum == 3) {
-//                    image = left3;
-//                }
-//                if (spriteNum == 4) {
-//                    image = left4;
-//                }
-//                if (spriteNum == 5) {
-//                    image = left5;
-//                }
+                g2.drawImage(currentFrame, (int) screenX, (int) screenY - 30, size, size, null);
                 break;
             case "right":
-                if (spriteNum == 1) {
-                    image = right1;
-                }
-                if (spriteNum == 2) {
-                    image = right2;
-                }
-//                if (spriteNum == 3) {
-//                    image = right3;
-//                }
-//                if (spriteNum == 4) {
-//                    image = right4;
-//                }
-//                if (spriteNum == 5) {
-//                    image = right5;
-//                }
+                g2.drawImage(currentFrame, (int) screenX, (int) screenY - 30, size, size, null);
+                break;
+            default:
                 break;
         }
-        g2.drawImage(image, (int) screenX, (int) screenY, size, size, null);
     }
 }
