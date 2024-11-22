@@ -51,8 +51,8 @@ public class AssetSetter {
         i++;
 
         gp.enemy[mapNum].add(new Ene_WonWon(gp));
-        gp.enemy[mapNum].get(i).worldX = 1 * gp.tileSize;
-        gp.enemy[mapNum].get(i).worldY = 2 * gp.tileSize;
+        gp.enemy[mapNum].get(i).worldX = 2 * gp.tileSize;
+        gp.enemy[mapNum].get(i).worldY = 11 * gp.tileSize;
         i++;
     }
 

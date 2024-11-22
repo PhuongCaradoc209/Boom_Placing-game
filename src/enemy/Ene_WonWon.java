@@ -2,6 +2,8 @@ package enemy;
 
 import entity.Entity;
 import main.GamePanel;
+import object.Bullet_Slime;
+import object.Bullet_Wonwon;
 
 import java.util.Random;
 
@@ -11,7 +13,7 @@ public class Ene_WonWon extends Entity {
         super(gp);
 
         name = "wonwon";
-        speed = 0.5;
+        speed = 1;
         direction = "down";
         size = gp.tileSize;
         collisionOn = false;
@@ -26,6 +28,7 @@ public class Ene_WonWon extends Entity {
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
 
+        projectile = new Bullet_Wonwon(gp);
         setBoomAmount(1);
         getImage();
     }
@@ -52,21 +55,53 @@ public class Ene_WonWon extends Entity {
         left4 = setup("enemy/wonwon/wonwon-left-4", gp.tileSize, gp.tileSize);
     }
 
-    public void setAction() {
-        actionLookCounter++;
-        if (actionLookCounter == 100) {
-            Random random = new Random();
-            int i = random.nextInt(200) + 1;
-            if (i <= 50) {
-                direction = "down";
-            } else if (i <= 100) {
-                direction = "left";
-            } else if (i <= 150) {
-                direction = "right";
-            } else {
-                direction = "up";
+    public void update() {
+        super.update();
+
+        int xDistance = (int) Math.abs(worldX - gp.player.worldX);
+        int yDistance = (int) Math.abs(worldY - gp.player.worldY);
+        int tileDistance = (xDistance + yDistance) / gp.tileSize;
+
+        if (!onPath && tileDistance < 3) {
+            int i = new Random().nextInt(100) + 1;
+            if (i > 50) {
+                onPath = true;
             }
-            actionLookCounter = 0;
+        }
+        if (onPath && tileDistance > 3) {
+            onPath = false;
+        }
+    }
+
+    public void setAction() {
+        if (onPath) {
+            fire();
+            int goalCol = (int) ((gp.player.worldX + gp.player.solidArea.x) / gp.tileSize);
+            int goalRow = (int) ((gp.player.worldY + gp.player.solidArea.y) / gp.tileSize);
+            searchPath(goalRow, goalCol);
+
+            int i = new Random().nextInt(200);
+            if (i > 197 && !projectile.alive && shotAvailableCounter == 30) {
+                projectile.set(worldX, worldY, direction, true, this);
+                gp.projectileList.add(projectile);
+                shotAvailableCounter = 0;
+            }
+        } else {
+            actionLookCounter++;
+            if (actionLookCounter == 100) {
+                Random random = new Random();
+                int i = random.nextInt(200) + 1;
+                if (i <= 50) {
+                    direction = "down";
+                } else if (i <= 100) {
+                    direction = "left";
+                } else if (i <= 150) {
+                    direction = "right";
+                } else {
+                    direction = "up";
+                }
+                actionLookCounter = 0;
+            }
         }
     }
 }

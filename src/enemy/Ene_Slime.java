@@ -15,7 +15,7 @@ public class Ene_Slime extends Entity {
         super(gp);
 
         name = "slime";
-        speed = 0.5;
+        speed = 0.8;
         direction = "down";
         size = gp.tileSize;
         collisionOn = false;
@@ -75,7 +75,6 @@ public class Ene_Slime extends Entity {
     public void setAction() {
         if (onPath){
             fire();
-
             int goalCol = (int) ((gp.player.worldX + gp.player.solidArea.x)/gp.tileSize);
             int goalRow = (int) ((gp.player.worldY + gp.player.solidArea.y)/gp.tileSize);
             searchPath(goalRow,goalCol);
