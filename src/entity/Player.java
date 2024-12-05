@@ -63,7 +63,7 @@ public class Player extends Entity {
     public void setDefaultValues() {
         worldX = gp.tileSize * 2;
         worldY = gp.tileSize * 1.8;
-        speed = 2;
+        speed = 1.5;
         direction = "standDown";
 
         //PLAYER STATUS

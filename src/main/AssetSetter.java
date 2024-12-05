@@ -1,4 +1,5 @@
 package main;
+import enemy.Ene_Lizard;
 import enemy.Ene_Slime;
 import enemy.Ene_WonWon;
 import entity.Entity;
@@ -45,14 +46,19 @@ public class AssetSetter {
         mapNum = 0;
         i = 0;
 
-        gp.enemy[mapNum].add(new Ene_Slime(gp));
-        gp.enemy[mapNum].get(i).worldX = 14 * gp.tileSize;
-        gp.enemy[mapNum].get(i).worldY = 2 * gp.tileSize;
-        i++;
+//        gp.enemy[mapNum].add(new Ene_Slime(gp));
+//        gp.enemy[mapNum].get(i).worldX = 14 * gp.tileSize;
+//        gp.enemy[mapNum].get(i).worldY = 2 * gp.tileSize;
+//        i++;
 
         gp.enemy[mapNum].add(new Ene_WonWon(gp));
         gp.enemy[mapNum].get(i).worldX = 2 * gp.tileSize;
         gp.enemy[mapNum].get(i).worldY = 11 * gp.tileSize;
+        i++;
+
+        gp.enemy[mapNum].add(new Ene_Lizard(gp));
+        gp.enemy[mapNum].get(i).worldX = 14 * gp.tileSize;
+        gp.enemy[mapNum].get(i).worldY = 2 * gp.tileSize;
         i++;
     }
 
@@ -81,7 +87,7 @@ public class AssetSetter {
     }
 
     public void removeObject(int x, int y, int mapIndex) {
-        String key = x + "," + y; // Tạo chuỗi key từ tọa độ
+        String key = x + "," + y;
         objectMaps[mapIndex].remove(key);
     }
 
