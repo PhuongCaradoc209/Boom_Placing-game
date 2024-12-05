@@ -30,10 +30,10 @@ public class Ene_Slime extends Entity {
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
 
-        deathAnimationFrames = new BufferedImage[5]; // Ví dụ có 5 frame
-        loadDeathAnimationFrames("enemy/slime/slime-die-", 5); // Hàm để load các frame
+        deathAnimationFrames = new BufferedImage[5];
+        loadDeathAnimationFrames("enemy/slime/slime-die-", 5);
         currentDeathFrame = 0;
-        deathAnimationSpeed = 10; // Frame sẽ thay đổi sau mỗi 10 lần vẽ
+        deathAnimationSpeed = 10;
         deathFrameCounter = 0;
         hasTwoAnimationDeath = true;
 

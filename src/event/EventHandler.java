@@ -1,5 +1,6 @@
 package event;
 
+import enemy.Ene_Lizard;
 import entity.Entity;
 import main.GamePanel;
 

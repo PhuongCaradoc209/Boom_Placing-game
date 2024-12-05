@@ -2,6 +2,7 @@ package entity;
 
 import buff.Buff;
 import buff.BuffManager;
+import enemy.Ene_Lizard;
 import main.GamePanel;
 import UI.UtilityTool;
 import object.Boom;
@@ -42,7 +43,7 @@ public class Entity {
     private int maxLife;
     private int life;
     public boolean alive = true;
-    private boolean isDead = false;
+    protected boolean isDead = false;
 
     //OBJ
     public String name;
@@ -283,7 +284,7 @@ public class Entity {
         }
     }
 
-    private void deadAnimation_1(Graphics2D g2) {
+    protected void deadAnimation_1(Graphics2D g2) {
         dyingCounter++;
         int i = 5;
         if (dyingCounter <= i) {
