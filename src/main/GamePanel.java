@@ -29,7 +29,7 @@ public class GamePanel extends JPanel implements Runnable {
     public int screenHeight = maxScreenRow * tileSize;//696px
 
     //WORLD SETTINGS
-    public final int maxMap = 1;
+    public final int maxMap = 2;
     public int currentMap;
     public final int maxWorldCol = 16;
     public final int maxWorldRow = 16;
@@ -73,9 +73,6 @@ public class GamePanel extends JPanel implements Runnable {
     //ENEMY
     public ArrayList<Entity>[] enemy = new ArrayList[maxMap];
 
-    //INTERACT TILE
-    public ArrayList<InteractiveTile>[] iTile = new ArrayList[maxMap];
-
     //GAME STATE
     public int gameState;
     public final int titleState = 0;
@@ -83,6 +80,7 @@ public class GamePanel extends JPanel implements Runnable {
     public final int mapSelectState = 2;
     public final int menuState = 3;
     public final int gameOverState = 4;
+    public final int gameWinState = 5;
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -146,13 +144,13 @@ public class GamePanel extends JPanel implements Runnable {
         aSetter.setInteractiveTile();
         aSetter.setEnemy();
 
-        entityManager.addEntity(player);
-
         //ADD ENTITY FOR MANAGER
         for (int i = 0; i < maxMap; i++) {
+            entityManager.addEntity(player, i);
+
             for (Entity entity : enemy[i]) {
                 if (entity != null) {
-                    entityManager.addEntity(entity);
+                    entityManager.addEntity(entity, i);
                 }
             }
         }
@@ -180,6 +178,10 @@ public class GamePanel extends JPanel implements Runnable {
                     else
                         projectileList.remove(i);
                 }
+            }
+
+            if (enemy[currentMap].isEmpty()){
+                gameState = gameWinState;
             }
         }
     }
@@ -210,7 +212,7 @@ public class GamePanel extends JPanel implements Runnable {
         g2.clearRect(0, 0, screenWidth2, screenHeight2);
 
 
-        if (gameState != titleState && currentMap == 0) {
+        if (gameState != mapSelectState && gameState != titleState) {
             tileMgr.draw(g2);
 
             //PROJECTILE

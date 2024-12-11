@@ -1,5 +1,6 @@
 package UI;
 
+import buff.Buff;
 import main.GamePanel;
 
 import javax.imageio.ImageIO;
@@ -7,6 +8,7 @@ import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -14,9 +16,10 @@ import java.util.Objects;
 public class UI_mapSelection {
     GamePanel gp;
     private List<BufferedImage> mapList;
-    private List<String> titleMap;
     private int selectedMapIndex = 0;
     private int scrollOffset = 0;
+
+    private final BufferedImage background;
 
     //VARIABLE
     private int x, y;
@@ -29,19 +32,20 @@ public class UI_mapSelection {
     private final Color shadow;
     private final BufferedImage arrow_left;
     private final BufferedImage arrow_right;
-    private float arrowHoverProgress = 0.0f; // Giá trị từ 0.0 đến 1.0
-    private float hoverSpeed = 0.1f; // Tốc độ thay đổi
+    private float arrowHoverProgress = 0.0f;
+    private float hoverSpeed = 0.1f;
 
     public UI_mapSelection(GamePanel gp) {
         this.gp = gp;
         mapList = new ArrayList<BufferedImage>();
         mapList.add(setup("maps/map_1", 256, 256));
-        mapList.add(setup("buff_debuff/add_boom", 256, 256));
-        mapList.add(setup("buff_debuff/fire_spell", 256, 256));
+        mapList.add(setup("maps/map_2", 256, 256));
 
         size = gp.tileSize * 5;
         x_Map = getCenter(gp.screenWidth, size);
         strokeWidth = 10;
+
+        background = setup("background/mapSelect_background", 626,434);
 
         //GRAPHICS
         shadow = new Color(0, 0, 0, 50);
@@ -69,8 +73,14 @@ public class UI_mapSelection {
 
     public void draw(Graphics2D g2) {
         //BACKGROUND
-        g2.setColor(new Color(0x795757));
-        g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
+        int bgWidth = gp.screenWidth;
+        int bgHeight = gp.screenHeight;
+
+        int bgX = (gp.screenWidth - bgWidth) / 2;
+        int bgY = (gp.screenHeight - bgHeight) / 2;
+
+        // DRAW BACKGROUND
+        g2.drawImage(background, bgX, bgY, bgWidth, bgHeight, null);
 
         if (gp.keyHandler.leftPressed) {
             updateSelection(-1);
@@ -107,7 +117,7 @@ public class UI_mapSelection {
                 g2.fillRoundRect(x - strokeWidth + 5, y - 2, size + 2 * strokeWidth - 10, size + 2 * strokeWidth - 5, 25, 25);
 
                 RoundRectangle2D roundedRect = new RoundRectangle2D.Float(x, y, size, size, 25, 25);
-                g2.setClip(roundedRect); // Set clip theo hình chữ nhật bo góc
+                g2.setClip(roundedRect);
 
                 g2.drawImage(mapList.get(i), x, y, size, size, null);
 
@@ -120,14 +130,20 @@ public class UI_mapSelection {
         g2.setFont(g2.getFont().deriveFont(Font.BOLD, 80F));
         g2.setColor(Color.white);
         String text = "Map " + (selectedMapIndex + 1);
+
         x = getCenter(gp.screenWidth, (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth());
         y = gp.tileSize;
 
-        // SHADOW TEXT
         g2.setColor(Color.BLACK);
         g2.drawString(text, x + 5, y + 5);
+        g2.drawString(text, x - 5, y + 5);
+        g2.drawString(text, x + 5, y - 5);
+        g2.drawString(text, x - 5, y - 5);
+        g2.drawString(text, x + 5, y);
+        g2.drawString(text, x - 5, y);
+        g2.drawString(text, x, y + 5);
+        g2.drawString(text, x, y - 5);
 
-        // MAIN COLOR TEXT
         g2.setColor(Color.white);
         g2.drawString(text, x, y);
 

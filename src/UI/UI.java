@@ -22,6 +22,7 @@ public class UI {
 
     // FONT AND TEXT
     Font pixel;
+    Font pixel2;
     protected Font font, font_title, font_text_plain, font_text_bold;
     protected String currentDialogue = "";
     protected String currentNotification = "";
@@ -41,6 +42,7 @@ public class UI {
     BufferedImage iconSelected;
     BufferedImage controlIcon;
     BufferedImage playerIcon;
+    BufferedImage enemyIcon;
 
     //SETTING FOR MENU
     public int commandNum_Menu = 0;
@@ -75,8 +77,10 @@ public class UI {
         mapSelection = new UI_mapSelection(gp);
 
         try {
-            InputStream is = getClass().getResourceAsStream("/font/x12y16pxMaruMonica.ttf");
+            InputStream is = getClass().getResourceAsStream("/font/m6x11plus.ttf");
             pixel = Font.createFont(Font.TRUETYPE_FONT, is);
+            is = getClass().getResourceAsStream("/font/x12y16pxMaruMonica.ttf");
+            pixel2 = Font.createFont(Font.TRUETYPE_FONT, is);
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (FontFormatException e) {
@@ -88,22 +92,23 @@ public class UI {
 
         //GRAPHICS
         //TITLE SCREEN
-        playerImage_1 = setup("player/standRight_1", 32, 32);
-        playerImage_2 = setup("player/standRight_2", 32, 32);
-        playerImage_3 = setup("player/standRight_3", 32, 32);
-        playerImage_4 = setup("player/standRight_4", 32, 32);
+        playerImage_1 = setup("player/standRight_1", 32, 32,"png");
+        playerImage_2 = setup("player/standRight_2", 32, 32,"png");
+        playerImage_3 = setup("player/standRight_3", 32, 32,"png");
+        playerImage_4 = setup("player/standRight_4", 32, 32,"png");
 
         playerFrames = new BufferedImage[]{
                 playerImage_1, playerImage_2, playerImage_3, playerImage_4
         };
 
         //ICON
-        iconSelected = setup("icon/selectedIcon_1", 32, 32);
-        controlIcon = setup("icon/control", 32, 32);
-        playerIcon = setup("icon/player", 32, 32);
+        iconSelected = setup("icon/selectedIcon_1", 32, 32, "png");
+        controlIcon = setup("icon/control", 32, 32,"png");
+        playerIcon = setup("icon/player", 32, 32,"png");
+        enemyIcon = setup("enemy/slime/slime-left-2", gp.tileSize, gp.tileSize,"png");
 
         //MAP SELECT SCREEN
-        mapImage_1 = setup("maps/map_1", 256, 256);
+        mapImage_1 = setup("maps/map_1", 256, 256,"png");
 
         //PLAYER LIFE
         Entity heartStatus = new OBJ_Heart(gp);
@@ -113,7 +118,7 @@ public class UI {
         // SET UP FONT
         font = pixel.deriveFont(Font.BOLD, 60f);
         font_title = pixel.deriveFont(Font.BOLD, 48f);
-        font_text_plain = pixel.deriveFont(Font.PLAIN, 35f);
+        font_text_plain = pixel2.deriveFont(Font.BOLD, 35f);
         font_text_bold = pixel.deriveFont(Font.BOLD, 35f);
     }
 
@@ -138,17 +143,21 @@ public class UI {
         }
         // MENU STATE
         else if (gp.gameState == gp.menuState) {
-//            drawCharacterStatus();
             drawMenu();
         }
-        //GAME OVER START
+        //GAME OVER STATE
         else if (gp.gameState == gp.gameOverState){
             drawGameOver();
+        }
+        //GAME WIN STATE
+        else if (gp.gameState == gp.gameWinState){
+            drawGameWin();
         }
     }
 
     private void drawPLayerInformation() {
         drawPlayerLife(gp.tileSize / 4, gp.tileSize / 4, gp.tileSize / 2);
+        drawEnemyAmount(gp.tileSize * 7 - 20, -gp.tileSize/4, gp.tileSize);
     }
 
     private void drawPlayerLife(int startX, int startY, int size) {
@@ -161,7 +170,7 @@ public class UI {
         while (i < gp.player.getMaxLife()) {
             g2.drawImage(heart_empty, x, y, size, size, null);
             i++;
-            x += (size * 1.2); // Adjust the spacing between hearts (size * 1.2 for padding)
+            x += (size * 1.2);
         }
 
         // Reset position for full hearts
@@ -173,14 +182,39 @@ public class UI {
         while (i < gp.player.getLife()) {
             g2.drawImage(heart_full, x, y, size, size, null);
             i++;
-            x += (size * 1.2); // Adjust the spacing between hearts (size * 1.2 for padding)
+            x += (size * 1.2);
+        }
+    }
+
+    private void drawEnemyAmount(int startX, int startY, int size) {
+        int x = startX;
+        int y = startY;
+        g2.drawImage(enemyIcon, x, y, size, size, null);
+
+        x -= 20;
+        y += size - 10;
+
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 32F));
+        g2.setColor(Color.WHITE);
+
+        String s = Integer.toString(gp.enemy[gp.currentMap].size());
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                g2.drawString(s, x + dx, y + dy);
+            }
         }
     }
 
     private void drawTitleScreen() {
+        BufferedImage titleBackground = setup("background/background", 736,471, "png");
+        int bgWidth = gp.screenWidth;
+        int bgHeight = gp.screenHeight;
+
+        int bgX = (gp.screenWidth - bgWidth) / 2;
+        int bgY = (gp.screenHeight - bgHeight) / 2;
+
         // DRAW BACKGROUND
-        g2.setColor(primaryColor_green);
-        g2.fill(screenArea);
+        g2.drawImage(titleBackground, bgX, bgY, bgWidth, bgHeight, null);
 
         // TITTLE NAME
         g2.setFont(g2.getFont().deriveFont(Font.BOLD, 96F));
@@ -284,6 +318,14 @@ public class UI {
     private void drawMapSelectScreen() {
         mapSelection.draw(g2);
         if (gp.keyHandler.enterPressed) {
+            switch (mapSelection.getSelectedMapIndex() + 1){
+                case 1:
+                    gp.player.setCoordinate(5,3.8);
+                    break;
+                case 2:
+                    gp.player.setCoordinate(12,3);
+                    break;
+            }
             gp.tileMgr.loadMap("/maps/mapdata_" + (mapSelection.getSelectedMapIndex() + 1), mapSelection.getSelectedMapIndex());
             gp.currentMap = mapSelection.getSelectedMapIndex();
             gp.gameState = gp.playState;
@@ -376,6 +418,8 @@ public class UI {
     }
 
     private void drawCharacterStatus(int frameWidth, int frameHeight, int frameX, int frameY) {
+        g2.setFont(pixel2);
+
         // DRAW CHARACTER IMAGE
         int imageX = frameX + 20;
         int imageY = frameY + gp.tileSize + 40;
@@ -419,12 +463,13 @@ public class UI {
 
         //DRAW LIFE
         g2.setColor(menuColorFont1);
-        g2.setFont(font_text_plain);
+        g2.setFont(font_text_bold);
         g2.drawString("Life", textX, textY);
         drawPlayerLife(textX + 100, textY - 35, 40);
         if (commandNum == 0) {
             g2.drawString(">", textX - 25, textY);
             g2.setColor(menuColorFont2);
+            g2.setFont(font_text_plain);
             textContent = "This shows the player's current life status";
             drawTextBlock(g2, textContent, rectX, textContentY, rectWidth);
         }
@@ -432,7 +477,7 @@ public class UI {
 
         //DRAW BUFF
         g2.setColor(menuColorFont1);
-        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 35F));
+        g2.setFont(font_text_bold);
         g2.drawString("Buff", textX, textY);
         int tempX = textX + 100;
         int temp2X = tempX;
@@ -444,7 +489,7 @@ public class UI {
             }
             g2.drawImage(gp.player.ownBuffManager.buffs.get(i).buffImage, tempX, textY - 35, 40, 40, null);
             if (commandNum == 1 && commandNum_Buff == i) {
-                g2.setFont(font_text_bold);
+                g2.setFont(font_text_plain);
                 g2.setColor(menuColorFont2);
                 g2.drawImage(iconSelected, tempX, textY - 35, 40, 40, null);
                 g2.drawString(gp.player.ownBuffManager.buffs.get(i).getName() + " (Max: " + gp.player.ownBuffManager.buffs.get(i).getMaxAmount() + ")", rectX + 20, textContentY);
@@ -454,12 +499,12 @@ public class UI {
             tempX += iconSpacing;
         }
         if (commandNum == 1) {
-            g2.setFont(font_text_plain);
+            g2.setFont(font_text_bold);
             g2.setColor(menuColorFont1);
             g2.drawString(">", textX - 25, textY);
             if (commandNum_Buff == -1 || commandNum_Buff == -2) {
                 g2.setColor(menuColorFont2);
-                g2.setFont(font_text_bold);
+                g2.setFont(font_text_plain);
                 textContent = "Buffs provide temporary boosts to the player";
                 drawTextBlock(g2, textContent, rectX, textContentY, rectWidth);
             }
@@ -468,7 +513,7 @@ public class UI {
         textY += lineSpacing;
         //DRAW DEBUFF
         g2.setColor(menuColorFont1);
-        g2.setFont(font_text_plain);
+        g2.setFont(font_text_bold);
         g2.drawString("Debuff", textX, textY);
         if (commandNum == 2) {
             g2.drawString(">", textX - 25, textY);
@@ -574,6 +619,8 @@ public class UI {
     }
 
     private void options_control(int frameX, int frameY) {
+        g2.setFont(pixel2);
+
         int textX;
         int textY;
 
@@ -614,12 +661,15 @@ public class UI {
     }
 
     private void options_endGameConfirmation(int frameX, int frameY) {
-        int textX = frameX + gp.tileSize;
+        g2.setFont(font_text_bold);
+
+        int textX = getXforCenteredText("Quit the game and");
         int textY = frameY + gp.tileSize;
 
         currentDialogue = "Quit the game and /nreturn to the tittle screen?";
 
         for (String line : currentDialogue.split("/n")) {
+            textX = getXforCenteredText(line);
             g2.drawString(line, textX, textY);
             textY += gp.tileSize;
         }
@@ -674,6 +724,20 @@ public class UI {
         g2.drawString(">", x - 40, y);
     }
 
+    private void drawGameWin(){
+        g2.setColor(new Color(0.222f, 0.222f, 0.222f, 0.85f));
+        g2.fill(screenArea);
+
+        int x, y;
+        String text;
+
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 110f));
+        g2.setColor(Color.yellow);
+        text = "Victory";
+        x = getXforCenteredText(text);
+        y = gp.tileSize * 4;
+        g2.drawString(text, x, y);
+    }
     //FEATURE METHOD
     protected int getXforCenteredText(String text) {
         int length = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
@@ -755,12 +819,12 @@ public class UI {
         return lines;
     }
 
-    private BufferedImage setup(String imagePath, int width, int height) {
+    private BufferedImage setup(String imagePath, int width, int height, String type) {
         UtilityTool uTool = new UtilityTool();
         BufferedImage image = null;
         try {
             image = ImageIO
-                    .read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(imagePath + ".png")));
+                    .read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(imagePath + "." + type)));
             image = uTool.scaleImage(image, width, height);
         } catch (IOException e) {
             e.printStackTrace();

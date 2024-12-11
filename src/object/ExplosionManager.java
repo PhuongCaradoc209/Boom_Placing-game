@@ -31,9 +31,9 @@ public class ExplosionManager {
     }
 
     public void hitEntities(Boom boom) {
-        for (int i = 0; i < gp.entityManager.getEntities().size(); i++) {
-            if (isEntityInExplosionRange(boom, gp.entityManager.getEntities().get(i))) {
-                gp.eHandler.damagePit(gp.entityManager.getEntities().get(i));
+        for (int i = 0; i < gp.entityManager.getEntities(gp.currentMap).size(); i++) {
+            if (isEntityInExplosionRange(boom, gp.entityManager.getEntities(gp.currentMap).get(i))) {
+                gp.eHandler.damagePit(gp.entityManager.getEntities(gp.currentMap).get(i));
             }
         }
     }

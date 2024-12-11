@@ -37,28 +37,42 @@ public class AssetSetter {
         mapNum = 0;
 
         i = 0;
-        loadTreesFromFile(Tree.class,"res/object/treeCoordinate",gp, mapNum);
-        loadTreesFromFile(Box.class,"res/object/boxCoordinate",gp, mapNum);
-        loadTreesFromFile(Stone.class,"res/object/stoneCoordinate",gp, mapNum);
+        loadTreesFromFile(Tree.class,"res/coordinateTiles/treeCoordinate_" + (i+1),gp, mapNum);
+        loadTreesFromFile(Box.class,"res/coordinateTiles/boxCoordinate_" + (i+1),gp, mapNum);
+        loadTreesFromFile(Stone.class,"res/coordinateTiles/stoneCoordinate_" + (i+1),gp, mapNum);
+
+        mapNum++;
+        i++;
+        loadTreesFromFile(Tree.class,"res/coordinateTiles/treeCoordinate_" + (i+1),gp, mapNum);
+        loadTreesFromFile(Box.class,"res/coordinateTiles/boxCoordinate_" + (i+1),gp, mapNum);
+        loadTreesFromFile(Stone.class,"res/coordinateTiles/stoneCoordinate_" + (i+1),gp, mapNum);
     }
 
     public void setEnemy(){
         mapNum = 0;
         i = 0;
 
-//        gp.enemy[mapNum].add(new Ene_Slime(gp));
-//        gp.enemy[mapNum].get(i).worldX = 14 * gp.tileSize;
-//        gp.enemy[mapNum].get(i).worldY = 2 * gp.tileSize;
-//        i++;
+        gp.enemy[mapNum].add(new Ene_Slime(gp));
+        gp.enemy[mapNum].get(i).worldX = 10 * gp.tileSize;
+        gp.enemy[mapNum].get(i).worldY = 10 * gp.tileSize;
+
+
+        i = 0;
+        mapNum++;
+
+        gp.enemy[mapNum].add(new Ene_Slime(gp));
+        gp.enemy[mapNum].get(i).worldX = 3 * gp.tileSize;
+        gp.enemy[mapNum].get(i).worldY = 2 * gp.tileSize;
+        i++;
 
         gp.enemy[mapNum].add(new Ene_WonWon(gp));
-        gp.enemy[mapNum].get(i).worldX = 2 * gp.tileSize;
-        gp.enemy[mapNum].get(i).worldY = 11 * gp.tileSize;
+        gp.enemy[mapNum].get(i).worldX = 12 * gp.tileSize;
+        gp.enemy[mapNum].get(i).worldY = 13 * gp.tileSize;
         i++;
 
         gp.enemy[mapNum].add(new Ene_Lizard(gp));
-        gp.enemy[mapNum].get(i).worldX = 14 * gp.tileSize;
-        gp.enemy[mapNum].get(i).worldY = 2 * gp.tileSize;
+        gp.enemy[mapNum].get(i).worldX = 2 * gp.tileSize;
+        gp.enemy[mapNum].get(i).worldY = 12 * gp.tileSize;
         i++;
     }
 

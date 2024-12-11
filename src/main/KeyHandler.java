@@ -33,19 +33,16 @@ public class KeyHandler implements KeyListener {
         if (gp.gameState == gp.mapSelectState) {
             mapSelectState(key);
         }
-        if (gp.currentMap == 0) {
-            // PLAY STATE
-            if (gp.gameState == gp.playState) {
-                gamePlayerState(key);
-            }
-            // MENU STATE
-            else if (gp.gameState == gp.menuState) {
-                menuState(key);
-            }
-            //GAME OVER STATE
-            else if (gp.gameState == gp.gameOverState) {
-                gameOverState(key);
-            }
+        if (gp.gameState == gp.playState) {
+            gamePlayerState(key);
+        }
+        // MENU STATE
+        else if (gp.gameState == gp.menuState) {
+            menuState(key);
+        }
+        //GAME OVER STATE
+        else if (gp.gameState == gp.gameOverState) {
+            gameOverState(key);
         }
     }
 
