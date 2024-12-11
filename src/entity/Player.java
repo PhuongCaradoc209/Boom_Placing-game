@@ -61,8 +61,6 @@ public class Player extends Entity {
     }
 
     public void setDefaultValues() {
-        worldX = gp.tileSize * 2;
-        worldY = gp.tileSize * 1.8;
         speed = 1.5;
         direction = "standDown";
 
@@ -75,6 +73,11 @@ public class Player extends Entity {
         //CLEAR BUFF
         ownBuffManager.buffs.clear();
         setBoomAmount(1);
+    }
+
+    public void setCoordinate(double x, double y) {
+        worldX = gp.tileSize * x;
+        worldY = gp.tileSize * y;
     }
 
     public void getPlayerImage() {
@@ -140,19 +143,19 @@ public class Player extends Entity {
         solidArea.height = (30 * gp.tileSize) / 48;
 
         // CHECK TILE COLLISION
-        collisionOn = false;
-        gp.cChecker.checkTile(this);
-        //CHECK BOOM
-        if (isOutOfBoomCoordinate()){
-            gp.cChecker.checkBoom(this, gp.boomManager.booms);
-        }
-        // CHECK INTERACT TILE COLLISION
-        iTileCoordinate = gp.cChecker.checkEntity(this, gp.aSetter.getObjectMap(gp.currentMap));
-        gp.cChecker.checkEntity(this, gp.enemy);
-        // CHECK IF AT EDGE
-        gp.cChecker.checkAtEdge(this);
-        //CHECK EVENT
-        gp.eHandler.checkEvent();
+//        collisionOn = false;
+//        gp.cChecker.checkTile(this);
+//        //CHECK BOOM
+//        if (isOutOfBoomCoordinate()){
+//            gp.cChecker.checkBoom(this, gp.boomManager.booms);
+//        }
+//        // CHECK INTERACT TILE COLLISION
+//        iTileCoordinate = gp.cChecker.checkEntity(this, gp.aSetter.getObjectMap(gp.currentMap));
+//        gp.cChecker.checkEntity(this, gp.enemy);
+//        // CHECK IF AT EDGE
+//        gp.cChecker.checkAtEdge(this);
+//        //CHECK EVENT
+//        gp.eHandler.checkEvent();
 
         getBuff( gp.cChecker.checkCollectBuff(this));
 

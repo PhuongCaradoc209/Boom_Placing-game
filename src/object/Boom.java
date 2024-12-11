@@ -35,7 +35,7 @@ public class Boom extends Entity {
     private int radiusExplosion;
 
     //EXPLOSION AREA
-    protected Map<String, List<int[]>> explosionArea;
+    protected HashMap<String, List<int[]>> explosionArea;
 
     public Boom(int col, int row, Entity entity, GamePanel gp) {
         super(gp);
