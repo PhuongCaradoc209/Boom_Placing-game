@@ -41,6 +41,7 @@ public class UI {
     BufferedImage iconSelected;
     BufferedImage controlIcon;
     BufferedImage playerIcon;
+    BufferedImage enemyIcon;
 
     //SETTING FOR MENU
     public int commandNum_Menu = 0;
@@ -101,6 +102,7 @@ public class UI {
         iconSelected = setup("icon/selectedIcon_1", 32, 32);
         controlIcon = setup("icon/control", 32, 32);
         playerIcon = setup("icon/player", 32, 32);
+        enemyIcon = setup("enemy/slime/slime-left-2", gp.tileSize, gp.tileSize);
 
         //MAP SELECT SCREEN
         mapImage_1 = setup("maps/map_1", 256, 256);
@@ -138,17 +140,21 @@ public class UI {
         }
         // MENU STATE
         else if (gp.gameState == gp.menuState) {
-//            drawCharacterStatus();
             drawMenu();
         }
-        //GAME OVER START
+        //GAME OVER STATE
         else if (gp.gameState == gp.gameOverState){
             drawGameOver();
+        }
+        //GAME WIN STATE
+        else if (gp.gameState == gp.gameWinState){
+            drawGameWin();
         }
     }
 
     private void drawPLayerInformation() {
         drawPlayerLife(gp.tileSize / 4, gp.tileSize / 4, gp.tileSize / 2);
+        drawEnemyAmount(gp.tileSize * 7 - 20, -gp.tileSize/4, gp.tileSize);
     }
 
     private void drawPlayerLife(int startX, int startY, int size) {
@@ -161,7 +167,7 @@ public class UI {
         while (i < gp.player.getMaxLife()) {
             g2.drawImage(heart_empty, x, y, size, size, null);
             i++;
-            x += (size * 1.2); // Adjust the spacing between hearts (size * 1.2 for padding)
+            x += (size * 1.2);
         }
 
         // Reset position for full hearts
@@ -173,7 +179,26 @@ public class UI {
         while (i < gp.player.getLife()) {
             g2.drawImage(heart_full, x, y, size, size, null);
             i++;
-            x += (size * 1.2); // Adjust the spacing between hearts (size * 1.2 for padding)
+            x += (size * 1.2);
+        }
+    }
+
+    private void drawEnemyAmount(int startX, int startY, int size) {
+        int x = startX;
+        int y = startY;
+        g2.drawImage(enemyIcon, x, y, size, size, null);
+
+        x -= 20;
+        y += size - 10;
+
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 32F));
+        g2.setColor(Color.WHITE);
+
+        String s = Integer.toString(gp.enemy[gp.currentMap].size());
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                g2.drawString(s, x + dx, y + dy);
+            }
         }
     }
 
@@ -284,6 +309,14 @@ public class UI {
     private void drawMapSelectScreen() {
         mapSelection.draw(g2);
         if (gp.keyHandler.enterPressed) {
+            switch (mapSelection.getSelectedMapIndex() + 1){
+                case 1:
+                    gp.player.setCoordinate(5,3.8);
+                    break;
+                case 2:
+                    gp.player.setCoordinate(12,3);
+                    break;
+            }
             gp.tileMgr.loadMap("/maps/mapdata_" + (mapSelection.getSelectedMapIndex() + 1), mapSelection.getSelectedMapIndex());
             gp.currentMap = mapSelection.getSelectedMapIndex();
             gp.gameState = gp.playState;
@@ -674,6 +707,20 @@ public class UI {
         g2.drawString(">", x - 40, y);
     }
 
+    private void drawGameWin(){
+        g2.setColor(new Color(0.222f, 0.222f, 0.222f, 0.85f));
+        g2.fill(screenArea);
+
+        int x, y;
+        String text;
+
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 110f));
+        g2.setColor(Color.yellow);
+        text = "Victory";
+        x = getXforCenteredText(text);
+        y = gp.tileSize * 4;
+        g2.drawString(text, x, y);
+    }
     //FEATURE METHOD
     protected int getXforCenteredText(String text) {
         int length = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();

@@ -14,7 +14,6 @@ import java.util.Objects;
 public class UI_mapSelection {
     GamePanel gp;
     private List<BufferedImage> mapList;
-    private List<String> titleMap;
     private int selectedMapIndex = 0;
     private int scrollOffset = 0;
 
@@ -29,15 +28,14 @@ public class UI_mapSelection {
     private final Color shadow;
     private final BufferedImage arrow_left;
     private final BufferedImage arrow_right;
-    private float arrowHoverProgress = 0.0f; // Giá trị từ 0.0 đến 1.0
-    private float hoverSpeed = 0.1f; // Tốc độ thay đổi
+    private float arrowHoverProgress = 0.0f;
+    private float hoverSpeed = 0.1f;
 
     public UI_mapSelection(GamePanel gp) {
         this.gp = gp;
         mapList = new ArrayList<BufferedImage>();
         mapList.add(setup("maps/map_1", 256, 256));
-        mapList.add(setup("buff_debuff/add_boom", 256, 256));
-        mapList.add(setup("buff_debuff/fire_spell", 256, 256));
+        mapList.add(setup("maps/map_2", 256, 256));
 
         size = gp.tileSize * 5;
         x_Map = getCenter(gp.screenWidth, size);
