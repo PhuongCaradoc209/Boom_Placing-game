@@ -375,50 +375,52 @@ public class Entity {
         gp.pathFinder.setNode(startRow, startCol, goalRow, goalCol);
 
         if (gp.pathFinder.search()) {
-            //NEXT WORLD X & Y
-            int nextX = gp.pathFinder.pathList.getFirst().col * gp.tileSize;
-            int nextY = gp.pathFinder.pathList.getFirst().row * gp.tileSize;
+            if (!gp.pathFinder.pathList.isEmpty()) {
+                //NEXT WORLD X & Y
+                int nextX = gp.pathFinder.pathList.get(0).col * gp.tileSize;
+                int nextY = gp.pathFinder.pathList.get(0).row * gp.tileSize;
 
-            double enLeftX = worldX + solidArea.x;
-            double enRightX = worldX + solidArea.x + solidArea.width;
-            double enTopY = worldY + solidArea.y;
-            double enBottomY = worldY + solidArea.y + solidArea.height;
+                double enLeftX = worldX + solidArea.x;
+                double enRightX = worldX + solidArea.x + solidArea.width;
+                double enTopY = worldY + solidArea.y;
+                double enBottomY = worldY + solidArea.y + solidArea.height;
 
-            if (enTopY > nextY && enLeftX >= nextX && enRightX < nextX + gp.tileSize) {
-                direction = "up";
-            } else if (enTopY < nextY && enLeftX >= nextX && enRightX < nextX + gp.tileSize) {
-                direction = "down";
-            } else if (enTopY >= nextY && enBottomY < nextY + gp.tileSize) {
-                //left or right
-                if (enLeftX > nextX) direction = "left";
-                else if (enLeftX < nextX) direction = "right";
-            } else if (enTopY > nextY && enLeftX > nextX) {
-                //up or left
-                direction = "up";
-                checkCollision();
-                if (collisionOn) {
-                    direction = "left";
-                }
-            } else if (enTopY > nextY && enLeftX < nextX) {
-                //up or right
-                direction = "up";
-                checkCollision();
-                if (collisionOn) {
-                    direction = "right";
-                }
-            } else if (enTopY < nextY && enLeftX > nextX) {
-                //down or left
-                direction = "down";
-                checkCollision();
-                if (collisionOn) {
-                    direction = "left";
-                }
-            } else if (enTopY < nextY && enLeftX < nextX) {
-                //down or right
-                direction = "down";
-                checkCollision();
-                if (collisionOn) {
-                    direction = "right";
+                if (enTopY > nextY && enLeftX >= nextX && enRightX < nextX + gp.tileSize) {
+                    direction = "up";
+                } else if (enTopY < nextY && enLeftX >= nextX && enRightX < nextX + gp.tileSize) {
+                    direction = "down";
+                } else if (enTopY >= nextY && enBottomY < nextY + gp.tileSize) {
+                    //left or right
+                    if (enLeftX > nextX) direction = "left";
+                    else if (enLeftX < nextX) direction = "right";
+                } else if (enTopY > nextY && enLeftX > nextX) {
+                    //up or left
+                    direction = "up";
+                    checkCollision();
+                    if (collisionOn) {
+                        direction = "left";
+                    }
+                } else if (enTopY > nextY && enLeftX < nextX) {
+                    //up or right
+                    direction = "up";
+                    checkCollision();
+                    if (collisionOn) {
+                        direction = "right";
+                    }
+                } else if (enTopY < nextY && enLeftX > nextX) {
+                    //down or left
+                    direction = "down";
+                    checkCollision();
+                    if (collisionOn) {
+                        direction = "left";
+                    }
+                } else if (enTopY < nextY && enLeftX < nextX) {
+                    //down or right
+                    direction = "down";
+                    checkCollision();
+                    if (collisionOn) {
+                        direction = "right";
+                    }
                 }
             }
         }

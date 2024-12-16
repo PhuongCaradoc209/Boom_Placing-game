@@ -119,8 +119,8 @@ public class Ene_Lizard extends Entity {
     public void setAction(){
         if (onPath){
             fire();
-            int goalCol = (int) ((gp.player.worldX + gp.player.solidArea.x)/gp.tileSize);
-            int goalRow = (int) ((gp.player.worldY + gp.player.solidArea.y)/gp.tileSize);
+            int goalCol = Math.min(gp.maxWorldCol - 1, Math.max(0, (int) ((gp.player.worldX + gp.player.solidArea.x) / gp.tileSize)));
+            int goalRow = Math.min(gp.maxWorldRow - 1, Math.max(0, (int) ((gp.player.worldY + gp.player.solidArea.y) / gp.tileSize)));
             searchPath(goalRow,goalCol);
 
             int i = new Random().nextInt(200);
