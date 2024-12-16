@@ -372,7 +372,6 @@ public class Entity {
     public void searchPath(int goalRow, int goalCol) {
         int startCol = (int) (worldX + solidArea.x) / gp.tileSize;
         int startRow = (int) (worldY + solidArea.y) / gp.tileSize;
-
         gp.pathFinder.setNode(startRow, startCol, goalRow, goalCol);
 
         if (gp.pathFinder.search()) {

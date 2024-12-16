@@ -23,6 +23,7 @@ public class BuffManager {
         for (Buff b : buffs) {
             if (b.getClass() == buff.getClass()) {
                 appearCounter++;
+                System.out.println(appearCounter);
             }
         }
 

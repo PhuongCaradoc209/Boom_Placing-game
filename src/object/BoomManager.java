@@ -46,7 +46,7 @@ public class BoomManager {
     public Entity getEntityPlacedBoom(Boom boom) {
         for (Entity entity : gp.entityManager.getEntities(gp.currentMap)) {
             if (entity.isPlacedBoom()) {
-                List<Boom> entityBooms = entity.ownBooms; // Assuming the entity has a list of bombs it placed
+                List<Boom> entityBooms = entity.ownBooms;
                 if (entityBooms.contains(boom)) {
                     return entity;
                 }

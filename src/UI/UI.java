@@ -559,7 +559,7 @@ public class UI {
             g2.drawString(">", textX - 25, textY);
         }
         // MUSIC VOLUME CONTROL
-        g2.drawRect(textX + 120, textY - 13, 120, 12);
+//        g2.drawRect(textX + 120, textY - 13, 120, 12);
 //        int volumeWidth = 24 * gp.music.volumeScale;
 //        g2.fillRect(textX, textY + 6, volumeWidth, 12);
 //        drawSubWindow1(volumeWidth + 5 + gp.tileSize * 41 / 4, textY, 13, 25, colorOfVolume, Color.BLACK, 2, 5);

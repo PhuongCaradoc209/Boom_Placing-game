@@ -67,42 +67,41 @@ public class PathFinder {
     public void setNode(int startRow, int startCol, int goalRow, int goalCol) {
         resetNodes();
 
-        startNode = node[startRow][startCol];
-        currentNode = startNode;
-        goalNode = node[goalRow][goalCol];
-        openList.add(currentNode);
+        if (startCol < gp.maxWorldCol && startRow < gp.maxWorldRow) {
+            startNode = node[startRow][startCol];
+            currentNode = startNode;
+            goalNode = node[goalRow][goalCol];
+            openList.add(currentNode);
 
-        col = 0;
-        row = 0;
-        int tempRow, tempCol;
-        Set<String> keySet;
-
-        while (col < gp.maxWorldCol && row < gp.maxWorldRow) {
-            //SET SOLID NODE
-            //CHECK TILES
-            int tileNum = gp.tileMgr.mapTileNum[gp.currentMap][row][col];
-            if (gp.tileMgr.tile[tileNum].collision) {
-                node[row][col].solid = true;
-            }
-
+            col = 0;
+            row = 0;
+            int tempRow, tempCol;
+            Set<String> keySet;
             keySet = gp.aSetter.getObjectMap(gp.currentMap).keySet();
             for (String key : keySet) {
-                // Split the key into row and col based on the comma
                 String[] parts = key.split(",");
 
-                // Parse row and col as integers
                 tempRow = Integer.parseInt(parts[1]);
                 tempCol = Integer.parseInt(parts[0]);
 
                 node[tempRow][tempCol].solid = true;
             }
 
-            //SET COST
-            getCost(node[row][col]);
-            col++;
-            if (col == gp.maxWorldCol) {
-                col = 0;
-                row++;
+            while (col < gp.maxWorldCol && row < gp.maxWorldRow) {
+                //SET SOLID NODE
+                //CHECK TILES
+                int tileNum = gp.tileMgr.mapTileNum[gp.currentMap][row][col];
+                if (gp.tileMgr.tile[tileNum].collision) {
+                    node[row][col].solid = true;
+                }
+
+                //SET COST
+                getCost(node[row][col]);
+                col++;
+                if (col == gp.maxWorldCol) {
+                    col = 0;
+                    row++;
+                }
             }
         }
     }
